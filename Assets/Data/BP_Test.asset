@@ -15,7 +15,7 @@ MonoBehaviour:
   version: 1
   displayName: sample
   seed: 12345
-  shellSize: 1
+  shellSize: 0
   starProfileTag: Solid
   paletteTag: Palette_Default
   palette:

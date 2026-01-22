@@ -12,7 +12,7 @@ public static class HanabiCompiler_MVP
     }
 
     /// <summary>
-    /// Default compile path: bake -> ignition solve -> burst binning -> particle init.
+    /// Default compile path: bake -> ignition solve -> ignition-region clustering -> particle init.
     /// </summary>
     public static void Compile(FireworkBlueprint bp, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits)
     {
@@ -30,7 +30,7 @@ public static class HanabiCompiler_MVP
         // 2) Ignition solve (time per voxel)
         float[] ignite = IgnitionSolver.Solve(bp, pv);
 
-        float binSize = Mathf.Max(0.01f, bp.ignition.burstBinSize);
+        float clusterWindow = Mathf.Max(0.01f, bp.ignition.burstBinSize);
         float maxIgnition = Mathf.Max(0.01f, bp.ignition.maxIgnitionTime);
 
         // Resolve palette (DB tag wins; fallback to blueprint.palette)
@@ -39,28 +39,9 @@ public static class HanabiCompiler_MVP
             paletteUsed = palFromDb;
         else
             paletteUsed = bp.palette;
-// 3) Bin star voxels by ignition time
-        var bins = new Dictionary<int, List<int>>(256);
-
-        for (int i = 0; i < pv.starMask.Length; i++)
-        {
-            if (pv.starMask[i] == 0) continue;
-
-            float t = ignite[i];
-            if (float.IsNaN(t) || float.IsInfinity(t)) continue;
-            if (t < 0f) t = 0f;
-            if (t > maxIgnition) continue;
-
-            int bin = Mathf.FloorToInt(t / binSize);
-            if (!bins.TryGetValue(bin, out var list))
-            {
-                list = new List<int>(256);
-                bins.Add(bin, list);
-            }
-            list.Add(i);
-        }
-
-        if (bins.Count == 0)
+        // 3) Cluster star voxels into ignition regions
+        var regions = BuildIgnitionRegions(pv, ignite, maxIgnition, clusterWindow);
+        if (regions.Count == 0)
         {
             // Fallback: single-shot all stars
             var solvedAll = BurstSolver.Solve(bp, pv);
@@ -80,18 +61,17 @@ public static class HanabiCompiler_MVP
         }
 
         // 4) Generate BurstEvent list in time order
-        var keys = new List<int>(bins.Keys);
-        keys.Sort();
+        regions.Sort((a, b) => a.minTime.CompareTo(b.minTime));
 
-        var burstList = new List<BurstEvent>(keys.Count);
+        var burstList = new List<BurstEvent>(regions.Count);
         var initList = new List<ParticleInitV2>(capacity: 4096);
 
-        foreach (int bin in keys)
+        foreach (var region in regions)
         {
-            List<int> starIdx = bins[bin];
+            List<int> starIdx = region.starIndices;
             if (starIdx == null || starIdx.Count == 0) continue;
 
-            float t0 = bin * binSize;
+            float t0 = region.minTime;
 
             // Solve only these star cells
             var solved = BurstSolver.SolveSubset(bp, pv, starIdx, paletteUsed);
@@ -124,7 +104,7 @@ public static class HanabiCompiler_MVP
             burstList.Add(new BurstEvent
             {
                 timeLocal = t0,
-                posLocal = Vector3.zero,
+                posLocal = region.posLocal,
                 eventFxId = -1,
                 particleCount = count,
                 particleStartIndex = start
@@ -138,11 +118,8 @@ public static class HanabiCompiler_MVP
     static int ResolveStarProfileId(HanabiDatabase db, FireworkBlueprint bp)
     {
         if (db != null && db.TryGetStarId(bp.starProfileTag, out int id)) return id;
-                // NOTE: particleTypeId was a legacy field. We now use tag-based StarProfile selection.
-                // If the tag is missing / not found, fall back to the first StarProfile (index 0).
-                if (db.starProfiles == null || db.starProfiles.Count == 0) return 0;
-                Debug.LogWarning($"[HanabiCompiler] StarProfileTag '{bp.starProfileTag}' not found in DB. Fallback to starProfiles[0].");
-                return 0;
+        if (db == null || db.starProfiles == null || db.starProfiles.Count == 0) return 0;
+        return 0;
     }
 
     static float ResolveStarSize(HanabiDatabase db, FireworkBlueprint bp, uint seed, uint index)
@@ -200,5 +177,93 @@ public static class HanabiCompiler_MVP
             };
         }
         return arr;
+    }
+
+    struct IgnitionRegion
+    {
+        public float minTime;
+        public Vector3 posLocal;
+        public List<int> starIndices;
+    }
+
+    static List<IgnitionRegion> BuildIgnitionRegions(PackedVolume pv, float[] ignite, float maxIgnition, float clusterWindow)
+    {
+        var regions = new List<IgnitionRegion>(64);
+        if (pv == null || ignite == null || pv.starMask == null) return regions;
+
+        int n = pv.starMask.Length;
+        var visited = new bool[n];
+
+        int[] dx = { 1, -1, 0, 0, 0, 0 };
+        int[] dy = { 0, 0, 1, -1, 0, 0 };
+        int[] dz = { 0, 0, 0, 0, 1, -1 };
+
+        for (int i = 0; i < n; i++)
+        {
+            if (visited[i] || pv.starMask[i] == 0) continue;
+
+            float t0 = ignite[i];
+            if (!IsIgnitionValid(t0, maxIgnition)) continue;
+
+            float minT = t0;
+            float maxT = t0;
+
+            var indices = new List<int>(128);
+            var queue = new Queue<int>();
+            queue.Enqueue(i);
+            visited[i] = true;
+
+            Vector3 sumPos = Vector3.zero;
+            int count = 0;
+
+            while (queue.Count > 0)
+            {
+                int idx = queue.Dequeue();
+                indices.Add(idx);
+
+                pv.XYZ(idx, out int x, out int y, out int z);
+                sumPos += pv.CellCenter(x, y, z);
+                count++;
+
+                for (int k = 0; k < 6; k++)
+                {
+                    int nx = x + dx[k];
+                    int ny = y + dy[k];
+                    int nz = z + dz[k];
+                    if (!pv.InBounds(nx, ny, nz)) continue;
+
+                    int nIdx = pv.Index(nx, ny, nz);
+                    if (visited[nIdx] || pv.starMask[nIdx] == 0) continue;
+
+                    float tn = ignite[nIdx];
+                    if (!IsIgnitionValid(tn, maxIgnition)) continue;
+
+                    float newMin = Mathf.Min(minT, tn);
+                    float newMax = Mathf.Max(maxT, tn);
+                    if (newMax - newMin > clusterWindow) continue;
+
+                    minT = newMin;
+                    maxT = newMax;
+                    visited[nIdx] = true;
+                    queue.Enqueue(nIdx);
+                }
+            }
+
+            if (indices.Count == 0) continue;
+
+            regions.Add(new IgnitionRegion
+            {
+                minTime = minT,
+                posLocal = sumPos / Mathf.Max(1, count),
+                starIndices = indices
+            });
+        }
+
+        return regions;
+    }
+
+    static bool IsIgnitionValid(float t, float maxIgnition)
+    {
+        return !(float.IsNaN(t) || float.IsInfinity(t)) && t >= 0f && t <= maxIgnition;
     }
 }
