@@ -1,0 +1,181 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\0db4j\\My project\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\0db4j\\my project\\assets\\hanabipipeline_mvp\\runtime\\hanabiplaybackcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\hanabipipeline_mvp\\runtime\\hanabiplaybackcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\hanabipipeline_mvp\\runtime\\hanabicompiler_mvp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\hanabipipeline_mvp\\runtime\\hanabicompiler_mvp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E8A91009-7186-A382-4FE4-3C21BA335F00}|Assembly-CSharp-Editor.csproj|C:\\Users\\0db4j\\My project\\assets\\hanabipipeline_mvp\\editor\\fireworkblueprintautocompiler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E8A91009-7186-A382-4FE4-3C21BA335F00}|Assembly-CSharp-Editor.csproj|solutionrelative:assets\\hanabipipeline_mvp\\editor\\fireworkblueprintautocompiler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\fireworkcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\fireworkcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\packedvolume.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\packedvolume.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\particlesim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\particlesim.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\fireworkbaker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\fireworkbaker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\fireworkblueprint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\fireworkblueprint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\0db4j\\My project\\assets\\scripts\\burstsolver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\burstsolver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "HanabiPlaybackController.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\HanabiPipeline_MVP\\Runtime\\HanabiPlaybackController.cs",
+              "RelativeDocumentMoniker": "Assets\\HanabiPipeline_MVP\\Runtime\\HanabiPlaybackController.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\HanabiPipeline_MVP\\Runtime\\HanabiPlaybackController.cs",
+              "RelativeToolTip": "Assets\\HanabiPipeline_MVP\\Runtime\\HanabiPlaybackController.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAArwCAAAAA3AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-21T16:27:58.674Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HanabiCompiler_MVP.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\HanabiPipeline_MVP\\Runtime\\HanabiCompiler_MVP.cs",
+              "RelativeDocumentMoniker": "Assets\\HanabiPipeline_MVP\\Runtime\\HanabiCompiler_MVP.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\HanabiPipeline_MVP\\Runtime\\HanabiCompiler_MVP.cs",
+              "RelativeToolTip": "Assets\\HanabiPipeline_MVP\\Runtime\\HanabiCompiler_MVP.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAADwvwAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-21T16:27:39.826Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "FireworkBlueprintAutoCompiler.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\HanabiPipeline_MVP\\Editor\\FireworkBlueprintAutoCompiler.cs",
+              "RelativeDocumentMoniker": "Assets\\HanabiPipeline_MVP\\Editor\\FireworkBlueprintAutoCompiler.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\HanabiPipeline_MVP\\Editor\\FireworkBlueprintAutoCompiler.cs",
+              "RelativeToolTip": "Assets\\HanabiPipeline_MVP\\Editor\\FireworkBlueprintAutoCompiler.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T13:29:50.3Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PlayerController.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\PlayerController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerController.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\PlayerController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PlayerController.cs",
+              "ViewState": "AQIAADAAAAAAAAAAAAAIwBgAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T08:25:17.457Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ParticleSim.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\ParticleSim.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ParticleSim.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\ParticleSim.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ParticleSim.cs",
+              "ViewState": "AQIAAE4AAAAAAAAAAAAYwGUAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T07:21:34.136Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PackedVolume.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\PackedVolume.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PackedVolume.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\PackedVolume.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PackedVolume.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T07:21:33.048Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "FireworkController.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\FireworkController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\FireworkController.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\FireworkController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\FireworkController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T07:21:31.63Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FireworkBlueprint.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\FireworkBlueprint.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\FireworkBlueprint.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\FireworkBlueprint.cs",
+              "RelativeToolTip": "Assets\\Scripts\\FireworkBlueprint.cs",
+              "ViewState": "AQIAAAgAAAAAAAAAAADwvyAAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T07:21:30.475Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FireworkBaker.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\FireworkBaker.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\FireworkBaker.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\FireworkBaker.cs",
+              "RelativeToolTip": "Assets\\Scripts\\FireworkBaker.cs",
+              "ViewState": "AQIAACgAAAAAAAAAAAAAwEcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T07:21:28.014Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "BurstSolver.cs",
+              "DocumentMoniker": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\BurstSolver.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\BurstSolver.cs",
+              "ToolTip": "C:\\Users\\0db4j\\My project\\Assets\\Scripts\\BurstSolver.cs",
+              "RelativeToolTip": "Assets\\Scripts\\BurstSolver.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAHIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T07:20:57.587Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

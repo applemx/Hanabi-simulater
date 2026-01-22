@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e503653bf1fea3348b677407fbe180ca, type: 3}
+  m_Name: BP_Test
+  m_EditorClassIdentifier: Assembly-CSharp::FireworkBlueprint
+  version: 1
+  displayName: sample
+  seed: 12345
+  shellSize: 1
+  starProfileTag: Solid
+  paletteTag: Palette_Default
+  palette:
+  - serializedVersion: 2
+    rgba: 4285190911
+  - serializedVersion: 2
+    rgba: 4285230079
+  - serializedVersion: 2
+    rgba: 4294951253
+  intent:
+    baseSpeed: 18
+    uniformity: 0.85
+    jitter: 0.12
+    life: 2.4
+    drag: 0.35
+    wind: 0.15
+  ring:
+    count: 1500
+    radius: 0.85
+    thickness: 0.1
+  paper: []
+  ignition:
+    secondsPerVoxel: 0.02
+    burstBinSize: 0.05
+    maxIgnitionTime: 6
+    paperExtraDelayPerCell: 0.01
+  igniters:
+  - posLocal: {x: 0, y: 0, z: 0}
+    fuseTag: Fuse_Default
+    startDelay: 0

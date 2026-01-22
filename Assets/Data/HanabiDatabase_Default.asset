@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f22d94abb0e9134194ce9cf7f664f6e, type: 3}
+  m_Name: HanabiDatabase_Default
+  m_EditorClassIdentifier: Assembly-CSharp::HanabiDatabase
+  starProfiles:
+  - tag: Solid
+    kind: 0
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 2.6
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 6
+    sizeJitter: 1.5
+    brightness: 1
+  - tag: Tail
+    kind: 1
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 2.8
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 8
+    sizeJitter: 2
+    brightness: 1
+  - tag: ColorChange
+    kind: 2
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 2.8
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 7
+    sizeJitter: 1.8
+    brightness: 1
+  - tag: Comet
+    kind: 3
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 3.2
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 10
+    sizeJitter: 2.5
+    brightness: 1
+  - tag: Strobe
+    kind: 4
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 2.4
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 8
+    sizeJitter: 2
+    brightness: 1
+  - tag: Glitter
+    kind: 5
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 3
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 8.5
+    sizeJitter: 2.2
+    brightness: 1
+  - tag: Crackle
+    kind: 6
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 2.3
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 7
+    sizeJitter: 1.8
+    brightness: 1
+  - tag: Crossette
+    kind: 7
+    baseSpeed: 18
+    speedJitter: 2.5
+    baseLife: 2.6
+    lifeJitter: 0.3
+    drag: 0.35
+    baseSize: 7.5
+    sizeJitter: 1.9
+    brightness: 1
+  palettes:
+  - tag: Palette_Default
+    colors:
+    - serializedVersion: 2
+      rgba: 4285190911
+    - serializedVersion: 2
+      rgba: 4285230079
+    - serializedVersion: 2
+      rgba: 4294951253
+    - serializedVersion: 2
+      rgba: 4294929078
