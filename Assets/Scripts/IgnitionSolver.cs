@@ -1,177 +1,211 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Compute ignition time per voxel (PackedVolume cell).
-/// MVP: Dijkstra over 6-neighborhood with cost based on charge and paper wall.
-/// Output is shell-local compile-time data. Runtime never runs this.
+/// Computes igniteTime[] for each voxel cell by running Dijkstra once at compile-time.
+///
+/// - Multiple igniters supported (bp.igniters)
+/// - Traversal is blocked for empty cells (charge==0)
+/// - Paper adds extra delay (bp.ignition.paperExtraDelayPerCell * paperStrength)
+///
+/// NOTE: this is compile-time only; never call at runtime every launch.
 /// </summary>
 public static class IgnitionSolver
 {
-    public static float[] Solve(FireworkBlueprint bp, PackedVolume pv)
+    struct HeapNode
     {
-        int n = pv.res * pv.res * pv.res;
-        var dist = new float[n];
-        for (int i = 0; i < n; i++) dist[i] = float.PositiveInfinity;
+        public float d;
+        public int idx;
 
-        // Multi-source: igniters
-        var heap = new MinHeap(n);
-
-        EnsureIgniters(bp);
-
-        foreach (var ig in bp.igniters)
+        public HeapNode(float d, int idx)
         {
-            int idx = LocalToIndexClamped(pv, ig.posLocal);
-            float t0 = Mathf.Max(0f, ig.startDelay);
-            if (t0 < dist[idx])
-            {
-                dist[idx] = t0;
-                heap.Push(idx, t0);
-            }
+            this.d = d;
+            this.idx = idx;
         }
-
-        int res = pv.res;
-        int res2 = res * res;
-
-        // Neighbor deltas (6-neighborhood)
-        int[] dx = { 1, -1, 0, 0, 0, 0 };
-        int[] dy = { 0, 0, 1, -1, 0, 0 };
-        int[] dz = { 0, 0, 0, 0, 1, -1 };
-
-        float secondsPerVoxel = Mathf.Max(1e-4f, bp.ignition.secondsPerVoxel);
-        float maxT = Mathf.Max(0.01f, bp.ignition.maxIgnitionTime);
-
-        while (heap.Count > 0)
-        {
-            heap.Pop(out int u, out float du);
-            if (du != dist[u]) continue; // stale
-            if (du > maxT) continue;
-
-            int ux = u % res;
-            int uy = (u / res) % res;
-            int uz = u / res2;
-
-            float uCharge = pv.charge[u] / 255f;
-            float uSpeedFactor = 0.2f + 0.8f * Mathf.Clamp01(uCharge); // 0.2..1.0
-            float baseStep = secondsPerVoxel / uSpeedFactor;
-
-            for (int k = 0; k < 6; k++)
-            {
-                int vx = ux + dx[k];
-                int vy = uy + dy[k];
-                int vz = uz + dz[k];
-                if (vx < 0 || vx >= res || vy < 0 || vy >= res || vz < 0 || vz >= res) continue;
-
-                int v = vx + vy * res + vz * res2;
-
-                float extra = 0f;
-                if (pv.paperCellWallId != null && pv.paperCellWallId[v] != 0)
-                    extra += Mathf.Max(0f, bp.ignition.paperExtraDelayPerCell);
-
-                float nd = du + baseStep + extra;
-                if (nd < dist[v])
-                {
-                    dist[v] = nd;
-                    heap.Push(v, nd);
-                }
-            }
-        }
-
-        return dist;
     }
 
-    static void EnsureIgniters(FireworkBlueprint bp)
-    {
-        if (bp.igniters == null) bp.igniters = new List<IgniterSpec>();
-        if (bp.igniters.Count == 0) bp.igniters.Add(IgniterSpec.Default);
-    }
-
-    static int LocalToIndexClamped(PackedVolume pv, Vector3 pLocal)
-    {
-        int x = Mathf.Clamp((int)((pLocal.x + 1f) * 0.5f * pv.res), 0, pv.res - 1);
-        int y = Mathf.Clamp((int)((pLocal.y + 1f) * 0.5f * pv.res), 0, pv.res - 1);
-        int z = Mathf.Clamp((int)((pLocal.z + 1f) * 0.5f * pv.res), 0, pv.res - 1);
-        return pv.Index(x, y, z);
-    }
-
-    // Tiny binary heap (min by key)
     sealed class MinHeap
     {
-        int[] nodes;
-        float[] keys;
-        int count;
-
-        public int Count => count;
+        HeapNode[] a;
+        int n;
 
         public MinHeap(int capacity)
         {
-            nodes = new int[Mathf.Max(16, capacity)];
-            keys = new float[nodes.Length];
-            count = 0;
+            a = new HeapNode[Mathf.Max(64, capacity)];
+            n = 0;
         }
 
-        public void Push(int node, float key)
+        public int Count => n;
+
+        public void Clear() => n = 0;
+
+        public void Push(float d, int idx)
         {
-            if (count >= nodes.Length)
+            if (n == a.Length)
             {
-                int newLen = nodes.Length * 2;
-                Array.Resize(ref nodes, newLen);
-                Array.Resize(ref keys, newLen);
+                Array.Resize(ref a, a.Length * 2);
             }
 
-            int i = count++;
-            nodes[i] = node;
-            keys[i] = key;
-            SiftUp(i);
-        }
+            int i = n++;
+            a[i] = new HeapNode(d, idx);
 
-        public void Pop(out int node, out float key)
-        {
-            node = nodes[0];
-            key = keys[0];
-
-            int last = --count;
-            if (last <= 0)
-            {
-                count = 0;
-                return;
-            }
-
-            nodes[0] = nodes[last];
-            keys[0] = keys[last];
-            SiftDown(0);
-        }
-
-        void SiftUp(int i)
-        {
+            // sift up
             while (i > 0)
             {
                 int p = (i - 1) >> 1;
-                if (keys[p] <= keys[i]) break;
-                Swap(i, p);
+                if (a[p].d <= a[i].d) break;
+                (a[p], a[i]) = (a[i], a[p]);
                 i = p;
             }
         }
 
-        void SiftDown(int i)
+        public HeapNode Pop()
         {
+            var root = a[0];
+            a[0] = a[--n];
+
+            // sift down
+            int i = 0;
             while (true)
             {
                 int l = (i << 1) + 1;
-                if (l >= count) break;
+                if (l >= n) break;
                 int r = l + 1;
-                int m = (r < count && keys[r] < keys[l]) ? r : l;
-                if (keys[i] <= keys[m]) break;
-                Swap(i, m);
+                int m = (r < n && a[r].d < a[l].d) ? r : l;
+                if (a[i].d <= a[m].d) break;
+                (a[i], a[m]) = (a[m], a[i]);
                 i = m;
+            }
+
+            return root;
+        }
+    }
+
+    public static float[] Solve(FireworkBlueprint bp, PackedVolume pv)
+    {
+        int res = pv.res;
+        int n = res * res * res;
+
+        float[] dist = new float[n];
+        for (int i = 0; i < n; i++) dist[i] = float.PositiveInfinity;
+
+        var heap = new MinHeap(Mathf.Min(n, 4096));
+
+        // Seed igniters
+        int seeded = 0;
+        if (bp.igniters != null)
+        {
+            for (int i = 0; i < bp.igniters.Count; i++)
+            {
+                int sIdx = V3ToIndex(bp.igniters[i].posLocal, res);
+                if (pv.charge[sIdx] == 0) continue; // outside shell -> ignore
+                if (dist[sIdx] > 0f)
+                {
+                    dist[sIdx] = 0f;
+                    heap.Push(0f, sIdx);
+                    seeded++;
+                }
             }
         }
 
-        void Swap(int a, int b)
+        if (seeded == 0)
         {
-            (nodes[a], nodes[b]) = (nodes[b], nodes[a]);
-            (keys[a], keys[b]) = (keys[b], keys[a]);
+            // Fallback: center
+            int c = V3ToIndex(Vector3.zero, res);
+            if (pv.charge[c] == 0)
+            {
+                // pick any non-empty voxel as last resort
+                for (int i = 0; i < n; i++)
+                {
+                    if (pv.charge[i] > 0)
+                    {
+                        c = i;
+                        break;
+                    }
+                }
+            }
+            dist[c] = 0f;
+            heap.Push(0f, c);
         }
+
+        float baseStep = Mathf.Max(1e-5f, bp.ignition.secondsPerVoxel);
+        float paperDelayPerCell = Mathf.Max(0f, bp.ignition.paperExtraDelayPerCell);
+
+        while (heap.Count > 0)
+        {
+            var node = heap.Pop();
+            float d = node.d;
+            int idx = node.idx;
+
+            if (d != dist[idx]) continue; // stale
+
+            int x, y, z;
+            pv.XYZ(idx, out x, out y, out z);
+
+            // 6-neighborhood
+            Relax(idx, x - 1, y, z);
+            Relax(idx, x + 1, y, z);
+            Relax(idx, x, y - 1, z);
+            Relax(idx, x, y + 1, z);
+            Relax(idx, x, y, z - 1);
+            Relax(idx, x, y, z + 1);
+        }
+
+        return dist;
+
+        void Relax(int fromIdx, int nx, int ny, int nz)
+        {
+            if ((uint)nx >= (uint)res || (uint)ny >= (uint)res || (uint)nz >= (uint)res) return;
+            int toIdx = pv.Index(nx, ny, nz);
+
+            // blocked
+            if (pv.charge[toIdx] == 0) return;
+
+            float step = baseStep;
+
+            // Fuel strength affects burn speed (weaker charge burns slower)
+            float strength = pv.charge[toIdx] / 255f; // 0..1
+            float fuelMult = 1f / Mathf.Lerp(0.25f, 1f, Mathf.Clamp01(strength)); // 1..4
+            step *= fuelMult;
+
+            // Paper adds extra delay (scaled by strength)
+            if (paperDelayPerCell > 0f && pv.paperStrength != null)
+            {
+                byte ps = pv.paperStrength[toIdx];
+                if (ps > 0)
+                {
+                    step += paperDelayPerCell * (ps / 255f);
+                }
+                else if (pv.paperCellWallId != null && pv.paperCellWallId[toIdx] != 0)
+                {
+                    // legacy: wall id without strength
+                    step += paperDelayPerCell;
+                }
+            }
+            else if (paperDelayPerCell > 0f && pv.paperCellWallId != null && pv.paperCellWallId[toIdx] != 0)
+            {
+                step += paperDelayPerCell;
+            }
+
+            float nd = dist[fromIdx] + step;
+            if (nd < dist[toIdx])
+            {
+                dist[toIdx] = nd;
+                heap.Push(nd, toIdx);
+            }
+        }
+    }
+
+    static int V3ToIndex(Vector3 local, int res)
+    {
+        float fx = (local.x * 0.5f) + 0.5f;
+        float fy = (local.y * 0.5f) + 0.5f;
+        float fz = (local.z * 0.5f) + 0.5f;
+
+        int x = Mathf.Clamp((int)(fx * res), 0, res - 1);
+        int y = Mathf.Clamp((int)(fy * res), 0, res - 1);
+        int z = Mathf.Clamp((int)(fz * res), 0, res - 1);
+
+        return x + res * (y + res * z);
     }
 }
