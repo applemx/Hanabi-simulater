@@ -49,6 +49,9 @@ public class FireworkBlueprint : ScriptableObject
         thickness = 0.10f
     };
 
+    [Header("Stars (placed points, optional)")]
+    public List<StarPoint> stars = new List<StarPoint>();
+
     [Header("Waruyaku (MVP: spheres)")]
     public List<WaruyakuPrimitive> waruyaku = new List<WaruyakuPrimitive>
     {
@@ -67,6 +70,9 @@ public class FireworkBlueprint : ScriptableObject
             strength = 190
         }
     };
+
+    [Header("Waruyaku (paint strokes, optional)")]
+    public List<WaruyakuStroke> waruyakuStrokes = new List<WaruyakuStroke>();
 
     [Header("Paper (MVP: disc walls)")]
     public List<PaperPrimitive> paper = new List<PaperPrimitive>();
@@ -117,6 +123,15 @@ public struct StarSkeletonRing
     public float thickness;
 }
 
+[Serializable]
+public struct StarPoint
+{
+    public Vector3 dir;   // normalized
+    public float radius;  // 0..1
+    public string tag;    // StarTag (role)
+    public byte size;     // voxel cube size (e.g., 2,3,5)
+}
+
 public enum PaperShape { Disc }
 
 [Serializable]
@@ -129,6 +144,15 @@ public struct WaruyakuPrimitive
 }
 
 public enum WaruyakuShape { Sphere }
+
+[Serializable]
+public struct WaruyakuStroke
+{
+    public Vector3 dir;       // normalized
+    public float radius;      // 0..1
+    public float brushRadius; // local radius (0..1)
+    public byte strength;     // 0..255
+}
 
 [Serializable]
 public struct PaperPrimitive

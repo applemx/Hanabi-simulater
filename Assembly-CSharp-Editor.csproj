@@ -52,6 +52,7 @@
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\FireworkBlueprintAutoCompiler.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiMenu.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiDatabaseEditorUtil.cs" />
+    <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiWorkshopSceneBuilder.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\FireworkBlueprintEditor.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -57,9 +57,12 @@
     <Compile Include="Assets\Scripts\IgnitionSolver.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\PackedVolume.cs" />
+    <Compile Include="Assets\Scripts\HanabiHemisphereMesh.cs" />
     <Compile Include="Assets\Scripts\FireworkController.cs" />
     <Compile Include="Assets\Scripts\ParticleSim.cs" />
+    <Compile Include="Assets\Scripts\HanabiWorkshopCameraOrbit.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Runtime\CompiledShowSerializer.cs" />
+    <Compile Include="Assets\Scripts\HanabiWorkshopController.cs" />
     <Compile Include="Assets\Scripts\FireworkBaker.cs" />
     <Compile Include="Assets\Scripts\FireworkBlueprint.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Runtime\CompiledShowTypes.cs" />

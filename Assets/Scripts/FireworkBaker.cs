@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Random = System.Random;
 using UnityEngine;
 
@@ -93,22 +94,35 @@ public static class FireworkBaker
             }
         }
 
-        // 2) Stars (MVP: ring skeleton)
-        int paletteCount = Mathf.Max(1, bp.palette != null ? bp.palette.Count : 1);
-        var ring = bp.ring;
-        for (int i = 0; i < ring.count; i++)
+        // 1.6) Waruyaku paint strokes (optional)
+        if (bp.waruyakuStrokes != null && bp.waruyakuStrokes.Count > 0)
         {
-            Vector3 dir = RandomOnUnitSphere(rng);
-            Vector3 center = dir * ring.radius;
-            Vector3 jitter = RandomInsideUnitSphere(rng) * ring.thickness;
-            Vector3 p = center + jitter;
-            if (p.sqrMagnitude > 1f) p = p.normalized; // keep inside
+            ApplyWaruyakuStrokes(pv, bp.waruyakuStrokes, res);
+        }
 
-            int idx = V3ToIndex(p, res);
-            if (pv.charge[idx] == 0) continue; // should not happen, but just in case
+        // 2) Stars (placed points or ring skeleton)
+        int paletteCount = Mathf.Max(1, bp.palette != null ? bp.palette.Count : 1);
+        if (bp.stars != null && bp.stars.Count > 0)
+        {
+            ApplyStarPoints(pv, bp.stars, paletteCount, rng);
+        }
+        else
+        {
+            var ring = bp.ring;
+            for (int i = 0; i < ring.count; i++)
+            {
+                Vector3 dir = RandomOnUnitSphere(rng);
+                Vector3 center = dir * ring.radius;
+                Vector3 jitter = RandomInsideUnitSphere(rng) * ring.thickness;
+                Vector3 p = center + jitter;
+                if (p.sqrMagnitude > 1f) p = p.normalized; // keep inside
 
-            pv.starMask[idx] = 1;
-            pv.starColor[idx] = (byte)rng.Next(paletteCount);
+                int idx = V3ToIndex(p, res);
+                if (pv.charge[idx] == 0) continue; // should not happen, but just in case
+
+                pv.starMask[idx] = 1;
+                pv.starColor[idx] = (byte)rng.Next(paletteCount);
+            }
         }
 
         // Resolve washi tag -> wall id/strength (simple mapping for MVP)
@@ -250,6 +264,110 @@ public static class FireworkBaker
             Vector3 v = new Vector3(x, y, z);
             if (v.sqrMagnitude <= 1.0f) return v;
         }
+    }
+
+    static void ApplyStarPoints(PackedVolume pv, IList<StarPoint> stars, int paletteCount, Random rng)
+    {
+        int res = pv.res;
+        for (int i = 0; i < stars.Count; i++)
+        {
+            var sp = stars[i];
+            Vector3 dir = sp.dir;
+            if (dir.sqrMagnitude < 1e-8f) dir = Vector3.up;
+            dir.Normalize();
+
+            float radius = Mathf.Clamp01(sp.radius);
+            Vector3 p = dir * radius;
+
+            LocalToVoxel(p, res, out int cx, out int cy, out int cz);
+            byte color = (byte)rng.Next(paletteCount);
+            int size = Mathf.Max(1, sp.size);
+            StampStarCube(pv, cx, cy, cz, size, color);
+        }
+    }
+
+    static void StampStarCube(PackedVolume pv, int cx, int cy, int cz, int size, byte color)
+    {
+        int res = pv.res;
+        int half = size / 2;
+        int startX = cx - half;
+        int startY = cy - half;
+        int startZ = cz - half;
+
+        for (int z = startZ; z < startZ + size; z++)
+        {
+            if ((uint)z >= (uint)res) continue;
+            for (int y = startY; y < startY + size; y++)
+            {
+                if ((uint)y >= (uint)res) continue;
+                for (int x = startX; x < startX + size; x++)
+                {
+                    if ((uint)x >= (uint)res) continue;
+                    int idx = pv.Index(x, y, z);
+                    if (pv.charge[idx] == 0) continue; // outside shell
+                    pv.starMask[idx] = 1;
+                    pv.starColor[idx] = color;
+                }
+            }
+        }
+    }
+
+    static void ApplyWaruyakuStrokes(PackedVolume pv, IList<WaruyakuStroke> strokes, int res)
+    {
+        for (int i = 0; i < strokes.Count; i++)
+        {
+            var stroke = strokes[i];
+            if (stroke.strength == 0) continue;
+
+            Vector3 dir = stroke.dir;
+            if (dir.sqrMagnitude < 1e-8f) dir = Vector3.up;
+            dir.Normalize();
+
+            float radius = Mathf.Clamp01(stroke.radius);
+            float brush = Mathf.Max(0.001f, stroke.brushRadius);
+            float brush2 = brush * brush;
+
+            Vector3 center = dir * radius;
+
+            int minX = LocalToVoxelIndex(center.x - brush, res) - 1;
+            int maxX = LocalToVoxelIndex(center.x + brush, res) + 1;
+            int minY = LocalToVoxelIndex(center.y - brush, res) - 1;
+            int maxY = LocalToVoxelIndex(center.y + brush, res) + 1;
+            int minZ = LocalToVoxelIndex(center.z - brush, res) - 1;
+            int maxZ = LocalToVoxelIndex(center.z + brush, res) + 1;
+
+            minX = Mathf.Clamp(minX, 0, res - 1);
+            maxX = Mathf.Clamp(maxX, 0, res - 1);
+            minY = Mathf.Clamp(minY, 0, res - 1);
+            maxY = Mathf.Clamp(maxY, 0, res - 1);
+            minZ = Mathf.Clamp(minZ, 0, res - 1);
+            maxZ = Mathf.Clamp(maxZ, 0, res - 1);
+
+            for (int z = minZ; z <= maxZ; z++)
+            {
+                for (int y = minY; y <= maxY; y++)
+                {
+                    for (int x = minX; x <= maxX; x++)
+                    {
+                        int idx = pv.Index(x, y, z);
+                        if (pv.charge[idx] == 0) continue; // outside shell
+
+                        Vector3 p = pv.CellCenter(x, y, z);
+                        Vector3 v = p - center;
+                        if (v.sqrMagnitude > brush2) continue;
+
+                        if (stroke.strength > pv.charge[idx])
+                            pv.charge[idx] = stroke.strength;
+                    }
+                }
+            }
+        }
+    }
+
+    static int LocalToVoxelIndex(float local, int res)
+    {
+        float f = (local * 0.5f) + 0.5f;
+        return Mathf.Clamp((int)(f * res), 0, res - 1);
     }
 
     static void RasterizeLine(Vector3 aLocal, Vector3 bLocal, int res, Action<int, int, int> visit)

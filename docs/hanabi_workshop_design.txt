@@ -1,0 +1,67 @@
+﻿花火制作システム 設計メモ v0.1
+
+目的
+- 半球ビューの3D編集で星/割薬/和紙/導火線を配置できるMVP。
+- 配置した内容がそのまま Bake -> Compile -> Playback に流れる。
+- 操作は「置く/塗る/対称」で迷わない設計。
+
+全体フロー（現状の接続）
+- FireworkBlueprint に配置データを保存
+- FireworkBaker が配置データを PackedVolume に焼く
+- HanabiCompiler_MVP が点火/バースト/粒子初期化を生成
+- HanabiPlaybackController が再生
+
+追加/拡張データ（Blueprint）
+1) StarPoint（球面点置き）
+- dir: Vector3（球面方向。正規化）
+- radius: 0..1（中心からの距離）
+- tag: StarTag（役物はここで代用）
+- size: ボクセル立方体サイズ（2/3/5など）
+
+2) WaruyakuStroke（割薬の塗り）
+- dir: Vector3（球面方向。正規化）
+- radius: 0..1
+- brushRadius: 0..1（局所の塗り半径）
+- strength: 0..255（L/M/Hで代用）
+
+3) 既存の waruyaku（球）/ paper（disc）/ igniters はそのまま使用
+
+現状の実装ポイント
+- FireworkBaker は stars があるとリングではなく StarPoint を焼く
+- WaruyakuStroke は charge を上書き（強い方優先）
+- StarPoint.tag は保存のみ（現時点は未使用）
+  ※ 今は blueprint の starProfileTag が全体に適用される
+
+主要クラス
+- FireworkBlueprint
+  - stars: List<StarPoint>
+  - waruyakuStrokes: List<WaruyakuStroke>
+  - ring/waruyaku/paper/igniters は従来通り
+- FireworkBaker
+  - ApplyStarPoints: StarPoint -> starMask/starColor
+  - ApplyWaruyakuStrokes: WaruyakuStroke -> charge
+- PackedVolume
+  - charge/starMask/starColor/paper...（既存）
+
+UI/操作仕様（MVP）
+- 半球ビュー（回転/ズーム可、基本は上から）
+- 星: クリック配置 + ブラシ散布
+- 割薬: 長押し塗り + 単発スタンプ
+- 和紙: disc 追加（中心/法線/半径）
+- 導火線: 中心固定（将来分岐）
+- 対称配置: 1/4/8/12/16
+
+焼き込みルール（MVP）
+- StarPoint -> ローカル座標（dir * radius）
+- size は voxel 立方体スタンプ
+- WaruyakuStroke -> ローカル球で charge を塗る（強い方を採用）
+
+次の課題
+- StarPoint.tag を profileId に反映（星ごとの役物表現）
+- 3D編集UI（SceneView or EditorWindow ではなくゲーム内）
+- ブラシ散布の密度/乱数制御
+- Undo/Redo の拡張
+
+備考
+- 役物は StarTag で代用する方針
+- グリッドは 64^3 を前提
