@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e503653bf1fea3348b677407fbe180ca, type: 3}
   m_Name: BP_Test
   m_EditorClassIdentifier: Assembly-CSharp::FireworkBlueprint
-  version: 1
+  version: 2
   displayName: sample
   seed: 12345
-  shellSize: 1
+  shellSize: 0
   starProfileTag: Solid
   paletteTag: Palette_Default
   waruyakuTag: Waruyaku_H
@@ -28,23 +28,26 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4294951253
   intent:
-    baseSpeed: 18
-    uniformity: 0.85
-    jitter: 0.12
-    life: 2.4
-    drag: 0.35
-    wind: 0.15
+    baseSpeed: 12
+    uniformity: 0.92
+    jitter: 0.06
+    life: 2.2
+    drag: 0.38
+    wind: 0.1
   ring:
-    count: 1500
-    radius: 0.85
-    thickness: 0.1
-  paper:
+    count: 900
+    radius: 0.82
+    thickness: 0.08
+  waruyaku:
   - shape: 0
     center: {x: 0, y: 0, z: 0}
-    normal: {x: 0, y: 2, z: 0}
-    radius: 30
-    wallId: 0
-    strength: 255
+    radius: 0.35
+    strength: 210
+  - shape: 0
+    center: {x: 0, y: 0, z: 0}
+    radius: 0.8
+    strength: 170
+  paper: []
   ignition:
     secondsPerVoxel: 0.02
     burstBinSize: 0.05
@@ -52,5 +55,5 @@ MonoBehaviour:
     paperExtraDelayPerCell: 0.01
   igniters:
   - posLocal: {x: 0, y: 0, z: 0}
-    fuseTag: Fuse_Fast
+    fuseTag: Fuse_Default
     startDelay: 0

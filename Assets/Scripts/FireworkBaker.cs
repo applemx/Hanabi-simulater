@@ -58,6 +58,41 @@ public static class FireworkBaker
             }
         }
 
+        // 1.5) Waruyaku overrides (MVP: spheres)
+        if (bp.waruyaku != null && bp.waruyaku.Count > 0)
+        {
+            for (int w = 0; w < bp.waruyaku.Count; w++)
+            {
+                var wk = bp.waruyaku[w];
+                if (wk.shape != WaruyakuShape.Sphere) continue;
+                if (wk.strength == 0) continue;
+
+                float radius = Mathf.Max(0.001f, wk.radius);
+                float radius2 = radius * radius;
+
+                for (int z = 0; z < res; z++)
+                {
+                    float fz = ((z + 0.5f) * invRes) * 2f - 1f;
+                    for (int y = 0; y < res; y++)
+                    {
+                        float fy = ((y + 0.5f) * invRes) * 2f - 1f;
+                        for (int x = 0; x < res; x++)
+                        {
+                            float fx = ((x + 0.5f) * invRes) * 2f - 1f;
+                            int idx = pv.Index(x, y, z);
+
+                            if (pv.charge[idx] == 0) continue; // outside shell
+
+                            Vector3 v = new Vector3(fx, fy, fz) - wk.center;
+                            if (v.sqrMagnitude > radius2) continue;
+
+                            pv.charge[idx] = wk.strength;
+                        }
+                    }
+                }
+            }
+        }
+
         // 2) Stars (MVP: ring skeleton)
         int paletteCount = Mathf.Max(1, bp.palette != null ? bp.palette.Count : 1);
         var ring = bp.ring;

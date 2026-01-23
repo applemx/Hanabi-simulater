@@ -18,9 +18,10 @@ public class FireworkBlueprint : ScriptableObject
     [Header("Tags (preferred)")]
     public string starProfileTag = "Solid";
     public string paletteTag = "Palette_Default";
-    public string waruyakuTag = "Waruyaku_M";
+    public string waruyakuTag = "Waruyaku_H";
     public string washiTag = "Washi_Default";
-[Header("Palette")]
+
+    [Header("Palette")]
     public List<Color32> palette = new List<Color32>
     {
         new Color32(255, 210, 106, 255),
@@ -31,20 +32,39 @@ public class FireworkBlueprint : ScriptableObject
     [Header("Intent (temporary knobs)")]
     public IntentParams intent = new IntentParams
     {
-        baseSpeed = 18f,
-        uniformity = 0.85f,
-        jitter = 0.12f,
-        life = 2.4f,
-        drag = 0.35f,
-        wind = 0.15f
+        baseSpeed = 12f,
+        uniformity = 0.92f,
+        jitter = 0.06f,
+        life = 2.2f,
+        drag = 0.38f,
+        wind = 0.10f
     };
 
     [Header("Star skeleton (MVP: ring)")]
     public StarSkeletonRing ring = new StarSkeletonRing
     {
-        count = 1500,
-        radius = 0.85f,
-        thickness = 0.10f
+        count = 900,
+        radius = 0.82f,
+        thickness = 0.08f
+    };
+
+    [Header("Waruyaku (MVP: spheres)")]
+    public List<WaruyakuPrimitive> waruyaku = new List<WaruyakuPrimitive>
+    {
+        new WaruyakuPrimitive
+        {
+            shape = WaruyakuShape.Sphere,
+            center = Vector3.zero,
+            radius = 0.35f,
+            strength = 210
+        },
+        new WaruyakuPrimitive
+        {
+            shape = WaruyakuShape.Sphere,
+            center = Vector3.zero,
+            radius = 0.80f,
+            strength = 170
+        }
     };
 
     [Header("Paper (MVP: disc walls)")]
@@ -97,6 +117,17 @@ public struct StarSkeletonRing
 }
 
 public enum PaperShape { Disc }
+
+[Serializable]
+public struct WaruyakuPrimitive
+{
+    public WaruyakuShape shape;
+    public Vector3 center;
+    public float radius;
+    public byte strength; // 0..255 (0 = no override)
+}
+
+public enum WaruyakuShape { Sphere }
 
 [Serializable]
 public struct PaperPrimitive
