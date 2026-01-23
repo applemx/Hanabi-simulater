@@ -14,12 +14,24 @@ public static class HanabiDatabaseEditorUtil
         {
             string path = AssetDatabase.GUIDToAssetPath(guids[0]);
             var db = AssetDatabase.LoadAssetAtPath<HanabiDatabase>(path);
-            if (db != null) return db;
+            if (db != null)
+            {
+                db.EnsureDefaultsIfEmpty();
+                EditorUtility.SetDirty(db);
+                AssetDatabase.SaveAssetIfDirty(db);
+                return db;
+            }
         }
 
         // Create at default path
         var existing = AssetDatabase.LoadAssetAtPath<HanabiDatabase>(DefaultPath);
-        if (existing != null) return existing;
+        if (existing != null)
+        {
+            existing.EnsureDefaultsIfEmpty();
+            EditorUtility.SetDirty(existing);
+            AssetDatabase.SaveAssetIfDirty(existing);
+            return existing;
+        }
 
         Directory.CreateDirectory(Path.GetDirectoryName(DefaultPath));
         var created = ScriptableObject.CreateInstance<HanabiDatabase>();

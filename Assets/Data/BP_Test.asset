@@ -15,9 +15,11 @@ MonoBehaviour:
   version: 1
   displayName: sample
   seed: 12345
-  shellSize: 0
+  shellSize: 1
   starProfileTag: Solid
   paletteTag: Palette_Default
+  waruyakuTag: Waruyaku_H
+  washiTag: Washi_Default
   palette:
   - serializedVersion: 2
     rgba: 4285190911
@@ -36,7 +38,13 @@ MonoBehaviour:
     count: 1500
     radius: 0.85
     thickness: 0.1
-  paper: []
+  paper:
+  - shape: 0
+    center: {x: 0, y: 0, z: 0}
+    normal: {x: 0, y: 2, z: 0}
+    radius: 30
+    wallId: 0
+    strength: 255
   ignition:
     secondsPerVoxel: 0.02
     burstBinSize: 0.05
@@ -44,5 +52,5 @@ MonoBehaviour:
     paperExtraDelayPerCell: 0.01
   igniters:
   - posLocal: {x: 0, y: 0, z: 0}
-    fuseTag: Fuse_Default
+    fuseTag: Fuse_Fast
     startDelay: 0

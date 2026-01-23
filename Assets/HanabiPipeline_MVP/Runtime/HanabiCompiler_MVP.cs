@@ -6,6 +6,8 @@ using UnityEngine;
 // Output is BurstEvent[] + ParticleInitV2[] which get serialized into CompiledShowAsset.blob.
 public static class HanabiCompiler_MVP
 {
+    const bool LogWashiStats = true;
+
     public static void Compile(FireworkBlueprint bp, HanabiDatabase db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits)
     {
         CompileIgnitionMultiBurst(bp, db, out seed, out bursts, out inits);
@@ -24,14 +26,42 @@ public static class HanabiCompiler_MVP
         seed = (uint)bp.seed;
         if (db != null) db.BuildCaches();
 
+        StarProfileDef starProfile = null;
+        WashiDef washiDef = null;
+        if (db != null)
+        {
+            int starId = ResolveStarProfileId(db, bp);
+            starProfile = db.GetStarById(starId);
+            if (db.TryGetWashiId(bp.washiTag, out int waId))
+                washiDef = db.GetWashiById(waId);
+        }
+        if (LogWashiStats && washiDef == null && !string.IsNullOrWhiteSpace(bp.washiTag))
+            Debug.LogWarning($"[Hanabi] Washi tag '{bp.washiTag}' not found in DB. Washi stats skipped.");
+
         // 1) Bake blueprint -> voxel volume
         PackedVolume pv = FireworkBaker.Bake(bp);
 
+        FuseDef fuseDef = null;
+        WaruyakuDef waruyakuDef = null;
+        if (db != null)
+        {
+            if (db.TryGetFuseId(bp.igniters != null && bp.igniters.Count > 0 ? bp.igniters[0].fuseTag : null, out int fId))
+                fuseDef = db.GetFuseById(fId);
+            if (db.TryGetWaruyakuId(bp.waruyakuTag, out int wId))
+                waruyakuDef = db.GetWaruyakuById(wId);
+        }
+
         // 2) Ignition solve (time per voxel)
-        float[] ignite = IgnitionSolver.Solve(bp, pv);
+        float[] ignite = IgnitionSolver.Solve(bp, pv, fuseDef, waruyakuDef);
 
         float clusterWindow = Mathf.Max(0.01f, bp.ignition.burstBinSize);
         float maxIgnition = Mathf.Max(0.01f, bp.ignition.maxIgnitionTime);
+
+        int washiHitCount = 0;
+        int totalParticleCount = 0;
+        float washiDelaySum = 0f;
+        float washiDelayMax = 0f;
+        float washiStrengthSum = 0f;
 
         // Resolve palette (DB tag wins; fallback to blueprint.palette)
         List<Color32> paletteUsed = null;
@@ -44,7 +74,7 @@ public static class HanabiCompiler_MVP
         if (regions.Count == 0)
         {
             // Fallback: single-shot all stars
-            var solvedAll = BurstSolver.Solve(bp, pv);
+            var solvedAll = BurstSolver.Solve(bp, pv, starProfile, washiDef, waruyakuDef);
             bursts = new[]
             {
                 new BurstEvent
@@ -57,6 +87,12 @@ public static class HanabiCompiler_MVP
                 }
             };
             inits = ConvertInits(bp, db, solvedAll, seed, extraSpawnDelay: null);
+
+            if (LogWashiStats)
+            {
+                AccumulateWashiStatsFromVolume(pv, washiDef, ref washiHitCount, ref totalParticleCount, ref washiDelaySum, ref washiDelayMax, ref washiStrengthSum);
+                LogWashiSummary(bp, washiDef, washiHitCount, totalParticleCount, washiDelaySum, washiDelayMax, washiStrengthSum);
+            }
             return;
         }
 
@@ -74,7 +110,7 @@ public static class HanabiCompiler_MVP
             float t0 = region.minTime;
 
             // Solve only these star cells
-            var solved = BurstSolver.SolveSubset(bp, pv, starIdx, paletteUsed);
+            var solved = BurstSolver.SolveSubset(bp, pv, starIdx, paletteUsed, starProfile, washiDef, waruyakuDef);
 
             int start = initList.Count;
 
@@ -85,6 +121,21 @@ public static class HanabiCompiler_MVP
                 float dtWithin = Mathf.Max(0f, ignite[cell] - t0);
 
                 var s = solved[k];
+                if (LogWashiStats)
+                {
+                    totalParticleCount++;
+                    if (pv.paperCellWallId != null && pv.paperCellWallId[cell] != 0)
+                    {
+                        washiHitCount++;
+                        washiDelaySum += s.delay;
+                        washiDelayMax = Mathf.Max(washiDelayMax, s.delay);
+                        float strength = 1f;
+                        if (pv.paperStrength != null)
+                            strength = Mathf.Clamp01(pv.paperStrength[cell] / 255f);
+                        washiStrengthSum += strength;
+                    }
+                }
+
                 initList.Add(new ParticleInitV2
                 {
                     pos0Local = s.pos0,
@@ -113,6 +164,9 @@ public static class HanabiCompiler_MVP
 
         bursts = burstList.ToArray();
         inits = initList.ToArray();
+
+        if (LogWashiStats)
+            LogWashiSummary(bp, washiDef, washiHitCount, totalParticleCount, washiDelaySum, washiDelayMax, washiStrengthSum);
     }
 
     static int ResolveStarProfileId(HanabiDatabase db, FireworkBlueprint bp)
@@ -265,5 +319,40 @@ public static class HanabiCompiler_MVP
     static bool IsIgnitionValid(float t, float maxIgnition)
     {
         return !(float.IsNaN(t) || float.IsInfinity(t)) && t >= 0f && t <= maxIgnition;
+    }
+
+    static void AccumulateWashiStatsFromVolume(PackedVolume pv, WashiDef washiDef, ref int hitCount, ref int totalCount, ref float delaySum, ref float delayMax, ref float strengthSum)
+    {
+        if (pv == null || pv.starMask == null) return;
+        if (washiDef == null) return;
+
+        float baseDelay = Mathf.Max(0f, washiDef.delaySeconds);
+        for (int i = 0; i < pv.starMask.Length; i++)
+        {
+            if (pv.starMask[i] == 0) continue;
+            totalCount++;
+            if (pv.paperCellWallId != null && pv.paperCellWallId[i] != 0)
+            {
+                float strength = 1f;
+                if (pv.paperStrength != null)
+                    strength = Mathf.Clamp01(pv.paperStrength[i] / 255f);
+                float d = baseDelay * strength;
+                hitCount++;
+                strengthSum += strength;
+                delaySum += d;
+                delayMax = Mathf.Max(delayMax, d);
+            }
+        }
+    }
+
+    static void LogWashiSummary(FireworkBlueprint bp, WashiDef washiDef, int hitCount, int totalCount, float delaySum, float delayMax, float strengthSum)
+    {
+        if (!LogWashiStats || washiDef == null) return;
+        float avgDelay = hitCount > 0 ? delaySum / hitCount : 0f;
+        float avgStrength = hitCount > 0 ? strengthSum / hitCount : 0f;
+        float avgCollimation = avgStrength * Mathf.Clamp01(washiDef.collimation);
+        float ratio = totalCount > 0 ? (float)hitCount / totalCount : 0f;
+
+        Debug.Log($"[Hanabi] Washi stats tag={washiDef.tag} hits={hitCount}/{totalCount} ({ratio:P0}) avgDelay={avgDelay:F3}s maxDelay={delayMax:F3}s avgStrength={avgStrength:F2} avgCollim={avgCollimation:F2}");
     }
 }

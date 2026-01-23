@@ -18,6 +18,8 @@ public class FireworkBlueprint : ScriptableObject
     [Header("Tags (preferred)")]
     public string starProfileTag = "Solid";
     public string paletteTag = "Palette_Default";
+    public string waruyakuTag = "Waruyaku_M";
+    public string washiTag = "Washi_Default";
 [Header("Palette")]
     public List<Color32> palette = new List<Color32>
     {

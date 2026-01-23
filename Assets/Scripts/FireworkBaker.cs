@@ -1,3 +1,4 @@
+using System;
 using Random = System.Random;
 using UnityEngine;
 
@@ -25,6 +26,14 @@ public static class FireworkBaker
 
         float invRes = 1f / res;
 
+        // Resolve waruyaku tag -> base charge (MVP mapping)
+        byte waruyakuCharge = 200;
+        if (!string.IsNullOrWhiteSpace(bp.waruyakuTag))
+        {
+            if (bp.waruyakuTag.IndexOf("L", StringComparison.OrdinalIgnoreCase) >= 0) waruyakuCharge = 220;
+            else if (bp.waruyakuTag.IndexOf("H", StringComparison.OrdinalIgnoreCase) >= 0) waruyakuCharge = 160;
+        }
+
         // 1) Fill: sphere interior as fuel; outside empty
         for (int z = 0; z < res; z++)
         {
@@ -44,7 +53,7 @@ public static class FireworkBaker
                         continue;
                     }
 
-                    pv.charge[idx] = 255;
+                    pv.charge[idx] = waruyakuCharge;
                 }
             }
         }
@@ -65,6 +74,15 @@ public static class FireworkBaker
 
             pv.starMask[idx] = 1;
             pv.starColor[idx] = (byte)rng.Next(paletteCount);
+        }
+
+        // Resolve washi tag -> wall id/strength (simple mapping for MVP)
+        byte washiWallId = 1;
+        byte washiStrength = 180;
+        if (!string.IsNullOrWhiteSpace(bp.washiTag))
+        {
+            if (bp.washiTag.IndexOf("Strong", StringComparison.OrdinalIgnoreCase) >= 0) washiStrength = 230;
+            else if (bp.washiTag.IndexOf("Light", StringComparison.OrdinalIgnoreCase) >= 0) washiStrength = 100;
         }
 
         // 3) Paper walls (disc on plane)
@@ -108,10 +126,10 @@ public static class FireworkBaker
                             if (inPlane.sqrMagnitude > radius2) continue;
 
                             // Keep strongest wall if overlaps
-                            byte s = paper.strength;
+                            byte s = (paper.strength > 0) ? paper.strength : washiStrength;
                             if (s >= pv.paperStrength[idx])
                             {
-                                pv.paperCellWallId[idx] = paper.wallId;
+                                pv.paperCellWallId[idx] = (paper.wallId != 0) ? paper.wallId : washiWallId;
                                 pv.paperStrength[idx] = s;
                             }
                         }
@@ -125,8 +143,18 @@ public static class FireworkBaker
         {
             for (int i = 0; i < bp.igniters.Count; i++)
             {
-                int idx = V3ToIndex(bp.igniters[i].posLocal, res);
+                Vector3 pLocal = bp.igniters[i].posLocal;
+                int idx = V3ToIndex(pLocal, res);
                 pv.charge[idx] = 255;
+
+                if (pv.fuseMask != null)
+                {
+                    RasterizeLine(Vector3.zero, pLocal, res, (x, y, z) =>
+                    {
+                        int fIdx = pv.Index(x, y, z);
+                        pv.fuseMask[fIdx] = 1;
+                    });
+                }
             }
         }
 
@@ -187,5 +215,41 @@ public static class FireworkBaker
             Vector3 v = new Vector3(x, y, z);
             if (v.sqrMagnitude <= 1.0f) return v;
         }
+    }
+
+    static void RasterizeLine(Vector3 aLocal, Vector3 bLocal, int res, Action<int, int, int> visit)
+    {
+        LocalToVoxel(aLocal, res, out int x0, out int y0, out int z0);
+        LocalToVoxel(bLocal, res, out int x1, out int y1, out int z1);
+
+        int dx = x1 - x0;
+        int dy = y1 - y0;
+        int dz = z1 - z0;
+        int steps = Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy), Mathf.Abs(dz));
+        if (steps <= 0)
+        {
+            visit(x0, y0, z0);
+            return;
+        }
+
+        for (int i = 0; i <= steps; i++)
+        {
+            float t = i / (float)steps;
+            int x = Mathf.Clamp(Mathf.RoundToInt(x0 + dx * t), 0, res - 1);
+            int y = Mathf.Clamp(Mathf.RoundToInt(y0 + dy * t), 0, res - 1);
+            int z = Mathf.Clamp(Mathf.RoundToInt(z0 + dz * t), 0, res - 1);
+            visit(x, y, z);
+        }
+    }
+
+    static void LocalToVoxel(Vector3 local, int res, out int x, out int y, out int z)
+    {
+        float fx = (local.x * 0.5f) + 0.5f;
+        float fy = (local.y * 0.5f) + 0.5f;
+        float fz = (local.z * 0.5f) + 0.5f;
+
+        x = Mathf.Clamp((int)(fx * res), 0, res - 1);
+        y = Mathf.Clamp((int)(fy * res), 0, res - 1);
+        z = Mathf.Clamp((int)(fz * res), 0, res - 1);
     }
 }

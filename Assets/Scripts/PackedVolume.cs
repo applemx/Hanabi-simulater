@@ -25,6 +25,12 @@ public class PackedVolume
     /// <summary>0..255 (paper strength for delay/collimation etc.).</summary>
     public byte[] paperStrength;
 
+    /// <summary>0/1 fuse cells (compile-time only).</summary>
+    public byte[] fuseMask;
+
+    /// <summary>Payload id (0 = none).</summary>
+    public byte[] payloadId;
+
     public PackedVolume(int res)
     {
         this.res = res;
@@ -35,6 +41,8 @@ public class PackedVolume
         starColor = new byte[n];
         paperCellWallId = new byte[n];
         paperStrength = new byte[n];
+        fuseMask = new byte[n];
+        payloadId = new byte[n];
     }
 
     public int Index(int x, int y, int z)

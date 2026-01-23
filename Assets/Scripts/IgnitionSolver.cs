@@ -81,7 +81,7 @@ public static class IgnitionSolver
         }
     }
 
-    public static float[] Solve(FireworkBlueprint bp, PackedVolume pv)
+    public static float[] Solve(FireworkBlueprint bp, PackedVolume pv, FuseDef fuseDef = null, WaruyakuDef waruyakuDef = null)
     {
         int res = pv.res;
         int n = res * res * res;
@@ -130,6 +130,9 @@ public static class IgnitionSolver
 
         float baseStep = Mathf.Max(1e-5f, bp.ignition.secondsPerVoxel);
         float paperDelayPerCell = Mathf.Max(0f, bp.ignition.paperExtraDelayPerCell);
+        float fuseCost = (fuseDef != null) ? Mathf.Max(1e-5f, fuseDef.igniteCost) : 0f;
+        float fuseSpeed = (fuseDef != null) ? Mathf.Max(0.01f, fuseDef.burnSpeed) : 1.0f;
+        float waruyakuMul = (waruyakuDef != null) ? Mathf.Max(0.1f, waruyakuDef.igniteCostMultiplier) : 1.0f;
 
         while (heap.Count > 0)
         {
@@ -167,6 +170,16 @@ public static class IgnitionSolver
             float strength = pv.charge[toIdx] / 255f; // 0..1
             float fuelMult = 1f / Mathf.Lerp(0.25f, 1f, Mathf.Clamp01(strength)); // 1..4
             step *= fuelMult;
+
+            // Fuse cells propagate faster with their own cost curve.
+            if (pv.fuseMask != null && pv.fuseMask[toIdx] != 0)
+            {
+                step = fuseCost / fuseSpeed;
+            }
+            else
+            {
+                step *= waruyakuMul;
+            }
 
             // Paper adds extra delay (scaled by strength)
             if (paperDelayPerCell > 0f && pv.paperStrength != null)

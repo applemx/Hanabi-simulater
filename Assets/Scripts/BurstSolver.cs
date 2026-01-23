@@ -16,24 +16,47 @@ public static class BurstSolver
     /// <summary>
     /// MVP: solve all star voxels (single-shot).
     /// </summary>
-    public static List<ParticleInit> Solve(FireworkBlueprint bp, PackedVolume pv)
+    public static List<ParticleInit> Solve(FireworkBlueprint bp, PackedVolume pv, StarProfileDef starProfile = null, WashiDef washiDef = null, WaruyakuDef waruyakuDef = null)
     {
         // Gather all star indices and forward to subset solver.
         var indices = new List<int>(capacity: 4096);
         for (int i = 0; i < pv.starMask.Length; i++)
             if (pv.starMask[i] != 0) indices.Add(i);
 
-        return SolveSubset(bp, pv, indices);
+        return SolveSubset(bp, pv, indices, null, starProfile, washiDef, waruyakuDef);
     }
 
     /// <summary>
     /// Solve only the provided star cell indices, preserving order (one ParticleInit per index).
     /// This is used by the ignition-driven multi-burst compiler.
     /// </summary>
-    public static List<ParticleInit> SolveSubset(FireworkBlueprint bp, PackedVolume pv, IReadOnlyList<int> starCellIndices, List<Color32> paletteOverride = null)
+    public static List<ParticleInit> SolveSubset(FireworkBlueprint bp, PackedVolume pv, IReadOnlyList<int> starCellIndices, List<Color32> paletteOverride = null, StarProfileDef starProfile = null, WashiDef washiDef = null, WaruyakuDef waruyakuDef = null)
     {
         var outList = new List<ParticleInit>(capacity: Mathf.Max(64, starCellIndices.Count));
         var rng = new System.Random(bp.seed);
+
+        float baseSpeed = bp.intent.baseSpeed;
+        float speedJitter = 0f;
+        float baseLife = bp.intent.life;
+        float lifeJitter = 0f;
+        if (starProfile != null)
+        {
+            baseSpeed = starProfile.baseSpeed;
+            speedJitter = starProfile.speedJitter;
+            baseLife = starProfile.baseLife;
+            lifeJitter = starProfile.lifeJitter;
+        }
+
+        float washiDelay = (washiDef != null) ? Mathf.Max(0f, washiDef.delaySeconds) : 0.05f;
+        float washiCollimation = (washiDef != null) ? Mathf.Clamp01(washiDef.collimation) : 0.35f;
+
+        float scatterStrength = 1f;
+        float uniformity = Mathf.Clamp01(bp.intent.uniformity);
+        if (waruyakuDef != null)
+        {
+            scatterStrength = Mathf.Clamp(waruyakuDef.scatterStrength, 0.5f, 2.0f);
+            uniformity = Mathf.Clamp01(uniformity * waruyakuDef.uniformity);
+        }
 
         int res = pv.res;
         int res2 = res * res;
@@ -55,18 +78,39 @@ public static class BurstSolver
             float localAvg = SampleLocalChargeAvg(pv, x, y, z);
             float rayInt = SampleRayChargeIntegral(pv, p, steps: 24);
 
-            float speed = bp.intent.baseSpeed * (1.0f + 0.6f * localAvg + 0.9f * rayInt);
+            float speed = baseSpeed * (1.0f + 0.6f * localAvg + 0.9f * rayInt);
+            if (speedJitter > 0f)
+            {
+                float sj = ((float)rng.NextDouble() * 2f - 1f) * speedJitter;
+                speed = Mathf.Max(0.01f, speed + sj);
+            }
+            speed = Mathf.Max(0.01f, speed * scatterStrength);
 
             float jitter = bp.intent.jitter;
-            Vector3 j = RandomUnitVector(rng) * jitter;
+            float jitterScale = scatterStrength * Mathf.Lerp(1.1f, 0.15f, uniformity);
+            Vector3 j = RandomUnitVector(rng) * jitter * jitterScale;
 
-            float paperOcclusion = (pv.paperCellWallId[idx] != 0) ? 1f : 0f;
-            float collimation = Mathf.Lerp(1f, 0.6f, paperOcclusion);
+            bool paperHit = (pv.paperCellWallId[idx] != 0);
+            float paperStrength = 1f;
+            if (paperHit && pv.paperStrength != null)
+                paperStrength = Mathf.Clamp01(pv.paperStrength[idx] / 255f);
 
-            Vector3 vDir = (dir + j * collimation).normalized;
+            Vector3 vDir = (dir + j).normalized;
+            if (paperHit && washiCollimation > 0f && dir.sqrMagnitude > 1e-6f)
+            {
+                Vector3 vPar = Vector3.Dot(vDir, dir) * dir;
+                Vector3 vPerp = vDir - vPar;
+                float c = washiCollimation * paperStrength;
+                vDir = (vPar + vPerp * (1f - c)).normalized;
+            }
 
-            float life = bp.intent.life;
-            float delay = paperOcclusion * 0.05f;
+            float life = baseLife;
+            if (lifeJitter > 0f)
+            {
+                float lj = ((float)rng.NextDouble() * 2f - 1f) * lifeJitter;
+                life = Mathf.Max(0.05f, life + lj);
+            }
+            float delay = paperHit ? (washiDelay * paperStrength) : 0f;
 
             int ci = pv.starColor[idx];
             var pal = (paletteOverride != null && paletteOverride.Count > 0) ? paletteOverride : bp.palette;

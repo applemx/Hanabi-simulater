@@ -104,3 +104,33 @@ MonoBehaviour:
       rgba: 4294951253
     - serializedVersion: 2
       rgba: 4294929078
+  waruyakuDefs:
+  - tag: Waruyaku_L
+    scatterStrength: 1.15
+    uniformity: 0.9
+    igniteCostMultiplier: 0.9
+  - tag: Waruyaku_M
+    scatterStrength: 1
+    uniformity: 0.85
+    igniteCostMultiplier: 1
+  - tag: Waruyaku_H
+    scatterStrength: 0.85
+    uniformity: 0.8
+    igniteCostMultiplier: 1.15
+  washiDefs:
+  - tag: Washi_Default
+    delaySeconds: 0.05
+    collimation: 0.35
+  fuseDefs:
+  - tag: Fuse_Default
+    burnSpeed: 1
+    igniteCost: 0.02
+    jitter: 0
+  - tag: Fuse_Fast
+    burnSpeed: 2
+    igniteCost: 0.01
+    jitter: 0
+  - tag: Fuse_Slow
+    burnSpeed: 0.6
+    igniteCost: 0.04
+    jitter: 0

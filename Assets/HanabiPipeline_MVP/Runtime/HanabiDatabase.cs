@@ -11,8 +11,20 @@ public class HanabiDatabase : ScriptableObject
     [Header("Palettes (tag -> colors)")]
     public List<PaletteDef> palettes = new List<PaletteDef>();
 
+    [Header("Waruyaku (tag -> ignition scatter)")]
+    public List<WaruyakuDef> waruyakuDefs = new List<WaruyakuDef>();
+
+    [Header("Washi (tag -> delay/collimation)")]
+    public List<WashiDef> washiDefs = new List<WashiDef>();
+
+    [Header("Fuse (tag -> burn speed)")]
+    public List<FuseDef> fuseDefs = new List<FuseDef>();
+
     Dictionary<string, int> _starTagToId;
     Dictionary<string, int> _paletteTagToId;
+    Dictionary<string, int> _waruyakuTagToId;
+    Dictionary<string, int> _washiTagToId;
+    Dictionary<string, int> _fuseTagToId;
 
     public void BuildCaches()
     {
@@ -30,6 +42,30 @@ public class HanabiDatabase : ScriptableObject
             var t = palettes[i]?.tag;
             if (string.IsNullOrWhiteSpace(t)) continue;
             if (!_paletteTagToId.ContainsKey(t)) _paletteTagToId.Add(t, i);
+        }
+
+        _waruyakuTagToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < waruyakuDefs.Count; i++)
+        {
+            var t = waruyakuDefs[i]?.tag;
+            if (string.IsNullOrWhiteSpace(t)) continue;
+            if (!_waruyakuTagToId.ContainsKey(t)) _waruyakuTagToId.Add(t, i);
+        }
+
+        _washiTagToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < washiDefs.Count; i++)
+        {
+            var t = washiDefs[i]?.tag;
+            if (string.IsNullOrWhiteSpace(t)) continue;
+            if (!_washiTagToId.ContainsKey(t)) _washiTagToId.Add(t, i);
+        }
+
+        _fuseTagToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < fuseDefs.Count; i++)
+        {
+            var t = fuseDefs[i]?.tag;
+            if (string.IsNullOrWhiteSpace(t)) continue;
+            if (!_fuseTagToId.ContainsKey(t)) _fuseTagToId.Add(t, i);
         }
     }
 
@@ -67,6 +103,57 @@ public class HanabiDatabase : ScriptableObject
         return colors != null && colors.Count > 0;
     }
 
+    public bool TryGetWaruyakuId(string tag, out int id)
+    {
+        if (_waruyakuTagToId == null) BuildCaches();
+        if (string.IsNullOrWhiteSpace(tag))
+        {
+            id = 0;
+            return waruyakuDefs.Count > 0;
+        }
+        return _waruyakuTagToId.TryGetValue(tag, out id);
+    }
+
+    public WaruyakuDef GetWaruyakuById(int id)
+    {
+        if (id < 0 || id >= waruyakuDefs.Count) return null;
+        return waruyakuDefs[id];
+    }
+
+    public bool TryGetWashiId(string tag, out int id)
+    {
+        if (_washiTagToId == null) BuildCaches();
+        if (string.IsNullOrWhiteSpace(tag))
+        {
+            id = 0;
+            return washiDefs.Count > 0;
+        }
+        return _washiTagToId.TryGetValue(tag, out id);
+    }
+
+    public WashiDef GetWashiById(int id)
+    {
+        if (id < 0 || id >= washiDefs.Count) return null;
+        return washiDefs[id];
+    }
+
+    public bool TryGetFuseId(string tag, out int id)
+    {
+        if (_fuseTagToId == null) BuildCaches();
+        if (string.IsNullOrWhiteSpace(tag))
+        {
+            id = 0;
+            return fuseDefs.Count > 0;
+        }
+        return _fuseTagToId.TryGetValue(tag, out id);
+    }
+
+    public FuseDef GetFuseById(int id)
+    {
+        if (id < 0 || id >= fuseDefs.Count) return null;
+        return fuseDefs[id];
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -79,6 +166,9 @@ public class HanabiDatabase : ScriptableObject
     {
         if (starProfiles == null) starProfiles = new List<StarProfileDef>();
         if (palettes == null) palettes = new List<PaletteDef>();
+        if (waruyakuDefs == null) waruyakuDefs = new List<WaruyakuDef>();
+        if (washiDefs == null) washiDefs = new List<WashiDef>();
+        if (fuseDefs == null) fuseDefs = new List<FuseDef>();
 
         if (starProfiles.Count == 0)
         {
@@ -106,6 +196,25 @@ public class HanabiDatabase : ScriptableObject
                     new Color32(182, 106, 255, 255),
                 }
             });
+        }
+
+        if (waruyakuDefs.Count == 0)
+        {
+            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_L", igniteCostMultiplier = 0.9f, scatterStrength = 1.15f, uniformity = 0.9f });
+            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_M", igniteCostMultiplier = 1.0f, scatterStrength = 1.0f, uniformity = 0.85f });
+            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_H", igniteCostMultiplier = 1.15f, scatterStrength = 0.85f, uniformity = 0.8f });
+        }
+
+        if (washiDefs.Count == 0)
+        {
+            washiDefs.Add(new WashiDef { tag = "Washi_Default", delaySeconds = 0.05f, collimation = 0.35f });
+        }
+
+        if (fuseDefs.Count == 0)
+        {
+            fuseDefs.Add(new FuseDef { tag = "Fuse_Default", burnSpeed = 1.0f, igniteCost = 0.02f, jitter = 0.0f });
+            fuseDefs.Add(new FuseDef { tag = "Fuse_Fast", burnSpeed = 2.0f, igniteCost = 0.01f, jitter = 0.0f });
+            fuseDefs.Add(new FuseDef { tag = "Fuse_Slow", burnSpeed = 0.6f, igniteCost = 0.04f, jitter = 0.0f });
         }
     }
 }
@@ -161,4 +270,31 @@ public class PaletteDef
 {
     public string tag = "Palette_Default";
     public List<Color32> colors = new List<Color32>();
+}
+
+[Serializable]
+public class WaruyakuDef
+{
+    public string tag = "Waruyaku_M";
+    public float scatterStrength = 1.0f;
+    public float uniformity = 0.85f;
+    public float igniteCostMultiplier = 1.0f;
+}
+
+[Serializable]
+public class WashiDef
+{
+    public string tag = "Washi_Default";
+    public float delaySeconds = 0.05f;
+    [Range(0f, 1f)]
+    public float collimation = 0.35f;
+}
+
+[Serializable]
+public class FuseDef
+{
+    public string tag = "Fuse_Default";
+    public float burnSpeed = 1.0f;
+    public float igniteCost = 0.02f;
+    public float jitter = 0.0f;
 }

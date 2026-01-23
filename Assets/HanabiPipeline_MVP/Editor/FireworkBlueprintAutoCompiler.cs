@@ -53,6 +53,7 @@ public class FireworkBlueprintAutoCompiler : AssetModificationProcessor
         cs.blob = CompiledShowSerializer.Write(seed, bursts, inits, version: 1);
 
         EditorUtility.SetDirty(cs);
+        AssetDatabase.SaveAssetIfDirty(cs);
         
 
         Debug.Log($"[Hanabi] Compiled {bp.name} -> {Path.GetFileName(csPath)}  bursts={bursts.Length} particles={inits.Length} blob={cs.blob?.Length ?? 0}");
