@@ -15,13 +15,13 @@ MonoBehaviour:
   starProfiles:
   - tag: Solid
     kind: 0
-    baseSpeed: 18
+    baseSpeed: 40
     speedJitter: 2.5
     baseLife: 2.6
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 6
-    sizeJitter: 1.5
+    baseSize: 0.06
+    sizeJitter: 0.02
     brightness: 1
   - tag: Tail
     kind: 1
@@ -30,8 +30,8 @@ MonoBehaviour:
     baseLife: 2.8
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 8
-    sizeJitter: 2
+    baseSize: 0.08
+    sizeJitter: 0.03
     brightness: 1
   - tag: ColorChange
     kind: 2
@@ -40,8 +40,8 @@ MonoBehaviour:
     baseLife: 2.8
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 7
-    sizeJitter: 1.8
+    baseSize: 0.07
+    sizeJitter: 0.025
     brightness: 1
   - tag: Comet
     kind: 3
@@ -50,8 +50,8 @@ MonoBehaviour:
     baseLife: 3.2
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 10
-    sizeJitter: 2.5
+    baseSize: 0.1
+    sizeJitter: 0.035
     brightness: 1
   - tag: Strobe
     kind: 4
@@ -60,8 +60,8 @@ MonoBehaviour:
     baseLife: 2.4
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 8
-    sizeJitter: 2
+    baseSize: 0.08
+    sizeJitter: 0.03
     brightness: 1
   - tag: Glitter
     kind: 5
@@ -70,8 +70,8 @@ MonoBehaviour:
     baseLife: 3
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 8.5
-    sizeJitter: 2.2
+    baseSize: 0.09
+    sizeJitter: 0.03
     brightness: 1
   - tag: Crackle
     kind: 6
@@ -80,8 +80,8 @@ MonoBehaviour:
     baseLife: 2.3
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 7
-    sizeJitter: 1.8
+    baseSize: 0.07
+    sizeJitter: 0.025
     brightness: 1
   - tag: Crossette
     kind: 7
@@ -90,20 +90,18 @@ MonoBehaviour:
     baseLife: 2.6
     lifeJitter: 0.3
     drag: 0.35
-    baseSize: 7.5
-    sizeJitter: 1.9
+    baseSize: 0.075
+    sizeJitter: 0.03
     brightness: 1
   palettes:
   - tag: Palette_Default
     colors:
     - serializedVersion: 2
-      rgba: 4285190911
+      rgba: 4294960840
     - serializedVersion: 2
-      rgba: 4285230079
+      rgba: 4294947950
     - serializedVersion: 2
-      rgba: 4294951253
-    - serializedVersion: 2
-      rgba: 4294929078
+      rgba: 4294967295
   waruyakuDefs:
   - tag: Waruyaku_L
     scatterStrength: 1.15

@@ -28,9 +28,9 @@ public class HanabiPlaybackController : MonoBehaviour
     [Tooltip("If enabled, subtract the first burst time from all burst times. Useful if compiled times are huge.")]
     [SerializeField] bool debugRebaseFirstBurstToZero = false;
     [Tooltip("Multiply size of compiled particles (debug only).")]
-    [SerializeField] float debugCompiledSizeMultiplier = 50.0f;
+    [SerializeField] float debugCompiledSizeMultiplier = 1.0f;
     [Tooltip("Clamp minimum particle size after multiplier (debug only).")]
-    [SerializeField] float debugCompiledMinSize = 0.5f;
+    [SerializeField] float debugCompiledMinSize = 0.03f;
     [Tooltip("Log sim state every N seconds while playing (0 = off).")]
     [SerializeField] float debugPeriodicLogSeconds = 1.0f;
 

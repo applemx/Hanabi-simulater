@@ -172,15 +172,17 @@ public class HanabiDatabase : ScriptableObject
 
         if (starProfiles.Count == 0)
         {
-            // MVP initial 8
-            starProfiles.Add(StarProfileDef.Make("Solid", StarKind.Solid, baseSize: 6.0f, sizeJitter: 1.5f, baseLife: 2.6f));
-            starProfiles.Add(StarProfileDef.Make("Tail", StarKind.Tail, baseSize: 8.0f, sizeJitter: 2.0f, baseLife: 2.8f));
-            starProfiles.Add(StarProfileDef.Make("ColorChange", StarKind.ColorChange, baseSize: 7.0f, sizeJitter: 1.8f, baseLife: 2.8f));
-            starProfiles.Add(StarProfileDef.Make("Comet", StarKind.Comet, baseSize: 10.0f, sizeJitter: 2.5f, baseLife: 3.2f));
-            starProfiles.Add(StarProfileDef.Make("Strobe", StarKind.Strobe, baseSize: 8.0f, sizeJitter: 2.0f, baseLife: 2.4f));
-            starProfiles.Add(StarProfileDef.Make("Glitter", StarKind.Glitter, baseSize: 8.5f, sizeJitter: 2.2f, baseLife: 3.0f));
-            starProfiles.Add(StarProfileDef.Make("Crackle", StarKind.Crackle, baseSize: 7.0f, sizeJitter: 1.8f, baseLife: 2.3f));
-            starProfiles.Add(StarProfileDef.Make("Crossette", StarKind.Crossette, baseSize: 7.5f, sizeJitter: 1.9f, baseLife: 2.6f));
+            // MVP initial 8 (smaller sizes to avoid heavy overdraw)
+            var solid = StarProfileDef.Make("Solid", StarKind.Solid, baseSize: 0.06f, sizeJitter: 0.02f, baseLife: 2.6f);
+            solid.baseSpeed = 40f;
+            starProfiles.Add(solid);
+            starProfiles.Add(StarProfileDef.Make("Tail", StarKind.Tail, baseSize: 0.08f, sizeJitter: 0.03f, baseLife: 2.8f));
+            starProfiles.Add(StarProfileDef.Make("ColorChange", StarKind.ColorChange, baseSize: 0.07f, sizeJitter: 0.025f, baseLife: 2.8f));
+            starProfiles.Add(StarProfileDef.Make("Comet", StarKind.Comet, baseSize: 0.10f, sizeJitter: 0.035f, baseLife: 3.2f));
+            starProfiles.Add(StarProfileDef.Make("Strobe", StarKind.Strobe, baseSize: 0.08f, sizeJitter: 0.03f, baseLife: 2.4f));
+            starProfiles.Add(StarProfileDef.Make("Glitter", StarKind.Glitter, baseSize: 0.09f, sizeJitter: 0.03f, baseLife: 3.0f));
+            starProfiles.Add(StarProfileDef.Make("Crackle", StarKind.Crackle, baseSize: 0.07f, sizeJitter: 0.025f, baseLife: 2.3f));
+            starProfiles.Add(StarProfileDef.Make("Crossette", StarKind.Crossette, baseSize: 0.075f, sizeJitter: 0.03f, baseLife: 2.6f));
         }
 
         if (palettes.Count == 0)
@@ -190,10 +192,9 @@ public class HanabiDatabase : ScriptableObject
                 tag = "Palette_Default",
                 colors = new List<Color32>
                 {
-                    new Color32(255, 210, 106, 255),
-                    new Color32(255, 107, 107, 255),
-                    new Color32(85, 193, 255, 255),
-                    new Color32(182, 106, 255, 255),
+                    new Color32(200, 230, 255, 255),
+                    new Color32(110, 180, 255, 255),
+                    new Color32(255, 255, 255, 255),
                 }
             });
         }
@@ -245,8 +246,8 @@ public class StarProfileDef
     public float drag = 0.35f;
 
     [Header("Visual")]
-    public float baseSize = 2.2f;
-    public float sizeJitter = 0.4f;
+    public float baseSize = 0.06f;
+    public float sizeJitter = 0.02f;
 
     /// <summary>0..2 (MVP: used to scale alpha only; true HDR comes later via material/Bloom).</summary>
     [Range(0f, 2f)]

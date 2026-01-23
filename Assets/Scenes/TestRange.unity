@@ -5488,7 +5488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b05f483073a04247a02314d88146993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HanabiPlaybackController
-  compiledShow: {fileID: 11400000, guid: 0c61e20ca252fc84f9d5a17d3ca8d2f3, type: 2}
+  compiledShow: {fileID: 0}
   particleSystemRenderer: {fileID: 1500344363}
   launchOrigin: {fileID: 1844819986}
   fallbackForwardDistance: 150

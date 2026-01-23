@@ -22,11 +22,11 @@ MonoBehaviour:
   washiTag: Washi_Default
   palette:
   - serializedVersion: 2
-    rgba: 4285190911
+    rgba: 4294960840
   - serializedVersion: 2
-    rgba: 4285230079
+    rgba: 4294947950
   - serializedVersion: 2
-    rgba: 4294951253
+    rgba: 4294967295
   intent:
     baseSpeed: 12
     uniformity: 0.92
@@ -35,18 +35,18 @@ MonoBehaviour:
     drag: 0.38
     wind: 0.1
   ring:
-    count: 900
-    radius: 0.82
-    thickness: 0.08
+    count: 1200
+    radius: 0.85
+    thickness: 0.06
   waruyaku:
   - shape: 0
     center: {x: 0, y: 0, z: 0}
     radius: 0.35
-    strength: 210
+    strength: 230
   - shape: 0
     center: {x: 0, y: 0, z: 0}
     radius: 0.8
-    strength: 170
+    strength: 190
   paper: []
   ignition:
     secondsPerVoxel: 0.02

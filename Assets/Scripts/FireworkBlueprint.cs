@@ -24,9 +24,9 @@ public class FireworkBlueprint : ScriptableObject
     [Header("Palette")]
     public List<Color32> palette = new List<Color32>
     {
-        new Color32(255, 210, 106, 255),
-        new Color32(255, 107, 107, 255),
-        new Color32(85, 193, 255, 255)
+        new Color32(200, 230, 255, 255),
+        new Color32(110, 180, 255, 255),
+        new Color32(255, 255, 255, 255)
     };
 
     [Header("Intent (temporary knobs)")]
@@ -43,9 +43,9 @@ public class FireworkBlueprint : ScriptableObject
     [Header("Star skeleton (MVP: ring)")]
     public StarSkeletonRing ring = new StarSkeletonRing
     {
-        count = 900,
-        radius = 0.82f,
-        thickness = 0.08f
+        count = 1200,
+        radius = 0.85f,
+        thickness = 0.06f
     };
 
     [Header("Waruyaku (MVP: spheres)")]
@@ -56,14 +56,14 @@ public class FireworkBlueprint : ScriptableObject
             shape = WaruyakuShape.Sphere,
             center = Vector3.zero,
             radius = 0.35f,
-            strength = 210
+            strength = 230
         },
         new WaruyakuPrimitive
         {
             shape = WaruyakuShape.Sphere,
             center = Vector3.zero,
             radius = 0.80f,
-            strength = 170
+            strength = 190
         }
     };
 
