@@ -34,3 +34,13 @@ public struct ParticleInitV2
     public ushort profileId; // StarProfile id (future-proof)
     public uint seed;
 }
+
+[Serializable]
+public struct LaunchParams
+{
+    public float launchSpeed;
+    public float fuseSeconds;
+    public float gravityScale;
+    public float windScale;
+    public float dragScale;
+}

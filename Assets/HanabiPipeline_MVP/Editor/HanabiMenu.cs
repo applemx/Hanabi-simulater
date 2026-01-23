@@ -23,12 +23,13 @@ public static class HanabiMenu
         if (cs == null)
         {
             cs = ScriptableObject.CreateInstance<CompiledShowAsset>();
-            cs.version = 1;
+            cs.version = 2;
             AssetDatabase.CreateAsset(cs, csPath);
         }
 
-        HanabiCompiler_MVP.Compile(bp, db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits);
-        cs.blob = CompiledShowSerializer.Write(seed, bursts, inits, version: 1);
+        HanabiCompiler_MVP.Compile(bp, db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits, out LaunchParams launchParams);
+        cs.blob = CompiledShowSerializer.Write(seed, bursts, inits, launchParams, version: 2);
+        cs.version = 2;
 
         EditorUtility.SetDirty(cs);
         AssetDatabase.SaveAssets();

@@ -134,6 +134,27 @@ public static class IgnitionSolver
         float fuseSpeed = (fuseDef != null) ? Mathf.Max(0.01f, fuseDef.burnSpeed) : 1.0f;
         float waruyakuMul = (waruyakuDef != null) ? Mathf.Max(0.1f, waruyakuDef.igniteCostMultiplier) : 1.0f;
 
+        int[] nx = new int[26];
+        int[] ny = new int[26];
+        int[] nz = new int[26];
+        float[] nd = new float[26];
+        int nCount = 0;
+        for (int dz = -1; dz <= 1; dz++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    if (dx == 0 && dy == 0 && dz == 0) continue;
+                    nx[nCount] = dx;
+                    ny[nCount] = dy;
+                    nz[nCount] = dz;
+                    nd[nCount] = Mathf.Sqrt(dx * dx + dy * dy + dz * dz);
+                    nCount++;
+                }
+            }
+        }
+
         while (heap.Count > 0)
         {
             var node = heap.Pop();
@@ -145,18 +166,16 @@ public static class IgnitionSolver
             int x, y, z;
             pv.XYZ(idx, out x, out y, out z);
 
-            // 6-neighborhood
-            Relax(idx, x - 1, y, z);
-            Relax(idx, x + 1, y, z);
-            Relax(idx, x, y - 1, z);
-            Relax(idx, x, y + 1, z);
-            Relax(idx, x, y, z - 1);
-            Relax(idx, x, y, z + 1);
+            // 26-neighborhood with distance weighting
+            for (int k = 0; k < nCount; k++)
+            {
+                Relax(idx, x + nx[k], y + ny[k], z + nz[k], nd[k]);
+            }
         }
 
         return dist;
 
-        void Relax(int fromIdx, int nx, int ny, int nz)
+        void Relax(int fromIdx, int nx, int ny, int nz, float distFactor)
         {
             if ((uint)nx >= (uint)res || (uint)ny >= (uint)res || (uint)nz >= (uint)res) return;
             int toIdx = pv.Index(nx, ny, nz);
@@ -164,7 +183,7 @@ public static class IgnitionSolver
             // blocked
             if (pv.charge[toIdx] == 0) return;
 
-            float step = baseStep;
+            float step = baseStep * distFactor;
 
             // Fuel strength affects burn speed (weaker charge burns slower)
             float strength = pv.charge[toIdx] / 255f; // 0..1
@@ -174,7 +193,7 @@ public static class IgnitionSolver
             // Fuse cells propagate faster with their own cost curve.
             if (pv.fuseMask != null && pv.fuseMask[toIdx] != 0)
             {
-                step = fuseCost / fuseSpeed;
+                step = (fuseCost / fuseSpeed) * distFactor;
             }
             else
             {

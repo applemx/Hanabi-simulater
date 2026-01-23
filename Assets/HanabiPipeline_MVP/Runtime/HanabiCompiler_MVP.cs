@@ -8,20 +8,20 @@ public static class HanabiCompiler_MVP
 {
     const bool LogWashiStats = true;
 
-    public static void Compile(FireworkBlueprint bp, HanabiDatabase db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits)
+    public static void Compile(FireworkBlueprint bp, HanabiDatabase db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits, out LaunchParams launchParams)
     {
-        CompileIgnitionMultiBurst(bp, db, out seed, out bursts, out inits);
+        CompileIgnitionMultiBurst(bp, db, out seed, out bursts, out inits, out launchParams);
     }
 
     /// <summary>
     /// Default compile path: bake -> ignition solve -> ignition-region clustering -> particle init.
     /// </summary>
-    public static void Compile(FireworkBlueprint bp, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits)
+    public static void Compile(FireworkBlueprint bp, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits, out LaunchParams launchParams)
     {
-        CompileIgnitionMultiBurst(bp, null, out seed, out bursts, out inits);
+        CompileIgnitionMultiBurst(bp, null, out seed, out bursts, out inits, out launchParams);
     }
 
-    public static void CompileIgnitionMultiBurst(FireworkBlueprint bp, HanabiDatabase db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits)
+    public static void CompileIgnitionMultiBurst(FireworkBlueprint bp, HanabiDatabase db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits, out LaunchParams launchParams)
     {
         seed = (uint)bp.seed;
         if (db != null) db.BuildCaches();
@@ -43,13 +43,35 @@ public static class HanabiCompiler_MVP
 
         FuseDef fuseDef = null;
         WaruyakuDef waruyakuDef = null;
+        LaunchProfileDef launchDef = null;
         if (db != null)
         {
             if (db.TryGetFuseId(bp.igniters != null && bp.igniters.Count > 0 ? bp.igniters[0].fuseTag : null, out int fId))
                 fuseDef = db.GetFuseById(fId);
             if (db.TryGetWaruyakuId(bp.waruyakuTag, out int wId))
                 waruyakuDef = db.GetWaruyakuById(wId);
+            if (db.TryGetLaunchId(bp.launchTag, out int lId))
+                launchDef = db.GetLaunchById(lId);
         }
+
+        float fuseSeconds = (fuseDef != null && fuseDef.burnSeconds > 0f) ? fuseDef.burnSeconds : 3.5f;
+        float startDelay = 0f;
+        if (bp.igniters != null && bp.igniters.Count > 0)
+        {
+            startDelay = bp.igniters[0].startDelay;
+            for (int i = 1; i < bp.igniters.Count; i++)
+                startDelay = Mathf.Min(startDelay, bp.igniters[i].startDelay);
+            startDelay = Mathf.Max(0f, startDelay);
+        }
+
+        launchParams = new LaunchParams
+        {
+            launchSpeed = (launchDef != null) ? Mathf.Max(1f, launchDef.launchSpeed) : 70f,
+            fuseSeconds = fuseSeconds + startDelay,
+            gravityScale = (launchDef != null) ? Mathf.Max(0.01f, launchDef.gravityScale) : 1f,
+            windScale = (launchDef != null) ? Mathf.Max(0f, launchDef.windScale) : 0.2f,
+            dragScale = (launchDef != null) ? Mathf.Max(0f, launchDef.dragScale) : 0.2f
+        };
 
         // 2) Ignition solve (time per voxel)
         float[] ignite = IgnitionSolver.Solve(bp, pv, fuseDef, waruyakuDef);

@@ -73,10 +73,12 @@ public static class BurstSolver
             int z = idx / res2;
 
             Vector3 p = pv.CellCenter(x, y, z);
-            Vector3 dir = (p - center).normalized;
+            Vector3 posJitter = RandomInsideUnitSphere(rng) * (pv.cellSize * 0.45f);
+            Vector3 pos = p + posJitter;
+            Vector3 dir = (pos - center).normalized;
 
             float localAvg = SampleLocalChargeAvg(pv, x, y, z);
-            float rayInt = SampleRayChargeIntegral(pv, p, steps: 24);
+            float rayInt = SampleRayChargeIntegral(pv, pos, steps: 24);
 
             float speed = baseSpeed * (1.0f + 0.6f * localAvg + 0.9f * rayInt);
             if (speedJitter > 0f)
@@ -120,7 +122,7 @@ public static class BurstSolver
 
             outList.Add(new ParticleInit
             {
-                pos0 = p,
+                pos0 = pos,
                 vel0 = vDir * speed,
                 life = life,
                 color = color,
@@ -176,5 +178,17 @@ public static class BurstSolver
         float z = 2f * v - 1f;
         float r = Mathf.Sqrt(Mathf.Max(0f, 1f - z * z));
         return new Vector3(r * Mathf.Cos(theta), r * Mathf.Sin(theta), z);
+    }
+
+    static Vector3 RandomInsideUnitSphere(System.Random rng)
+    {
+        while (true)
+        {
+            float x = (float)(rng.NextDouble() * 2.0 - 1.0);
+            float y = (float)(rng.NextDouble() * 2.0 - 1.0);
+            float z = (float)(rng.NextDouble() * 2.0 - 1.0);
+            Vector3 v = new Vector3(x, y, z);
+            if (v.sqrMagnitude <= 1.0f) return v;
+        }
     }
 }

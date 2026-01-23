@@ -7,6 +7,7 @@ public class HanabiPlaybackController : MonoBehaviour
     [SerializeField] ParticleSystem particleSystemRenderer;
     [SerializeField] Transform launchOrigin;           // set your launcher
     [SerializeField] float fallbackForwardDistance = 150f;
+    [SerializeField] HanabiDatabase profileDatabase;   // optional: drive StarProfile visuals
 
     [Header("Playback")]
     [SerializeField] KeyCode launchKey = KeyCode.F;
@@ -44,6 +45,7 @@ public class HanabiPlaybackController : MonoBehaviour
     uint seed;
     BurstEvent[] bursts;
     ParticleInitV2[] inits;
+    LaunchParams launchParams;
 
     float t;
     int nextBurstIndex;
@@ -52,6 +54,12 @@ public class HanabiPlaybackController : MonoBehaviour
     // Debug state
     float debugNextLogAt;
     int debugBurstsFired;
+
+    // Launch state
+    Vector3 shellPos;
+    Vector3 shellVel;
+    Vector3 burstOrigin;
+    bool burstOriginReady;
 
 
     void Awake()
@@ -70,6 +78,7 @@ public class HanabiPlaybackController : MonoBehaviour
 
         psBuffer = new ParticleSystem.Particle[main.maxParticles];
         sim = new ParticleSim(main.maxParticles);
+        sim.SetProfileLookup(profileDatabase != null ? profileDatabase.starProfiles : null);
 
         particleSystemRenderer.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         particleSystemRenderer.Clear(true);
@@ -87,14 +96,16 @@ public class HanabiPlaybackController : MonoBehaviour
             seed = 0;
             bursts = System.Array.Empty<BurstEvent>();
             inits = System.Array.Empty<ParticleInitV2>();
+            launchParams = default;
             return;
         }
 
-        if (!CompiledShowSerializer.TryRead(compiledShow.blob, out seed, out bursts, out inits, out _))
+        if (!CompiledShowSerializer.TryRead(compiledShow.blob, out seed, out bursts, out inits, out launchParams, out _))
         {
             Debug.LogError("[HanabiPlaybackController] Failed to read compiled blob. (wrong version?)");
             bursts = System.Array.Empty<BurstEvent>();
             inits = System.Array.Empty<ParticleInitV2>();
+            launchParams = default;
         }
 
         // Debug summary / fixups
@@ -146,10 +157,29 @@ public class HanabiPlaybackController : MonoBehaviour
         if (!playing) return;
 
         float dt = Time.deltaTime;
+        float prevT = t;
         t += dt;
 
+        if (UseLaunchParams() && !burstOriginReady)
+        {
+            float fuseT = launchParams.fuseSeconds;
+            if (prevT < fuseT)
+            {
+                float step = Mathf.Min(t, fuseT) - prevT;
+                if (step > 0f)
+                    StepShell(step);
+
+                if (t >= fuseT)
+                {
+                    burstOrigin = shellPos;
+                    burstOriginReady = true;
+                }
+            }
+        }
+
         // Fire bursts
-        while (nextBurstIndex < bursts.Length && bursts[nextBurstIndex].timeLocal <= t)
+        float burstOffset = UseLaunchParams() ? launchParams.fuseSeconds : 0f;
+        while (nextBurstIndex < bursts.Length && bursts[nextBurstIndex].timeLocal + burstOffset <= t)
         {
             SpawnBurst(bursts[nextBurstIndex]);
             nextBurstIndex++;
@@ -237,6 +267,7 @@ public class HanabiPlaybackController : MonoBehaviour
 
         // Recreate sim every show start (cheap at MVP scale and avoids capacity bookkeeping)
         sim = new ParticleSim(cap);
+        sim.SetProfileLookup(profileDatabase != null ? profileDatabase.starProfiles : null);
 
         t = 0f;
         nextBurstIndex = 0;
@@ -244,10 +275,22 @@ public class HanabiPlaybackController : MonoBehaviour
         debugBurstsFired = 0;
         debugNextLogAt = Time.time + Mathf.Max(0.01f, debugPeriodicLogSeconds);
 
+        InitLaunchState();
+
         if (debugSkipToFirstBurst && bursts != null && bursts.Length > 0)
         {
             // Set t so the first burst triggers immediately on this frame.
-            t = Mathf.Max(0f, bursts[0].timeLocal - 0.01f);
+            if (UseLaunchParams())
+            {
+                SimulateShellToFuse();
+                burstOrigin = shellPos;
+                burstOriginReady = true;
+                t = Mathf.Max(0f, launchParams.fuseSeconds + bursts[0].timeLocal - 0.01f);
+            }
+            else
+            {
+                t = Mathf.Max(0f, bursts[0].timeLocal - 0.01f);
+            }
         }
 
         if (debugVerboseLogs)
@@ -265,8 +308,7 @@ public class HanabiPlaybackController : MonoBehaviour
     void SpawnBurst(BurstEvent be)
     {
         // Convert shell-local to world
-        Vector3 origin = GetOriginPosition();
-        origin.y = explodeHeight;
+        Vector3 origin = GetBurstOrigin();
 
         // Append compiled particles into the live sim.
         // Final world pos = origin + be.posLocal + p.pos0Local
@@ -286,6 +328,72 @@ public class HanabiPlaybackController : MonoBehaviour
         return transform.position + transform.forward * fallbackForwardDistance;
     }
 
+    bool UseLaunchParams()
+    {
+        return launchParams.launchSpeed > 0f && launchParams.fuseSeconds > 0f;
+    }
+
+    void InitLaunchState()
+    {
+        burstOriginReady = false;
+        burstOrigin = Vector3.zero;
+
+        Vector3 origin = GetOriginPosition();
+        if (UseLaunchParams())
+        {
+            shellPos = origin;
+            Vector3 launchDir = (launchOrigin != null) ? launchOrigin.up : Vector3.up;
+            shellVel = launchDir.normalized * launchParams.launchSpeed;
+            if (launchParams.fuseSeconds <= 0f)
+            {
+                burstOriginReady = true;
+                burstOrigin = shellPos;
+            }
+        }
+        else
+        {
+            burstOriginReady = true;
+            burstOrigin = origin;
+            burstOrigin.y = explodeHeight;
+        }
+    }
+
+    void StepShell(float dt)
+    {
+        Vector3 accel = new Vector3(0f, -9.81f * launchParams.gravityScale, 0f);
+        accel += wind * launchParams.windScale;
+
+        shellVel += accel * dt;
+        if (launchParams.dragScale > 0f)
+        {
+            float speed = shellVel.magnitude;
+            shellVel += (-dragK * launchParams.dragScale * speed) * shellVel * dt;
+        }
+        shellPos += shellVel * dt;
+    }
+
+    void SimulateShellToFuse()
+    {
+        if (!UseLaunchParams()) return;
+        float fuseT = launchParams.fuseSeconds;
+        if (fuseT <= 0f) return;
+
+        float step = 1f / 60f;
+        float time = 0f;
+        while (time < fuseT)
+        {
+            float dt = Mathf.Min(step, fuseT - time);
+            StepShell(dt);
+            time += dt;
+        }
+    }
+
+    Vector3 GetBurstOrigin()
+    {
+        if (!UseLaunchParams()) return burstOrigin;
+        return burstOriginReady ? burstOrigin : shellPos;
+    }
+
     void OnGUI()
     {
         if (!debugOverlay) return;
@@ -298,7 +406,10 @@ public class HanabiPlaybackController : MonoBehaviour
         GUILayout.Label("Hanabi Playback (debug)");
         GUILayout.Label($"compiledBlob={blob} bytes  bursts={bCount}  inits={(inits != null ? inits.Length : 0)}");
         GUILayout.Label($"playing={playing}  t={t:F2}  alive={(sim != null ? sim.AliveCount : 0)}  nextIdx={nextBurstIndex}/{bCount}  nextT={nextT:F2}");
-        GUILayout.Label($"origin={(launchOrigin != null ? launchOrigin.position.ToString() : ("fallback:" + fallbackForwardDistance))}  explodeHeight={explodeHeight}");
+        if (UseLaunchParams())
+            GUILayout.Label($"launchSpeed={launchParams.launchSpeed:F1} fuse={launchParams.fuseSeconds:F2} g={launchParams.gravityScale:F2} windScale={launchParams.windScale:F2}");
+        else
+            GUILayout.Label($"origin={(launchOrigin != null ? launchOrigin.position.ToString() : ("fallback:" + fallbackForwardDistance))}  explodeHeight={explodeHeight}");
         GUILayout.Label($"sizeMul={debugCompiledSizeMultiplier}  minSize={debugCompiledMinSize}  skipFirst={debugSkipToFirstBurst}  rebaseFirst={debugRebaseFirstBurstToZero}");
         GUILayout.EndArea();
     }
@@ -308,8 +419,7 @@ public class HanabiPlaybackController : MonoBehaviour
         if (!debugGizmos) return;
 
         Vector3 origin = GetOriginPosition();
-        Vector3 burstOrigin = origin;
-        burstOrigin.y = explodeHeight;
+        Vector3 burstOrigin = UseLaunchParams() ? GetBurstOrigin() : new Vector3(origin.x, explodeHeight, origin.z);
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(origin, burstOrigin);

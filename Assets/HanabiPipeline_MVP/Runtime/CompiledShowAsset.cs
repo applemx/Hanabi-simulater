@@ -4,7 +4,7 @@ using UnityEngine;
 public class CompiledShowAsset : ScriptableObject
 {
     [Header("Build Metadata")]
-    public int version = 1;
+    public int version = 2;
     public string sourceGuid;     // Blueprint GUID used to compile
     public string sourceHash;     // content hash (optional)
 

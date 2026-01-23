@@ -20,6 +20,7 @@ MonoBehaviour:
   paletteTag: Palette_Default
   waruyakuTag: Waruyaku_H
   washiTag: Washi_Default
+  launchTag: Launch_High
   palette:
   - serializedVersion: 2
     rgba: 4294960840
@@ -30,14 +31,14 @@ MonoBehaviour:
   intent:
     baseSpeed: 12
     uniformity: 0.92
-    jitter: 0.06
+    jitter: 0.1
     life: 2.2
     drag: 0.38
     wind: 0.1
   ring:
     count: 1200
     radius: 0.85
-    thickness: 0.06
+    thickness: 0.1
   waruyaku:
   - shape: 0
     center: {x: 0, y: 0, z: 0}
@@ -50,7 +51,7 @@ MonoBehaviour:
   paper: []
   ignition:
     secondsPerVoxel: 0.02
-    burstBinSize: 0.05
+    burstBinSize: 0.08
     maxIgnitionTime: 6
     paperExtraDelayPerCell: 0.01
   igniters:

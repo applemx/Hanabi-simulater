@@ -6,26 +6,37 @@ using UnityEngine;
 public static class CompiledShowSerializer
 {
     // Simple binary format (little-endian):
-    // [magic 4] 'HBS1'
+    // [magic 4] 'HBS2'
     // [version i32]
     // [seed u32]
     // [burstCount i32]
     // [particleCount i32]
+    // [launchSpeed f32]
+    // [fuseSeconds f32]
+    // [gravityScale f32]
+    // [windScale f32]
+    // [dragScale f32]
     // bursts: time(f32), pos(xyz f32), eventFx(i32), particleCount(i32), particleStart(i32)
     // particles: pos(xyz f32), vel(xyz f32), life(f32), size(f32), color(rgba u8), delay(f32), profile(u16), seed(u32)
 
-    const string MAGIC = "HBS1";
+    const string MAGIC_V1 = "HBS1";
+    const string MAGIC_V2 = "HBS2";
 
-    public static byte[] Write(uint showSeed, BurstEvent[] bursts, ParticleInitV2[] particles, int version = 1)
+    public static byte[] Write(uint showSeed, BurstEvent[] bursts, ParticleInitV2[] particles, LaunchParams launchParams, int version = 2)
     {
         using var ms = new MemoryStream(1024);
         using var bw = new BinaryWriter(ms);
 
-        bw.Write(Encoding.ASCII.GetBytes(MAGIC));
+        bw.Write(Encoding.ASCII.GetBytes(MAGIC_V2));
         bw.Write(version);
         bw.Write(showSeed);
         bw.Write(bursts.Length);
         bw.Write(particles.Length);
+        bw.Write(launchParams.launchSpeed);
+        bw.Write(launchParams.fuseSeconds);
+        bw.Write(launchParams.gravityScale);
+        bw.Write(launchParams.windScale);
+        bw.Write(launchParams.dragScale);
 
         for (int i = 0; i < bursts.Length; i++)
         {
@@ -55,11 +66,19 @@ public static class CompiledShowSerializer
         return ms.ToArray();
     }
 
-    public static bool TryRead(byte[] blob, out uint showSeed, out BurstEvent[] bursts, out ParticleInitV2[] particles, out int version)
+    public static bool TryRead(byte[] blob, out uint showSeed, out BurstEvent[] bursts, out ParticleInitV2[] particles, out LaunchParams launchParams, out int version)
     {
         showSeed = 0;
         bursts = Array.Empty<BurstEvent>();
         particles = Array.Empty<ParticleInitV2>();
+        launchParams = new LaunchParams
+        {
+            launchSpeed = 0f,
+            fuseSeconds = 0f,
+            gravityScale = 1f,
+            windScale = 1f,
+            dragScale = 0f
+        };
         version = 0;
 
         if (blob == null || blob.Length < 16) return false;
@@ -71,12 +90,21 @@ public static class CompiledShowSerializer
 
             var magicBytes = br.ReadBytes(4);
             var magic = Encoding.ASCII.GetString(magicBytes);
-            if (magic != MAGIC) return false;
+            if (magic != MAGIC_V1 && magic != MAGIC_V2) return false;
 
             version = br.ReadInt32();
             showSeed = br.ReadUInt32();
             int burstCount = br.ReadInt32();
             int particleCount = br.ReadInt32();
+
+            if (magic == MAGIC_V2)
+            {
+                launchParams.launchSpeed = br.ReadSingle();
+                launchParams.fuseSeconds = br.ReadSingle();
+                launchParams.gravityScale = br.ReadSingle();
+                launchParams.windScale = br.ReadSingle();
+                launchParams.dragScale = br.ReadSingle();
+            }
 
             bursts = new BurstEvent[burstCount];
             for (int i = 0; i < burstCount; i++)

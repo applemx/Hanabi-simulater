@@ -121,14 +121,33 @@ MonoBehaviour:
     collimation: 0.35
   fuseDefs:
   - tag: Fuse_Default
+    burnSeconds: 3.5
     burnSpeed: 1
     igniteCost: 0.02
     jitter: 0
   - tag: Fuse_Fast
+    burnSeconds: 2.8
     burnSpeed: 2
     igniteCost: 0.01
     jitter: 0
   - tag: Fuse_Slow
+    burnSeconds: 4.2
     burnSpeed: 0.6
     igniteCost: 0.04
     jitter: 0
+  launchProfiles:
+  - tag: Launch_Default
+    launchSpeed: 70
+    gravityScale: 1
+    windScale: 0.2
+    dragScale: 0.2
+  - tag: Launch_Low
+    launchSpeed: 60
+    gravityScale: 1
+    windScale: 0.2
+    dragScale: 0.25
+  - tag: Launch_High
+    launchSpeed: 78
+    gravityScale: 1
+    windScale: 0.2
+    dragScale: 0.18

@@ -20,11 +20,15 @@ public class HanabiDatabase : ScriptableObject
     [Header("Fuse (tag -> burn speed)")]
     public List<FuseDef> fuseDefs = new List<FuseDef>();
 
+    [Header("Launch Profiles (tag -> launch params)")]
+    public List<LaunchProfileDef> launchProfiles = new List<LaunchProfileDef>();
+
     Dictionary<string, int> _starTagToId;
     Dictionary<string, int> _paletteTagToId;
     Dictionary<string, int> _waruyakuTagToId;
     Dictionary<string, int> _washiTagToId;
     Dictionary<string, int> _fuseTagToId;
+    Dictionary<string, int> _launchTagToId;
 
     public void BuildCaches()
     {
@@ -66,6 +70,14 @@ public class HanabiDatabase : ScriptableObject
             var t = fuseDefs[i]?.tag;
             if (string.IsNullOrWhiteSpace(t)) continue;
             if (!_fuseTagToId.ContainsKey(t)) _fuseTagToId.Add(t, i);
+        }
+
+        _launchTagToId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < launchProfiles.Count; i++)
+        {
+            var t = launchProfiles[i]?.tag;
+            if (string.IsNullOrWhiteSpace(t)) continue;
+            if (!_launchTagToId.ContainsKey(t)) _launchTagToId.Add(t, i);
         }
     }
 
@@ -154,6 +166,23 @@ public class HanabiDatabase : ScriptableObject
         return fuseDefs[id];
     }
 
+    public bool TryGetLaunchId(string tag, out int id)
+    {
+        if (_launchTagToId == null) BuildCaches();
+        if (string.IsNullOrWhiteSpace(tag))
+        {
+            id = 0;
+            return launchProfiles.Count > 0;
+        }
+        return _launchTagToId.TryGetValue(tag, out id);
+    }
+
+    public LaunchProfileDef GetLaunchById(int id)
+    {
+        if (id < 0 || id >= launchProfiles.Count) return null;
+        return launchProfiles[id];
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -169,6 +198,7 @@ public class HanabiDatabase : ScriptableObject
         if (waruyakuDefs == null) waruyakuDefs = new List<WaruyakuDef>();
         if (washiDefs == null) washiDefs = new List<WashiDef>();
         if (fuseDefs == null) fuseDefs = new List<FuseDef>();
+        if (launchProfiles == null) launchProfiles = new List<LaunchProfileDef>();
 
         if (starProfiles.Count == 0)
         {
@@ -213,9 +243,16 @@ public class HanabiDatabase : ScriptableObject
 
         if (fuseDefs.Count == 0)
         {
-            fuseDefs.Add(new FuseDef { tag = "Fuse_Default", burnSpeed = 1.0f, igniteCost = 0.02f, jitter = 0.0f });
-            fuseDefs.Add(new FuseDef { tag = "Fuse_Fast", burnSpeed = 2.0f, igniteCost = 0.01f, jitter = 0.0f });
-            fuseDefs.Add(new FuseDef { tag = "Fuse_Slow", burnSpeed = 0.6f, igniteCost = 0.04f, jitter = 0.0f });
+            fuseDefs.Add(new FuseDef { tag = "Fuse_Default", burnSeconds = 3.5f, burnSpeed = 1.0f, igniteCost = 0.02f, jitter = 0.0f });
+            fuseDefs.Add(new FuseDef { tag = "Fuse_Fast", burnSeconds = 2.8f, burnSpeed = 2.0f, igniteCost = 0.01f, jitter = 0.0f });
+            fuseDefs.Add(new FuseDef { tag = "Fuse_Slow", burnSeconds = 4.2f, burnSpeed = 0.6f, igniteCost = 0.04f, jitter = 0.0f });
+        }
+
+        if (launchProfiles.Count == 0)
+        {
+            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_Default", launchSpeed = 70f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.2f });
+            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_Low", launchSpeed = 60f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.25f });
+            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_High", launchSpeed = 78f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.18f });
         }
     }
 }
@@ -295,7 +332,18 @@ public class WashiDef
 public class FuseDef
 {
     public string tag = "Fuse_Default";
+    public float burnSeconds = 3.5f;
     public float burnSpeed = 1.0f;
     public float igniteCost = 0.02f;
     public float jitter = 0.0f;
+}
+
+[Serializable]
+public class LaunchProfileDef
+{
+    public string tag = "Launch_Default";
+    public float launchSpeed = 70f;
+    public float gravityScale = 1.0f;
+    public float windScale = 0.2f;
+    public float dragScale = 0.2f;
 }

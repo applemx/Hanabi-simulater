@@ -37,6 +37,9 @@ public class FireworkBlueprintEditor : Editor
                 case "washiTag":
                     TagPopupDrawer.DrawTagPopup(iterator, "Washi Tag", TagOptionsCache.GetWashiTags(iterator.stringValue));
                     break;
+                case "launchTag":
+                    TagPopupDrawer.DrawTagPopup(iterator, "Launch Tag", TagOptionsCache.GetLaunchTags(iterator.stringValue));
+                    break;
                 default:
                     EditorGUILayout.PropertyField(iterator, true);
                     break;
@@ -117,6 +120,7 @@ static class TagOptionsCache
     public static List<string> GetWaruyakuTags(string current) => CollectTags(GetDb()?.waruyakuDefs, current, def => def.tag);
     public static List<string> GetWashiTags(string current) => CollectTags(GetDb()?.washiDefs, current, def => def.tag);
     public static List<string> GetFuseTags(string current) => CollectTags(GetDb()?.fuseDefs, current, def => def.tag);
+    public static List<string> GetLaunchTags(string current) => CollectTags(GetDb()?.launchProfiles, current, def => def.tag);
 
     static HanabiDatabase GetDb()
     {

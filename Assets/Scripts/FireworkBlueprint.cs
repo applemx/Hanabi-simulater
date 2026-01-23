@@ -20,6 +20,7 @@ public class FireworkBlueprint : ScriptableObject
     public string paletteTag = "Palette_Default";
     public string waruyakuTag = "Waruyaku_H";
     public string washiTag = "Washi_Default";
+    public string launchTag = "Launch_Default";
 
     [Header("Palette")]
     public List<Color32> palette = new List<Color32>
@@ -34,7 +35,7 @@ public class FireworkBlueprint : ScriptableObject
     {
         baseSpeed = 12f,
         uniformity = 0.92f,
-        jitter = 0.06f,
+        jitter = 0.10f,
         life = 2.2f,
         drag = 0.38f,
         wind = 0.10f
@@ -45,7 +46,7 @@ public class FireworkBlueprint : ScriptableObject
     {
         count = 1200,
         radius = 0.85f,
-        thickness = 0.06f
+        thickness = 0.10f
     };
 
     [Header("Waruyaku (MVP: spheres)")]
@@ -74,7 +75,7 @@ public class FireworkBlueprint : ScriptableObject
     public IgnitionParams ignition = new IgnitionParams
     {
         secondsPerVoxel = 0.02f,
-        burstBinSize = 0.05f,
+        burstBinSize = 0.08f,
         maxIgnitionTime = 6.0f,
         paperExtraDelayPerCell = 0.01f
     };
