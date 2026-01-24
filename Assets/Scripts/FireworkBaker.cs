@@ -67,29 +67,12 @@ public static class FireworkBaker
                 var wk = bp.waruyaku[w];
                 if (wk.shape != WaruyakuShape.Sphere) continue;
                 if (wk.strength == 0) continue;
-
-                float radius = Mathf.Max(0.001f, wk.radius);
-                float radius2 = radius * radius;
-
-                for (int z = 0; z < res; z++)
+                ApplyWaruyakuSphere(pv, wk, res, invRes);
+                if (bp.mirrorUpperHemisphere && Mathf.Abs(wk.center.y) > 1e-4f)
                 {
-                    float fz = ((z + 0.5f) * invRes) * 2f - 1f;
-                    for (int y = 0; y < res; y++)
-                    {
-                        float fy = ((y + 0.5f) * invRes) * 2f - 1f;
-                        for (int x = 0; x < res; x++)
-                        {
-                            float fx = ((x + 0.5f) * invRes) * 2f - 1f;
-                            int idx = pv.Index(x, y, z);
-
-                            if (pv.charge[idx] == 0) continue; // outside shell
-
-                            Vector3 v = new Vector3(fx, fy, fz) - wk.center;
-                            if (v.sqrMagnitude > radius2) continue;
-
-                            pv.charge[idx] = wk.strength;
-                        }
-                    }
+                    var mirror = wk;
+                    mirror.center = new Vector3(wk.center.x, -wk.center.y, wk.center.z);
+                    ApplyWaruyakuSphere(pv, mirror, res, invRes);
                 }
             }
         }
@@ -97,14 +80,14 @@ public static class FireworkBaker
         // 1.6) Waruyaku paint strokes (optional)
         if (bp.waruyakuStrokes != null && bp.waruyakuStrokes.Count > 0)
         {
-            ApplyWaruyakuStrokes(pv, bp.waruyakuStrokes, res);
+            ApplyWaruyakuStrokes(pv, bp.waruyakuStrokes, res, bp.mirrorUpperHemisphere);
         }
 
         // 2) Stars (placed points or ring skeleton)
         int paletteCount = Mathf.Max(1, bp.palette != null ? bp.palette.Count : 1);
         if (bp.stars != null && bp.stars.Count > 0)
         {
-            ApplyStarPoints(pv, bp.stars, paletteCount, rng);
+            ApplyStarPoints(pv, bp.stars, paletteCount, rng, bp.mirrorUpperHemisphere);
         }
         else
         {
@@ -266,7 +249,7 @@ public static class FireworkBaker
         }
     }
 
-    static void ApplyStarPoints(PackedVolume pv, IList<StarPoint> stars, int paletteCount, Random rng)
+    static void ApplyStarPoints(PackedVolume pv, IList<StarPoint> stars, int paletteCount, Random rng, bool mirrorUpper)
     {
         int res = pv.res;
         for (int i = 0; i < stars.Count; i++)
@@ -276,14 +259,24 @@ public static class FireworkBaker
             if (dir.sqrMagnitude < 1e-8f) dir = Vector3.up;
             dir.Normalize();
 
-            float radius = Mathf.Clamp01(sp.radius);
-            Vector3 p = dir * radius;
-
-            LocalToVoxel(p, res, out int cx, out int cy, out int cz);
             byte color = (byte)rng.Next(paletteCount);
             int size = Mathf.Max(1, sp.size);
-            StampStarCube(pv, cx, cy, cz, size, color);
+            ApplyStarPoint(pv, dir, sp.radius, size, color);
+
+            if (mirrorUpper)
+            {
+                Vector3 mirrorDir = new Vector3(dir.x, -dir.y, dir.z);
+                ApplyStarPoint(pv, mirrorDir, sp.radius, size, color);
+            }
         }
+    }
+
+    static void ApplyStarPoint(PackedVolume pv, Vector3 dir, float radius, int size, byte color)
+    {
+        int res = pv.res;
+        Vector3 p = dir * Mathf.Clamp01(radius);
+        LocalToVoxel(p, res, out int cx, out int cy, out int cz);
+        StampStarCube(pv, cx, cy, cz, size, color);
     }
 
     static void StampStarCube(PackedVolume pv, int cx, int cy, int cz, int size, byte color)
@@ -293,6 +286,8 @@ public static class FireworkBaker
         int startX = cx - half;
         int startY = cy - half;
         int startZ = cz - half;
+        float radius = Mathf.Max(0.5f, size * 0.5f);
+        float r2 = radius * radius;
 
         for (int z = startZ; z < startZ + size; z++)
         {
@@ -303,6 +298,10 @@ public static class FireworkBaker
                 for (int x = startX; x < startX + size; x++)
                 {
                     if ((uint)x >= (uint)res) continue;
+                    float dx = (x + 0.5f) - (cx + 0.5f);
+                    float dy = (y + 0.5f) - (cy + 0.5f);
+                    float dz = (z + 0.5f) - (cz + 0.5f);
+                    if ((dx * dx + dy * dy + dz * dz) > r2) continue;
                     int idx = pv.Index(x, y, z);
                     if (pv.charge[idx] == 0) continue; // outside shell
                     pv.starMask[idx] = 1;
@@ -312,53 +311,92 @@ public static class FireworkBaker
         }
     }
 
-    static void ApplyWaruyakuStrokes(PackedVolume pv, IList<WaruyakuStroke> strokes, int res)
+    static void ApplyWaruyakuSphere(PackedVolume pv, WaruyakuPrimitive wk, int res, float invRes)
+    {
+        float radius = Mathf.Max(0.001f, wk.radius);
+        float radius2 = radius * radius;
+
+        for (int z = 0; z < res; z++)
+        {
+            float fz = ((z + 0.5f) * invRes) * 2f - 1f;
+            for (int y = 0; y < res; y++)
+            {
+                float fy = ((y + 0.5f) * invRes) * 2f - 1f;
+                for (int x = 0; x < res; x++)
+                {
+                    float fx = ((x + 0.5f) * invRes) * 2f - 1f;
+                    int idx = pv.Index(x, y, z);
+
+                    if (pv.charge[idx] == 0) continue; // outside shell
+
+                    Vector3 v = new Vector3(fx, fy, fz) - wk.center;
+                    if (v.sqrMagnitude > radius2) continue;
+
+                    pv.charge[idx] = wk.strength;
+                }
+            }
+        }
+    }
+
+    static void ApplyWaruyakuStrokes(PackedVolume pv, IList<WaruyakuStroke> strokes, int res, bool mirrorUpper)
     {
         for (int i = 0; i < strokes.Count; i++)
         {
             var stroke = strokes[i];
             if (stroke.strength == 0) continue;
 
-            Vector3 dir = stroke.dir;
-            if (dir.sqrMagnitude < 1e-8f) dir = Vector3.up;
-            dir.Normalize();
+            ApplyWaruyakuStroke(pv, stroke, res);
 
-            float radius = Mathf.Clamp01(stroke.radius);
-            float brush = Mathf.Max(0.001f, stroke.brushRadius);
-            float brush2 = brush * brush;
-
-            Vector3 center = dir * radius;
-
-            int minX = LocalToVoxelIndex(center.x - brush, res) - 1;
-            int maxX = LocalToVoxelIndex(center.x + brush, res) + 1;
-            int minY = LocalToVoxelIndex(center.y - brush, res) - 1;
-            int maxY = LocalToVoxelIndex(center.y + brush, res) + 1;
-            int minZ = LocalToVoxelIndex(center.z - brush, res) - 1;
-            int maxZ = LocalToVoxelIndex(center.z + brush, res) + 1;
-
-            minX = Mathf.Clamp(minX, 0, res - 1);
-            maxX = Mathf.Clamp(maxX, 0, res - 1);
-            minY = Mathf.Clamp(minY, 0, res - 1);
-            maxY = Mathf.Clamp(maxY, 0, res - 1);
-            minZ = Mathf.Clamp(minZ, 0, res - 1);
-            maxZ = Mathf.Clamp(maxZ, 0, res - 1);
-
-            for (int z = minZ; z <= maxZ; z++)
+            if (mirrorUpper)
             {
-                for (int y = minY; y <= maxY; y++)
+                var mirror = stroke;
+                mirror.dir = new Vector3(stroke.dir.x, -stroke.dir.y, stroke.dir.z);
+                ApplyWaruyakuStroke(pv, mirror, res);
+            }
+        }
+    }
+
+    static void ApplyWaruyakuStroke(PackedVolume pv, WaruyakuStroke stroke, int res)
+    {
+        Vector3 dir = stroke.dir;
+        if (dir.sqrMagnitude < 1e-8f) dir = Vector3.up;
+        dir.Normalize();
+
+        float radius = Mathf.Clamp01(stroke.radius);
+        float brush = Mathf.Max(0.001f, stroke.brushRadius);
+        float brush2 = brush * brush;
+
+        Vector3 center = dir * radius;
+
+        int minX = LocalToVoxelIndex(center.x - brush, res) - 1;
+        int maxX = LocalToVoxelIndex(center.x + brush, res) + 1;
+        int minY = LocalToVoxelIndex(center.y - brush, res) - 1;
+        int maxY = LocalToVoxelIndex(center.y + brush, res) + 1;
+        int minZ = LocalToVoxelIndex(center.z - brush, res) - 1;
+        int maxZ = LocalToVoxelIndex(center.z + brush, res) + 1;
+
+        minX = Mathf.Clamp(minX, 0, res - 1);
+        maxX = Mathf.Clamp(maxX, 0, res - 1);
+        minY = Mathf.Clamp(minY, 0, res - 1);
+        maxY = Mathf.Clamp(maxY, 0, res - 1);
+        minZ = Mathf.Clamp(minZ, 0, res - 1);
+        maxZ = Mathf.Clamp(maxZ, 0, res - 1);
+
+        for (int z = minZ; z <= maxZ; z++)
+        {
+            for (int y = minY; y <= maxY; y++)
+            {
+                for (int x = minX; x <= maxX; x++)
                 {
-                    for (int x = minX; x <= maxX; x++)
-                    {
-                        int idx = pv.Index(x, y, z);
-                        if (pv.charge[idx] == 0) continue; // outside shell
+                    int idx = pv.Index(x, y, z);
+                    if (pv.charge[idx] == 0) continue; // outside shell
 
-                        Vector3 p = pv.CellCenter(x, y, z);
-                        Vector3 v = p - center;
-                        if (v.sqrMagnitude > brush2) continue;
+                    Vector3 p = pv.CellCenter(x, y, z);
+                    Vector3 v = p - center;
+                    if (v.sqrMagnitude > brush2) continue;
 
-                        if (stroke.strength > pv.charge[idx])
-                            pv.charge[idx] = stroke.strength;
-                    }
+                    if (stroke.strength > pv.charge[idx])
+                        pv.charge[idx] = stroke.strength;
                 }
             }
         }

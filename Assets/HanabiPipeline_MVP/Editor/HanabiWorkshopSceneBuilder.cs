@@ -30,6 +30,17 @@ public static class HanabiWorkshopSceneBuilder
         orbit.SetTarget(hemi.transform);
         camObj.AddComponent<AudioListener>();
 
+        // Preview camera (oblique)
+        var previewCamObj = new GameObject("WorkshopPreviewCamera");
+        previewCamObj.transform.SetParent(root.transform);
+        var previewCam = previewCamObj.AddComponent<Camera>();
+        previewCam.clearFlags = CameraClearFlags.Depth;
+        previewCam.depth = cam.depth + 1f;
+        previewCam.rect = new Rect(0.70f, 0.04f, 0.28f, 0.28f);
+        var previewOrbit = previewCamObj.AddComponent<HanabiWorkshopCameraOrbit>();
+        previewOrbit.SetTarget(hemi.transform);
+        previewOrbit.Configure(inputEnabled: false, topDownEnabled: false, useFixedAngles: true, fixedYaw: -35f, fixedPitch: 35f, distanceValue: 2.6f, applyViewport: true, viewport: previewCam.rect);
+
         // Light
         var lightObj = new GameObject("WorkshopLight");
         lightObj.transform.SetParent(root.transform);
@@ -37,6 +48,14 @@ public static class HanabiWorkshopSceneBuilder
         light.type = LightType.Directional;
         light.intensity = 0.8f;
         lightObj.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+
+        var fillObj = new GameObject("WorkshopFillLight");
+        fillObj.transform.SetParent(root.transform);
+        var fill = fillObj.AddComponent<Light>();
+        fill.type = LightType.Point;
+        fill.intensity = 1.1f;
+        fill.range = 6f;
+        fillObj.transform.position = new Vector3(0f, 1.6f, 1.2f);
 
         // Star preview particle system
         var previewObj = new GameObject("StarPreview");

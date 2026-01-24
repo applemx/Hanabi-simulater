@@ -195,5 +195,9 @@ public class HanabiHemisphereMesh : MonoBehaviour
             mat.SetFloat("_Smoothness", 0.2f);
         if (mat.HasProperty("_Glossiness"))
             mat.SetFloat("_Glossiness", 0.2f);
+        if (mat.HasProperty("_Cull"))
+            mat.SetFloat("_Cull", 0f);
+        if (mat.HasProperty("_CullMode"))
+            mat.SetFloat("_CullMode", 0f);
     }
 }

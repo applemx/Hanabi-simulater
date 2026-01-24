@@ -49,6 +49,9 @@ public class FireworkBlueprint : ScriptableObject
         thickness = 0.10f
     };
 
+    [Header("Workshop")]
+    public bool mirrorUpperHemisphere = true;
+
     [Header("Stars (placed points, optional)")]
     public List<StarPoint> stars = new List<StarPoint>();
 
