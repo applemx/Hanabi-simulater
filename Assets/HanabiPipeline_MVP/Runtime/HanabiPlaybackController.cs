@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class HanabiPlaybackController : MonoBehaviour
@@ -5,6 +6,10 @@ public class HanabiPlaybackController : MonoBehaviour
     [Header("Refs")]
     [SerializeField] CompiledShowAsset compiledShow;
     [SerializeField] ParticleSystem particleSystemRenderer;
+    [SerializeField] ParticleSystem[] starParticleSystems;
+    [SerializeField] bool useMultiParticleSystems = true;
+    [SerializeField] bool autoFindStarRenderers = true;
+    [SerializeField] string starRendererPrefix = "FireworkParticles_";
     [SerializeField] Transform launchOrigin;           // set your launcher
     [SerializeField] float fallbackForwardDistance = 150f;
     [SerializeField] HanabiDatabase profileDatabase;   // optional: drive StarProfile visuals
@@ -40,6 +45,9 @@ public class HanabiPlaybackController : MonoBehaviour
     [SerializeField] float dragK = 0.06f;
 
     ParticleSystem.Particle[] psBuffer;
+    ParticleSystem.Particle[][] starBuffers;
+    int[] starCounts;
+    int starKindCount;
     ParticleSim sim;
 
     uint seed;
@@ -61,27 +69,27 @@ public class HanabiPlaybackController : MonoBehaviour
     Vector3 burstOrigin;
     bool burstOriginReady;
 
-
     void Awake()
     {
-        if (particleSystemRenderer == null)
+        starKindCount = Enum.GetValues(typeof(StarKind)).Length;
+        EnsureStarRenderers();
+
+        var primary = GetPrimaryRenderer();
+        if (primary == null)
         {
             Debug.LogError("[HanabiPlaybackController] ParticleSystem is not assigned.");
             enabled = false;
             return;
         }
 
-        // Configure PS
-        var main = particleSystemRenderer.main;
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.maxParticles = Mathf.Max(256, main.maxParticles);
+        ConfigureStarRenderers();
 
-        psBuffer = new ParticleSystem.Particle[main.maxParticles];
-        sim = new ParticleSim(main.maxParticles);
+        var main = primary.main;
+        psBuffer = new ParticleSystem.Particle[Mathf.Max(256, main.maxParticles)];
+        sim = new ParticleSim(psBuffer.Length);
         sim.SetProfileLookup(profileDatabase != null ? profileDatabase.starProfiles : null);
 
-        particleSystemRenderer.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        particleSystemRenderer.Clear(true);
+        ClearStarRenderers();
 
         LoadCompiled();
 
@@ -94,8 +102,8 @@ public class HanabiPlaybackController : MonoBehaviour
         if (compiledShow == null || compiledShow.blob == null || compiledShow.blob.Length == 0)
         {
             seed = 0;
-            bursts = System.Array.Empty<BurstEvent>();
-            inits = System.Array.Empty<ParticleInitV2>();
+            bursts = Array.Empty<BurstEvent>();
+            inits = Array.Empty<ParticleInitV2>();
             launchParams = default;
             return;
         }
@@ -103,8 +111,8 @@ public class HanabiPlaybackController : MonoBehaviour
         if (!CompiledShowSerializer.TryRead(compiledShow.blob, out seed, out bursts, out inits, out launchParams, out _))
         {
             Debug.LogError("[HanabiPlaybackController] Failed to read compiled blob. (wrong version?)");
-            bursts = System.Array.Empty<BurstEvent>();
-            inits = System.Array.Empty<ParticleInitV2>();
+            bursts = Array.Empty<BurstEvent>();
+            inits = Array.Empty<ParticleInitV2>();
             launchParams = default;
         }
 
@@ -132,8 +140,7 @@ public class HanabiPlaybackController : MonoBehaviour
         if (Input.GetKeyDown(launchKey))
         {
             Debug.Log("[Hanabi] Launch pressed");
-            Debug.Log($"[Hanabi] refs: ps={(particleSystemRenderer != null)} origin={(launchOrigin != null)} compiled={(compiledShow != null)} blob={(compiledShow != null && compiledShow.blob != null ? compiledShow.blob.Length : -1)}");
-
+            Debug.Log($"[Hanabi] refs: ps={(GetPrimaryRenderer() != null)} origin={(launchOrigin != null)} compiled={(compiledShow != null)} blob={(compiledShow != null && compiledShow.blob != null ? compiledShow.blob.Length : -1)}");
 
             // Re-load on press so you can tweak & re-save compiled assets without restarting play mode.
             LoadCompiled();
@@ -187,18 +194,45 @@ public class HanabiPlaybackController : MonoBehaviour
 
         // Sim
         sim.Step(dt, wind, dragK);
-        sim.FillParticles(psBuffer);
+        if (UseMultiRenderers())
+        {
+            EnsureStarBuffers();
+            sim.FillParticlesByKind(starBuffers, starCounts);
+        }
+        else
+        {
+            sim.FillParticles(psBuffer);
+        }
+
         // DEBUG: make compiled particles more visible (optional)
         if (debugCompiledSizeMultiplier != 1f || debugCompiledMinSize > 0f)
         {
-            int n = sim.AliveCount;
             float mul = debugCompiledSizeMultiplier;
             float minS = debugCompiledMinSize;
-            for (int i = 0; i < n; i++)
+            if (UseMultiRenderers())
             {
-                float s = psBuffer[i].startSize * mul;
-                if (s < minS) s = minS;
-                psBuffer[i].startSize = s;
+                for (int sIdx = 0; sIdx < starBuffers.Length; sIdx++)
+                {
+                    var buf = starBuffers[sIdx];
+                    int count = (starCounts != null && sIdx < starCounts.Length) ? starCounts[sIdx] : 0;
+                    if (buf == null) continue;
+                    for (int i = 0; i < count; i++)
+                    {
+                        float s = buf[i].startSize * mul;
+                        if (s < minS) s = minS;
+                        buf[i].startSize = s;
+                    }
+                }
+            }
+            else
+            {
+                int n = sim.AliveCount;
+                for (int i = 0; i < n; i++)
+                {
+                    float s = psBuffer[i].startSize * mul;
+                    if (s < minS) s = minS;
+                    psBuffer[i].startSize = s;
+                }
             }
         }
 
@@ -208,7 +242,23 @@ public class HanabiPlaybackController : MonoBehaviour
             float nextT = (bursts != null && nextBurstIndex < bursts.Length) ? bursts[nextBurstIndex].timeLocal : -1f;
             Debug.Log($"[HanabiPlayback] t={t:F2} alive={sim.AliveCount} nextIdx={nextBurstIndex}/{bursts?.Length ?? 0} nextT={nextT:F2}");
         }
-        particleSystemRenderer.SetParticles(psBuffer, sim.AliveCount);
+
+        if (UseMultiRenderers())
+        {
+            for (int i = 0; i < starParticleSystems.Length; i++)
+            {
+                var ps = starParticleSystems[i];
+                if (ps == null) continue;
+                var buf = starBuffers[i];
+                int count = (starCounts != null && i < starCounts.Length) ? starCounts[i] : 0;
+                if (buf == null) continue;
+                ps.SetParticles(buf, count);
+            }
+        }
+        else
+        {
+            particleSystemRenderer.SetParticles(psBuffer, sim.AliveCount);
+        }
 
         if (nextBurstIndex >= bursts.Length && sim.AliveCount == 0)
         {
@@ -219,7 +269,7 @@ public class HanabiPlaybackController : MonoBehaviour
 
     void DebugSpawn()
     {
-        var ps = particleSystemRenderer;
+        var ps = GetPrimaryRenderer();
         if (ps == null)
         {
             Debug.LogError("[Hanabi] ParticleSystem is NULL. Assign FireworkParticles.");
@@ -257,16 +307,22 @@ public class HanabiPlaybackController : MonoBehaviour
         }
 
         // Ensure PS + buffers are large enough for the compiled show
-        var main = particleSystemRenderer.main;
         int need = Mathf.Max(256, inits.Length);
-        if (main.maxParticles < need) main.maxParticles = need;
-
-        int cap = main.maxParticles;
-        if (psBuffer == null || psBuffer.Length != cap)
-            psBuffer = new ParticleSystem.Particle[cap];
+        if (UseMultiRenderers())
+        {
+            EnsureStarBuffers(need);
+        }
+        else
+        {
+            var main = particleSystemRenderer.main;
+            if (main.maxParticles < need) main.maxParticles = need;
+            int cap = main.maxParticles;
+            if (psBuffer == null || psBuffer.Length != cap)
+                psBuffer = new ParticleSystem.Particle[cap];
+        }
 
         // Recreate sim every show start (cheap at MVP scale and avoids capacity bookkeeping)
-        sim = new ParticleSim(cap);
+        sim = new ParticleSim(need);
         sim.SetProfileLookup(profileDatabase != null ? profileDatabase.starProfiles : null);
 
         t = 0f;
@@ -299,10 +355,11 @@ public class HanabiPlaybackController : MonoBehaviour
             Debug.Log($"[HanabiPlayback] StartShow: origin={GetOriginPosition()} explodeY={explodeHeight} nextBurstT={nextT:F3} skipToFirst={debugSkipToFirstBurst}");
         }
 
-        particleSystemRenderer.Clear(true);
+        ClearStarRenderers();
 
         sim.Reset();
-        particleSystemRenderer.Play(true);
+        var primary = GetPrimaryRenderer();
+        if (primary != null) primary.Play(true);
     }
 
     void SpawnBurst(BurstEvent be)
@@ -433,4 +490,107 @@ public class HanabiPlaybackController : MonoBehaviour
         }
     }
 
+    void EnsureStarRenderers()
+    {
+        if (starParticleSystems == null || starParticleSystems.Length != starKindCount)
+            starParticleSystems = new ParticleSystem[starKindCount];
+
+        bool any = HasAnyStarRenderer();
+        if (!any && autoFindStarRenderers)
+        {
+            for (int i = 0; i < starKindCount; i++)
+            {
+                string name = $"{starRendererPrefix}{(StarKind)i}";
+                var go = GameObject.Find(name);
+                if (go != null) starParticleSystems[i] = go.GetComponent<ParticleSystem>();
+            }
+        }
+
+        if (!HasAnyStarRenderer() && particleSystemRenderer != null)
+            starParticleSystems[0] = particleSystemRenderer;
+    }
+
+    bool HasAnyStarRenderer()
+    {
+        if (starParticleSystems == null) return false;
+        for (int i = 0; i < starParticleSystems.Length; i++)
+            if (starParticleSystems[i] != null) return true;
+        return false;
+    }
+
+    bool UseMultiRenderers()
+    {
+        return useMultiParticleSystems && HasAnyStarRenderer();
+    }
+
+    ParticleSystem GetPrimaryRenderer()
+    {
+        if (UseMultiRenderers())
+        {
+            for (int i = 0; i < starParticleSystems.Length; i++)
+                if (starParticleSystems[i] != null) return starParticleSystems[i];
+        }
+        return particleSystemRenderer;
+    }
+
+    void ConfigureStarRenderers()
+    {
+        if (UseMultiRenderers())
+        {
+            for (int i = 0; i < starParticleSystems.Length; i++)
+                ConfigureRenderer(starParticleSystems[i]);
+        }
+        else
+        {
+            ConfigureRenderer(particleSystemRenderer);
+        }
+    }
+
+    static void ConfigureRenderer(ParticleSystem ps)
+    {
+        if (ps == null) return;
+        var main = ps.main;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.maxParticles = Mathf.Max(256, main.maxParticles);
+    }
+
+    void EnsureStarBuffers(int required = 0)
+    {
+        if (!UseMultiRenderers()) return;
+        if (starBuffers == null || starBuffers.Length != starKindCount)
+            starBuffers = new ParticleSystem.Particle[starKindCount][];
+        if (starCounts == null || starCounts.Length != starKindCount)
+            starCounts = new int[starKindCount];
+
+        int need = Mathf.Max(256, required);
+        for (int i = 0; i < starKindCount; i++)
+        {
+            var ps = starParticleSystems[i];
+            if (ps == null) continue;
+            var main = ps.main;
+            if (main.maxParticles < need) main.maxParticles = need;
+            int cap = main.maxParticles;
+            if (starBuffers[i] == null || starBuffers[i].Length != cap)
+                starBuffers[i] = new ParticleSystem.Particle[cap];
+        }
+    }
+
+    void ClearStarRenderers()
+    {
+        if (UseMultiRenderers())
+        {
+            for (int i = 0; i < starParticleSystems.Length; i++)
+            {
+                var ps = starParticleSystems[i];
+                if (ps == null) continue;
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                ps.Clear(true);
+            }
+        }
+        else if (particleSystemRenderer != null)
+        {
+            particleSystemRenderer.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particleSystemRenderer.Clear(true);
+        }
+    }
 }

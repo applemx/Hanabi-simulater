@@ -7,10 +7,16 @@ public class HanabiHemisphereMesh : MonoBehaviour
 {
     [SerializeField, Range(6, 64)] int segments = 24;
     [SerializeField, Range(0.2f, 4f)] float radius = 1f;
+    [SerializeField, Range(0f, 0.2f)] float thickness = 0.02f;
     [SerializeField] bool addCollider = true;
     [SerializeField] bool openUp = true;
+    [Header("Rim")]
+    [SerializeField] bool showRim = true;
+    [SerializeField, Range(0.001f, 0.05f)] float rimWidth = 0.01f;
+    [SerializeField] Color rimColor = new Color(0.65f, 0.9f, 1f, 0.9f);
 
     Mesh mesh;
+    LineRenderer rim;
 
     void Awake()
     {
@@ -40,7 +46,11 @@ public class HanabiHemisphereMesh : MonoBehaviour
         int latSegments = segments / 2;
         int lonSegments = segments;
 
-        int vertCount = (latSegments + 1) * (lonSegments + 1);
+        bool useThickness = thickness > 0.0001f && (radius - thickness) > 0.001f;
+        float innerRadius = useThickness ? Mathf.Max(0.001f, radius - thickness) : radius;
+
+        int ringVerts = (latSegments + 1) * (lonSegments + 1);
+        int vertCount = useThickness ? ringVerts * 2 : ringVerts;
         var verts = new Vector3[vertCount];
         var normals = new Vector3[vertCount];
         var uvs = new Vector2[vertCount];
@@ -58,16 +68,26 @@ public class HanabiHemisphereMesh : MonoBehaviour
                 float x = r * Mathf.Cos(theta);
                 float z = r * Mathf.Sin(theta);
 
-                Vector3 p = new Vector3(x, openUp ? -y : y, z) * radius;
+                Vector3 dir = new Vector3(x, openUp ? -y : y, z);
+                Vector3 p = dir * radius;
                 verts[v] = p;
-                Vector3 n = p.sqrMagnitude > 1e-8f ? p.normalized : Vector3.up;
+                Vector3 n = dir.sqrMagnitude > 1e-8f ? dir.normalized : Vector3.up;
                 normals[v] = openUp ? -n : n;
                 uvs[v] = new Vector2(lon / (float)lonSegments, lat / (float)latSegments);
+                if (useThickness)
+                {
+                    int inner = v + ringVerts;
+                    verts[inner] = dir * innerRadius;
+                    normals[inner] = openUp ? -n : n;
+                    uvs[inner] = uvs[v];
+                }
                 v++;
             }
         }
 
         int triCount = latSegments * lonSegments * 6;
+        if (useThickness)
+            triCount = triCount * 2 + lonSegments * 6;
         var tris = new int[triCount];
         int t = 0;
         for (int lat = 0; lat < latSegments; lat++)
@@ -79,26 +99,22 @@ public class HanabiHemisphereMesh : MonoBehaviour
                 int i2 = i0 + lonSegments + 1;
                 int i3 = i2 + 1;
 
-                if (openUp)
-                {
-                    tris[t++] = i0;
-                    tris[t++] = i1;
-                    tris[t++] = i2;
+                AddQuad(tris, ref t, i0, i1, i2, i3, flip: !openUp);
+                if (useThickness)
+                    AddQuad(tris, ref t, i0 + ringVerts, i1 + ringVerts, i2 + ringVerts, i3 + ringVerts, flip: openUp);
+            }
+        }
 
-                    tris[t++] = i1;
-                    tris[t++] = i3;
-                    tris[t++] = i2;
-                }
-                else
-                {
-                    tris[t++] = i0;
-                    tris[t++] = i2;
-                    tris[t++] = i1;
-
-                    tris[t++] = i1;
-                    tris[t++] = i2;
-                    tris[t++] = i3;
-                }
+        if (useThickness)
+        {
+            int rimRow = latSegments * (lonSegments + 1);
+            for (int lon = 0; lon < lonSegments; lon++)
+            {
+                int o0 = rimRow + lon;
+                int o1 = o0 + 1;
+                int i0 = o0 + ringVerts;
+                int i1 = o1 + ringVerts;
+                AddQuad(tris, ref t, o0, o1, i0, i1, flip: openUp);
             }
         }
 
@@ -132,6 +148,8 @@ public class HanabiHemisphereMesh : MonoBehaviour
             if (col == null) col = gameObject.AddComponent<MeshCollider>();
             col.sharedMesh = mesh;
         }
+
+        UpdateRim(lonSegments);
     }
 
     static Shader FindHemisphereShader()
@@ -199,5 +217,72 @@ public class HanabiHemisphereMesh : MonoBehaviour
             mat.SetFloat("_Cull", 0f);
         if (mat.HasProperty("_CullMode"))
             mat.SetFloat("_CullMode", 0f);
+    }
+
+    void UpdateRim(int lonSegments)
+    {
+        if (!showRim)
+        {
+            if (rim != null) rim.enabled = false;
+            return;
+        }
+
+        if (rim == null)
+        {
+            var child = transform.Find("HemisphereRim");
+            if (child != null) rim = child.GetComponent<LineRenderer>();
+            if (rim == null)
+            {
+                var go = new GameObject("HemisphereRim");
+                go.transform.SetParent(transform, false);
+                rim = go.AddComponent<LineRenderer>();
+            }
+        }
+
+        rim.enabled = true;
+        rim.useWorldSpace = false;
+        rim.loop = true;
+        rim.widthMultiplier = rimWidth;
+        rim.alignment = LineAlignment.View;
+        rim.numCornerVertices = 2;
+        rim.numCapVertices = 2;
+        rim.shadowCastingMode = ShadowCastingMode.Off;
+        rim.receiveShadows = false;
+
+        if (rim.sharedMaterial == null || rim.sharedMaterial.shader == null)
+        {
+            var shader = Shader.Find("Sprites/Default");
+            if (shader != null)
+                rim.sharedMaterial = new Material(shader);
+        }
+        if (rim.sharedMaterial != null)
+            rim.sharedMaterial.color = rimColor;
+
+        int count = Mathf.Max(6, lonSegments);
+        if (rim.positionCount != count)
+            rim.positionCount = count;
+
+        float y = openUp ? 0.0005f : -0.0005f;
+        for (int i = 0; i < count; i++)
+        {
+            float theta = 2f * Mathf.PI * (i / (float)count);
+            float x = Mathf.Cos(theta) * radius;
+            float z = Mathf.Sin(theta) * radius;
+            rim.SetPosition(i, new Vector3(x, y, z));
+        }
+    }
+
+    static void AddQuad(int[] tris, ref int t, int i0, int i1, int i2, int i3, bool flip)
+    {
+        if (flip)
+        {
+            tris[t++] = i0; tris[t++] = i1; tris[t++] = i2;
+            tris[t++] = i1; tris[t++] = i3; tris[t++] = i2;
+        }
+        else
+        {
+            tris[t++] = i0; tris[t++] = i2; tris[t++] = i1;
+            tris[t++] = i1; tris[t++] = i2; tris[t++] = i3;
+        }
     }
 }

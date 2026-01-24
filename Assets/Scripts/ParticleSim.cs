@@ -224,8 +224,112 @@ public class ParticleSim
             outParticles[i].startSize = size[i] * sizeMul;
             outParticles[i].startLifetime = L;
             outParticles[i].remainingLifetime = Mathf.Max(0.01f, L - a);
-            outParticles[i].velocity = Vector3.zero;
+            outParticles[i].velocity = vel[i];
             outParticles[i].randomSeed = seed[i];
+        }
+    }
+
+    public void FillParticlesByKind(ParticleSystem.Particle[][] outBuffers, int[] counts)
+    {
+        if (outBuffers == null || counts == null) return;
+        Array.Clear(counts, 0, counts.Length);
+        if (outBuffers.Length == 0) return;
+        int fallback = FindFirstBuffer(outBuffers);
+        if (fallback < 0) return;
+
+        for (int i = 0; i < aliveCount; i++)
+        {
+            float a = Mathf.Max(0f, age[i]);
+            float L = Mathf.Max(0.001f, life[i]);
+            float t = a / L;
+
+            float alphaMul = 1f;
+            float sizeMul = 1f;
+            StarKind kind = ResolveKind(profileId[i]);
+            float brightness = ResolveBrightness(profileId[i]);
+            float phase = Hash01(seed[i]);
+
+            switch (kind)
+            {
+                case StarKind.Tail:
+                    alphaMul *= Mathf.Lerp(1.1f, 0.5f, t);
+                    sizeMul *= Mathf.Lerp(1.1f, 0.7f, t);
+                    break;
+                case StarKind.Comet:
+                    alphaMul *= Mathf.Lerp(1.2f, 0.6f, t);
+                    sizeMul *= 1.35f;
+                    break;
+                case StarKind.Strobe:
+                {
+                    float freq = 10f;
+                    float st = 0.5f + 0.5f * Mathf.Sin((t * freq + phase) * Mathf.PI * 2f);
+                    alphaMul *= Mathf.Lerp(0.2f, 1.0f, st);
+                    break;
+                }
+                case StarKind.Glitter:
+                {
+                    int tick = (int)(a * 30f);
+                    float sparkle = Hash01(seed[i] ^ (uint)tick);
+                    alphaMul *= 0.6f + 0.6f * sparkle;
+                    break;
+                }
+                case StarKind.Crackle:
+                {
+                    if (t > 0.65f)
+                    {
+                        int tick = (int)(a * 40f);
+                        float s = Hash01(seed[i] ^ (uint)tick);
+                        alphaMul *= (s > 0.5f) ? 1.3f : 0.4f;
+                    }
+                    break;
+                }
+                case StarKind.Crossette:
+                {
+                    if (t > 0.6f)
+                    {
+                        float pulse = 0.6f + 0.4f * Mathf.Sin((t * 6f + phase) * Mathf.PI * 2f);
+                        alphaMul *= pulse;
+                    }
+                    break;
+                }
+                case StarKind.ColorChange:
+                    break;
+                default:
+                    break;
+            }
+
+            float alpha01 = Mathf.Clamp01((1f - t) * alphaMul * brightness);
+            byte alpha = (byte)Mathf.Clamp(alpha01 * 255f, 0f, 255f);
+
+            byte r = col[i].r;
+            byte g = col[i].g;
+            byte b = col[i].b;
+            if (kind == StarKind.ColorChange)
+            {
+                float u = Mathf.Clamp01((t - 0.4f) / 0.6f);
+                r = (byte)Mathf.Clamp(Mathf.Lerp(r, 255f, u), 0f, 255f);
+                g = (byte)Mathf.Clamp(Mathf.Lerp(g, 255f, u), 0f, 255f);
+                b = (byte)Mathf.Clamp(Mathf.Lerp(b, 255f, u), 0f, 255f);
+            }
+
+            int slot = (int)kind;
+            if (slot < 0 || slot >= outBuffers.Length || outBuffers[slot] == null)
+                slot = fallback;
+            var target = outBuffers[slot];
+            if (target == null) continue;
+
+            int writeIndex = counts[slot];
+            if (writeIndex >= target.Length) continue;
+
+            target[writeIndex].position = pos[i];
+            target[writeIndex].startColor = new Color32(r, g, b, alpha);
+            target[writeIndex].startSize = size[i] * sizeMul;
+            target[writeIndex].startLifetime = L;
+            target[writeIndex].remainingLifetime = Mathf.Max(0.01f, L - a);
+            target[writeIndex].velocity = vel[i];
+            target[writeIndex].randomSeed = seed[i];
+
+            counts[slot]++;
         }
     }
 
@@ -240,6 +344,15 @@ public class ParticleSim
     {
         if (brightnessLookup != null && id < brightnessLookup.Length) return brightnessLookup[id];
         return 1f;
+    }
+
+    static int FindFirstBuffer(ParticleSystem.Particle[][] buffers)
+    {
+        for (int i = 0; i < buffers.Length; i++)
+        {
+            if (buffers[i] != null) return i;
+        }
+        return -1;
     }
 
     static float Hash01(uint x)

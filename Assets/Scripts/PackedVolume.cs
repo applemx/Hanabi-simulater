@@ -19,6 +19,9 @@ public class PackedVolume
     /// <summary>Palette index (0..).</summary>
     public byte[] starColor;
 
+    /// <summary>StarProfile id per voxel (0..).</summary>
+    public byte[] starProfileId;
+
     /// <summary>0 means no paper wall, otherwise wallId.</summary>
     public byte[] paperCellWallId;
 
@@ -39,6 +42,7 @@ public class PackedVolume
         charge = new byte[n];
         starMask = new byte[n];
         starColor = new byte[n];
+        starProfileId = new byte[n];
         paperCellWallId = new byte[n];
         paperStrength = new byte[n];
         fuseMask = new byte[n];

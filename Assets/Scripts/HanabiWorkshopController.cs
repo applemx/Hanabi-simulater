@@ -43,6 +43,8 @@ public class HanabiWorkshopController : MonoBehaviour
     [SerializeField] int scatterPerStamp = 4;
     [SerializeField, Range(0.01f, 0.4f)] float brushRadius = 0.08f;
     [SerializeField] string starTag = "Solid";
+    string[] starTagOptions;
+    int starTagIndex;
 
     [Header("Waruyaku Paint")]
     [SerializeField, Range(0.1f, 1.0f)] float waruyakuRadius = 0.65f;
@@ -420,12 +422,12 @@ public class HanabiWorkshopController : MonoBehaviour
         int limit = previewBuffer.Length;
         for (int i = 0; i < targetBlueprint.stars.Count && count < limit; i++)
         {
-            AddStarPreview(targetBlueprint.stars[i], ref count, limit);
+            AddStarPreview(targetBlueprint.stars[i], ref count, limit, previewBuffer);
             if (mirrorUpperPreview && count < limit)
             {
                 var mirror = targetBlueprint.stars[i];
                 mirror.dir = new Vector3(mirror.dir.x, -mirror.dir.y, mirror.dir.z);
-                AddStarPreview(mirror, ref count, limit);
+                AddStarPreview(mirror, ref count, limit, previewBuffer);
             }
         }
 
@@ -507,7 +509,7 @@ public class HanabiWorkshopController : MonoBehaviour
         waruyakuPreview.Play();
     }
 
-    void AddStarPreview(StarPoint sp, ref int count, int limit)
+    void AddStarPreview(StarPoint sp, ref int count, int limit, ParticleSystem.Particle[] buffer)
     {
         if (count >= limit) return;
         if (hemisphereRoot == null) return;
@@ -525,11 +527,11 @@ public class HanabiWorkshopController : MonoBehaviour
         if (colorByDepth)
             baseColor = Color.Lerp(new Color(1f, 0.7f, 0.4f, 0.9f), new Color(0.6f, 0.9f, 1f, 0.9f), depthT);
 
-        previewBuffer[count].position = pWorld;
-        previewBuffer[count].startLifetime = 999f;
-        previewBuffer[count].remainingLifetime = 999f;
-        previewBuffer[count].startSize = size;
-        previewBuffer[count].startColor = baseColor;
+        buffer[count].position = pWorld;
+        buffer[count].startLifetime = 999f;
+        buffer[count].remainingLifetime = 999f;
+        buffer[count].startSize = size;
+        buffer[count].startColor = baseColor;
         count++;
     }
 
@@ -588,12 +590,43 @@ public class HanabiWorkshopController : MonoBehaviour
         if (database == null || database.starProfiles == null || database.starProfiles.Count == 0) return;
         if (string.IsNullOrWhiteSpace(starTag))
             starTag = database.starProfiles[0].tag;
+        RefreshStarTagOptions();
     }
 
     void SyncFromBlueprint()
     {
         if (targetBlueprint == null) return;
         mirrorUpperPreview = targetBlueprint.mirrorUpperHemisphere;
+    }
+
+    void RefreshStarTagOptions()
+    {
+        if (database == null || database.starProfiles == null || database.starProfiles.Count == 0)
+        {
+            starTagOptions = null;
+            starTagIndex = 0;
+            return;
+        }
+
+        int count = database.starProfiles.Count;
+        if (starTagOptions == null || starTagOptions.Length != count)
+            starTagOptions = new string[count];
+
+        for (int i = 0; i < count; i++)
+            starTagOptions[i] = database.starProfiles[i].tag;
+
+        int idx = 0;
+        for (int i = 0; i < count; i++)
+        {
+            if (starTagOptions[i] == starTag)
+            {
+                idx = i;
+                break;
+            }
+        }
+        starTagIndex = idx;
+        if (string.IsNullOrWhiteSpace(starTag))
+            starTag = starTagOptions[0];
     }
 
     void UpdateHemisphereVisibility()
@@ -972,7 +1005,26 @@ public class HanabiWorkshopController : MonoBehaviour
             starSize = (byte)Mathf.Clamp(EditorIntField(starSize), 1, 8);
 
             GUILayout.Label("Star Tag");
-            starTag = GUILayout.TextField(starTag);
+            if (database != null && database.starProfiles != null &&
+                (starTagOptions == null || starTagOptions.Length != database.starProfiles.Count))
+            {
+                RefreshStarTagOptions();
+            }
+
+            if (starTagOptions != null && starTagOptions.Length > 0)
+            {
+                int columns = Mathf.Clamp(starTagOptions.Length, 1, 3);
+                int nextIndex = GUILayout.SelectionGrid(starTagIndex, starTagOptions, columns);
+                if (nextIndex != starTagIndex)
+                {
+                    starTagIndex = nextIndex;
+                    starTag = starTagOptions[starTagIndex];
+                }
+            }
+            else
+            {
+                starTag = GUILayout.TextField(starTag);
+            }
         }
         else if (mode == EditMode.Waruyaku)
         {

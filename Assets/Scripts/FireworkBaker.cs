@@ -16,14 +16,27 @@ public static class FireworkBaker
 {
     public static PackedVolume Bake(FireworkBlueprint bp)
     {
-        var rng = new Random(bp.seed);
-        return Bake(bp, rng);
+        return Bake(bp, null);
     }
 
-    public static PackedVolume Bake(FireworkBlueprint bp, Random rng)
+    public static PackedVolume Bake(FireworkBlueprint bp, HanabiDatabase db)
+    {
+        var rng = new Random(bp.seed);
+        return Bake(bp, rng, db);
+    }
+
+    public static PackedVolume Bake(FireworkBlueprint bp, Random rng, HanabiDatabase db)
     {
         int res = ShellRes(bp.shellSize);
         var pv = new PackedVolume(res);
+
+        if (db != null)
+            db.BuildCaches();
+
+        int defaultStarId = 0;
+        if (db != null && db.TryGetStarId(bp.starProfileTag, out int defaultId))
+            defaultStarId = defaultId;
+        byte defaultStarIdByte = (byte)Mathf.Clamp(defaultStarId, 0, 255);
 
         float invRes = 1f / res;
 
@@ -87,7 +100,7 @@ public static class FireworkBaker
         int paletteCount = Mathf.Max(1, bp.palette != null ? bp.palette.Count : 1);
         if (bp.stars != null && bp.stars.Count > 0)
         {
-            ApplyStarPoints(pv, bp.stars, paletteCount, rng, bp.mirrorUpperHemisphere);
+            ApplyStarPoints(pv, bp.stars, paletteCount, rng, bp.mirrorUpperHemisphere, db, defaultStarIdByte);
         }
         else
         {
@@ -105,6 +118,7 @@ public static class FireworkBaker
 
                 pv.starMask[idx] = 1;
                 pv.starColor[idx] = (byte)rng.Next(paletteCount);
+                pv.starProfileId[idx] = defaultStarIdByte;
             }
         }
 
@@ -249,7 +263,7 @@ public static class FireworkBaker
         }
     }
 
-    static void ApplyStarPoints(PackedVolume pv, IList<StarPoint> stars, int paletteCount, Random rng, bool mirrorUpper)
+    static void ApplyStarPoints(PackedVolume pv, IList<StarPoint> stars, int paletteCount, Random rng, bool mirrorUpper, HanabiDatabase db, byte defaultStarId)
     {
         int res = pv.res;
         for (int i = 0; i < stars.Count; i++)
@@ -261,25 +275,28 @@ public static class FireworkBaker
 
             byte color = (byte)rng.Next(paletteCount);
             int size = Mathf.Max(1, sp.size);
-            ApplyStarPoint(pv, dir, sp.radius, size, color);
+            byte profileId = defaultStarId;
+            if (db != null && !string.IsNullOrWhiteSpace(sp.tag) && db.TryGetStarId(sp.tag, out int id))
+                profileId = (byte)Mathf.Clamp(id, 0, 255);
+            ApplyStarPoint(pv, dir, sp.radius, size, color, profileId);
 
             if (mirrorUpper)
             {
                 Vector3 mirrorDir = new Vector3(dir.x, -dir.y, dir.z);
-                ApplyStarPoint(pv, mirrorDir, sp.radius, size, color);
+                ApplyStarPoint(pv, mirrorDir, sp.radius, size, color, profileId);
             }
         }
     }
 
-    static void ApplyStarPoint(PackedVolume pv, Vector3 dir, float radius, int size, byte color)
+    static void ApplyStarPoint(PackedVolume pv, Vector3 dir, float radius, int size, byte color, byte profileId)
     {
         int res = pv.res;
         Vector3 p = dir * Mathf.Clamp01(radius);
         LocalToVoxel(p, res, out int cx, out int cy, out int cz);
-        StampStarCube(pv, cx, cy, cz, size, color);
+        StampStarCube(pv, cx, cy, cz, size, color, profileId);
     }
 
-    static void StampStarCube(PackedVolume pv, int cx, int cy, int cz, int size, byte color)
+    static void StampStarCube(PackedVolume pv, int cx, int cy, int cz, int size, byte color, byte profileId)
     {
         int res = pv.res;
         int half = size / 2;
@@ -306,6 +323,8 @@ public static class FireworkBaker
                     if (pv.charge[idx] == 0) continue; // outside shell
                     pv.starMask[idx] = 1;
                     pv.starColor[idx] = color;
+                    if (pv.starProfileId != null)
+                        pv.starProfileId[idx] = profileId;
                 }
             }
         }

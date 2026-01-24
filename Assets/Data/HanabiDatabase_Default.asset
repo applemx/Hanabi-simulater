@@ -15,6 +15,7 @@ MonoBehaviour:
   starProfiles:
   - tag: Solid
     kind: 0
+    renderMode: 0
     baseSpeed: 40
     speedJitter: 2.5
     baseLife: 2.6
@@ -25,6 +26,7 @@ MonoBehaviour:
     brightness: 1
   - tag: Tail
     kind: 1
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 2.8
@@ -35,6 +37,7 @@ MonoBehaviour:
     brightness: 1
   - tag: ColorChange
     kind: 2
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 2.8
@@ -45,6 +48,7 @@ MonoBehaviour:
     brightness: 1
   - tag: Comet
     kind: 3
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 3.2
@@ -55,6 +59,7 @@ MonoBehaviour:
     brightness: 1
   - tag: Strobe
     kind: 4
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 2.4
@@ -65,6 +70,7 @@ MonoBehaviour:
     brightness: 1
   - tag: Glitter
     kind: 5
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 3
@@ -75,6 +81,7 @@ MonoBehaviour:
     brightness: 1
   - tag: Crackle
     kind: 6
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 2.3
@@ -85,6 +92,7 @@ MonoBehaviour:
     brightness: 1
   - tag: Crossette
     kind: 7
+    renderMode: 0
     baseSpeed: 18
     speedJitter: 2.5
     baseLife: 2.6

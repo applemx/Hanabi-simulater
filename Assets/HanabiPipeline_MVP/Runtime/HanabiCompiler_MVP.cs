@@ -39,7 +39,7 @@ public static class HanabiCompiler_MVP
             Debug.LogWarning($"[Hanabi] Washi tag '{bp.washiTag}' not found in DB. Washi stats skipped.");
 
         // 1) Bake blueprint -> voxel volume
-        PackedVolume pv = FireworkBaker.Bake(bp);
+        PackedVolume pv = FireworkBaker.Bake(bp, db);
 
         FuseDef fuseDef = null;
         WaruyakuDef waruyakuDef = null;
@@ -96,7 +96,11 @@ public static class HanabiCompiler_MVP
         if (regions.Count == 0)
         {
             // Fallback: single-shot all stars
-            var solvedAll = BurstSolver.Solve(bp, pv, starProfile, washiDef, waruyakuDef);
+            var indices = new List<int>(capacity: 4096);
+            for (int i = 0; i < pv.starMask.Length; i++)
+                if (pv.starMask[i] != 0) indices.Add(i);
+
+            var solvedAll = BurstSolver.SolveSubset(bp, pv, indices, paletteUsed, starProfile, washiDef, waruyakuDef);
             bursts = new[]
             {
                 new BurstEvent
@@ -108,7 +112,25 @@ public static class HanabiCompiler_MVP
                     particleStartIndex = 0
                 }
             };
-            inits = ConvertInits(bp, db, solvedAll, seed, extraSpawnDelay: null);
+
+            inits = new ParticleInitV2[solvedAll.Count];
+            for (int i = 0; i < solvedAll.Count; i++)
+            {
+                int cell = (i < indices.Count) ? indices[i] : -1;
+                ushort profileId = ResolveStarProfileIdForCell(db, bp, pv, cell);
+                var s = solvedAll[i];
+                inits[i] = new ParticleInitV2
+                {
+                    pos0Local = s.pos0,
+                    vel0Local = s.vel0,
+                    life = s.life,
+                    size = ResolveStarSize(db, bp, seed, (uint)i, profileId),
+                    color = s.color,
+                    spawnDelay = s.delay,
+                    profileId = profileId,
+                    seed = seed ^ (uint)i * 2654435761u
+                };
+            }
 
             if (LogWashiStats)
             {
@@ -158,15 +180,16 @@ public static class HanabiCompiler_MVP
                     }
                 }
 
+                ushort profileId = ResolveStarProfileIdForCell(db, bp, pv, cell);
                 initList.Add(new ParticleInitV2
                 {
                     pos0Local = s.pos0,
                     vel0Local = s.vel0,
                     life = s.life,
-                    size = ResolveStarSize(db, bp, seed, (uint)(start + k)),
+                    size = ResolveStarSize(db, bp, seed, (uint)(start + k), profileId),
                     color = s.color,
                     spawnDelay = s.delay + dtWithin,
-                    profileId = (ushort)ResolveStarProfileId(db, bp),
+                    profileId = profileId,
                     seed = seed ^ (uint)(start + k) * 2654435761u
                 });
             }
@@ -198,13 +221,12 @@ public static class HanabiCompiler_MVP
         return 0;
     }
 
-    static float ResolveStarSize(HanabiDatabase db, FireworkBlueprint bp, uint seed, uint index)
+    static float ResolveStarSize(HanabiDatabase db, FireworkBlueprint bp, uint seed, uint index, ushort profileId)
     {
         // If DB exists, use baseSize +/- jitter. Otherwise use old shell defaults.
         if (db != null)
         {
-            int id = ResolveStarProfileId(db, bp);
-            var def = db.GetStarById(id);
+            var def = db.GetStarById(profileId);
             if (def != null)
             {
                 float j = Hash01(seed ^ (index * 2654435761u));
@@ -233,26 +255,11 @@ public static class HanabiCompiler_MVP
         return 0.35f;
     }
 
-    static ParticleInitV2[] ConvertInits(FireworkBlueprint bp, HanabiDatabase db, List<ParticleInit> solved, uint seed, float[] extraSpawnDelay)
+    static ushort ResolveStarProfileIdForCell(HanabiDatabase db, FireworkBlueprint bp, PackedVolume pv, int cell)
     {
-        var arr = new ParticleInitV2[solved.Count];
-        for (int i = 0; i < solved.Count; i++)
-        {
-            float extra = (extraSpawnDelay != null && i < extraSpawnDelay.Length) ? extraSpawnDelay[i] : 0f;
-            var s = solved[i];
-            arr[i] = new ParticleInitV2
-            {
-                pos0Local = s.pos0,
-                vel0Local = s.vel0,
-                life = s.life,
-                size = ResolveStarSize(db, bp, seed, (uint)i),
-                color = s.color,
-                spawnDelay = s.delay + extra,
-                profileId = (ushort)ResolveStarProfileId(db, bp),
-                seed = seed ^ (uint)i * 2654435761u
-            };
-        }
-        return arr;
+        if (pv != null && pv.starProfileId != null && cell >= 0 && cell < pv.starProfileId.Length)
+            return pv.starProfileId[cell];
+        return (ushort)ResolveStarProfileId(db, bp);
     }
 
     struct IgnitionRegion
