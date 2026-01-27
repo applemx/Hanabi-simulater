@@ -34,13 +34,13 @@ public class HanabiWorkshopController : MonoBehaviour
 
     [Header("Edit Mode")]
     [SerializeField] EditMode mode = EditMode.Star;
-    [SerializeField] int symmetry = 8;
+    [SerializeField] int symmetry = 1;
 
     [Header("Star Placement")]
     [SerializeField, Range(0.1f, 1.0f)] float starRadius = 0.85f;
     [SerializeField, Range(0f, 1.0f)] float starDepth = 0.0f;
     [SerializeField] byte starSize = 2;
-    [SerializeField] int scatterPerStamp = 4;
+    [SerializeField] int scatterPerStamp = 1;
     [SerializeField, Range(0.01f, 0.4f)] float brushRadius = 0.08f;
     [SerializeField] string starTag = "Solid";
     string[] starTagOptions;

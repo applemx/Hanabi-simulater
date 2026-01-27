@@ -84,8 +84,8 @@ public class FireworkBlueprint : ScriptableObject
     public IgnitionParams ignition = new IgnitionParams
     {
         secondsPerVoxel = 0.02f,
-        burstBinSize = 0.08f,
-        maxIgnitionTime = 6.0f,
+        burstBinSize = 0.35f,
+        maxIgnitionTime = 3.5f,
         paperExtraDelayPerCell = 0.01f
     };
 

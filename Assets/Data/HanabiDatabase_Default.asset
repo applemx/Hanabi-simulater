@@ -15,10 +15,9 @@ MonoBehaviour:
   starProfiles:
   - tag: Solid
     kind: 0
-    renderMode: 0
-    baseSpeed: 40
+    baseSpeed: 120
     speedJitter: 2.5
-    baseLife: 2.6
+    baseLife: 3.2
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.06
@@ -26,10 +25,9 @@ MonoBehaviour:
     brightness: 1
   - tag: Tail
     kind: 1
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 2.8
+    baseLife: 3.4
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.08
@@ -37,10 +35,9 @@ MonoBehaviour:
     brightness: 1
   - tag: ColorChange
     kind: 2
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 2.8
+    baseLife: 3.3
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.07
@@ -48,10 +45,9 @@ MonoBehaviour:
     brightness: 1
   - tag: Comet
     kind: 3
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 3.2
+    baseLife: 3.6
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.1
@@ -59,10 +55,9 @@ MonoBehaviour:
     brightness: 1
   - tag: Strobe
     kind: 4
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 2.4
+    baseLife: 3
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.08
@@ -70,10 +65,9 @@ MonoBehaviour:
     brightness: 1
   - tag: Glitter
     kind: 5
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 3
+    baseLife: 3.5
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.09
@@ -81,10 +75,9 @@ MonoBehaviour:
     brightness: 1
   - tag: Crackle
     kind: 6
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 2.3
+    baseLife: 2.9
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.07
@@ -92,10 +85,9 @@ MonoBehaviour:
     brightness: 1
   - tag: Crossette
     kind: 7
-    renderMode: 0
-    baseSpeed: 18
+    baseSpeed: 110
     speedJitter: 2.5
-    baseLife: 2.6
+    baseLife: 3.1
     lifeJitter: 0.3
     drag: 0.35
     baseSize: 0.075
@@ -113,15 +105,15 @@ MonoBehaviour:
   waruyakuDefs:
   - tag: Waruyaku_L
     scatterStrength: 1.15
-    uniformity: 0.9
+    uniformity: 0.82
     igniteCostMultiplier: 0.9
   - tag: Waruyaku_M
-    scatterStrength: 1
-    uniformity: 0.85
+    scatterStrength: 1.3
+    uniformity: 0.75
     igniteCostMultiplier: 1
   - tag: Waruyaku_H
-    scatterStrength: 0.85
-    uniformity: 0.8
+    scatterStrength: 1.6
+    uniformity: 0.7
     igniteCostMultiplier: 1.15
   washiDefs:
   - tag: Washi_Default
@@ -145,17 +137,17 @@ MonoBehaviour:
     jitter: 0
   launchProfiles:
   - tag: Launch_Default
-    launchSpeed: 70
+    launchSpeed: 240
     gravityScale: 1
     windScale: 0.2
     dragScale: 0.2
   - tag: Launch_Low
-    launchSpeed: 60
+    launchSpeed: 210
     gravityScale: 1
     windScale: 0.2
     dragScale: 0.25
   - tag: Launch_High
-    launchSpeed: 78
+    launchSpeed: 264
     gravityScale: 1
     windScale: 0.2
     dragScale: 0.18

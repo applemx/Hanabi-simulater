@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 
 // Compiler-side (editor time) entry point.
@@ -7,6 +9,7 @@ using UnityEngine;
 public static class HanabiCompiler_MVP
 {
     const bool LogWashiStats = true;
+    const bool DumpCompileDebug = true;
 
     public static void Compile(FireworkBlueprint bp, HanabiDatabase db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits, out LaunchParams launchParams)
     {
@@ -66,7 +69,7 @@ public static class HanabiCompiler_MVP
 
         launchParams = new LaunchParams
         {
-            launchSpeed = (launchDef != null) ? Mathf.Max(1f, launchDef.launchSpeed) : 70f,
+            launchSpeed = (launchDef != null) ? Mathf.Max(1f, launchDef.launchSpeed) : 240f,
             fuseSeconds = fuseSeconds + startDelay,
             gravityScale = (launchDef != null) ? Mathf.Max(0.01f, launchDef.gravityScale) : 1f,
             windScale = (launchDef != null) ? Mathf.Max(0f, launchDef.windScale) : 0.2f,
@@ -137,6 +140,8 @@ public static class HanabiCompiler_MVP
                 AccumulateWashiStatsFromVolume(pv, washiDef, ref washiHitCount, ref totalParticleCount, ref washiDelaySum, ref washiDelayMax, ref washiStrengthSum);
                 LogWashiSummary(bp, washiDef, washiHitCount, totalParticleCount, washiDelaySum, washiDelayMax, washiStrengthSum);
             }
+            if (DumpCompileDebug)
+                DumpCompileDebugFiles(bp, db, seed, bursts, inits, launchParams);
             return;
         }
 
@@ -212,6 +217,8 @@ public static class HanabiCompiler_MVP
 
         if (LogWashiStats)
             LogWashiSummary(bp, washiDef, washiHitCount, totalParticleCount, washiDelaySum, washiDelayMax, washiStrengthSum);
+        if (DumpCompileDebug)
+            DumpCompileDebugFiles(bp, db, seed, bursts, inits, launchParams);
     }
 
     static int ResolveStarProfileId(HanabiDatabase db, FireworkBlueprint bp)
@@ -384,4 +391,270 @@ public static class HanabiCompiler_MVP
 
         Debug.Log($"[Hanabi] Washi stats tag={washiDef.tag} hits={hitCount}/{totalCount} ({ratio:P0}) avgDelay={avgDelay:F3}s maxDelay={delayMax:F3}s avgStrength={avgStrength:F2} avgCollim={avgCollimation:F2}");
     }
+
+#if UNITY_EDITOR
+    [Serializable]
+    class CompileDump
+    {
+        public string blueprintName;
+        public int blueprintVersion;
+        public int seed;
+        public string starTag;
+        public string waruyakuTag;
+        public string washiTag;
+        public string launchTag;
+        public int starCount;
+        public int burstCount;
+        public float launchSpeed;
+        public float fuseSeconds;
+        public float gravityScale;
+        public float windScale;
+        public float dragScale;
+        public KindStat[] kindStats;
+        public BurstStat[] bursts;
+    }
+
+    [Serializable]
+    class KindStat
+    {
+        public string kind;
+        public int count;
+        public float avgSpeed;
+        public float maxSpeed;
+        public float minSpeed;
+        public float avgLife;
+        public float avgSize;
+        public float avgDelay;
+    }
+
+    [Serializable]
+    class BurstStat
+    {
+        public int index;
+        public float timeLocal;
+        public int particleCount;
+        public float avgSpeed;
+        public float maxSpeed;
+        public float minSpeed;
+        public float avgLife;
+        public float avgSize;
+        public float avgDelay;
+        public float dirBias;
+        public Vector3 meanDir;
+    }
+#endif
+
+    static void DumpCompileDebugFiles(FireworkBlueprint bp, HanabiDatabase db, uint seed, BurstEvent[] bursts, ParticleInitV2[] inits, LaunchParams launchParams)
+    {
+#if UNITY_EDITOR
+        try
+        {
+            string root = Path.Combine(Application.dataPath, "Debug", "CompiledDumps");
+            string dateFolder = DateTime.Now.ToString("yyyy-MM-dd");
+            string folder = Path.Combine(root, dateFolder);
+            Directory.CreateDirectory(folder);
+
+            string name = string.IsNullOrWhiteSpace(bp.displayName) ? bp.name : bp.displayName;
+            if (string.IsNullOrWhiteSpace(name)) name = "Blueprint";
+            string stamp = DateTime.Now.ToString("HHmmss");
+            string baseName = $"{SanitizeFileName(name)}_seed{seed}_{stamp}";
+
+            var dump = BuildCompileDump(bp, db, bursts, inits, launchParams);
+            string json = JsonUtility.ToJson(dump, true);
+            File.WriteAllText(Path.Combine(folder, baseName + ".json"), json);
+
+            string csv = BuildBurstCsv(dump);
+            File.WriteAllText(Path.Combine(folder, baseName + ".csv"), csv);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[Hanabi] Compile debug dump failed: {ex.Message}");
+        }
+#endif
+    }
+
+#if UNITY_EDITOR
+    static CompileDump BuildCompileDump(FireworkBlueprint bp, HanabiDatabase db, BurstEvent[] bursts, ParticleInitV2[] inits, LaunchParams launchParams)
+    {
+        var dump = new CompileDump
+        {
+            blueprintName = string.IsNullOrWhiteSpace(bp.displayName) ? bp.name : bp.displayName,
+            blueprintVersion = bp.version,
+            seed = bp.seed,
+            starTag = bp.starProfileTag,
+            waruyakuTag = bp.waruyakuTag,
+            washiTag = bp.washiTag,
+            launchTag = bp.launchTag,
+            starCount = inits != null ? inits.Length : 0,
+            burstCount = bursts != null ? bursts.Length : 0,
+            launchSpeed = launchParams.launchSpeed,
+            fuseSeconds = launchParams.fuseSeconds,
+            gravityScale = launchParams.gravityScale,
+            windScale = launchParams.windScale,
+            dragScale = launchParams.dragScale,
+        };
+
+        var kindStats = new Dictionary<StarKind, KindAccumulator>();
+        if (inits != null)
+        {
+            for (int i = 0; i < inits.Length; i++)
+            {
+                var p = inits[i];
+                float speed = p.vel0Local.magnitude;
+                var kind = ResolveKind(db, p.profileId);
+                if (!kindStats.TryGetValue(kind, out var acc))
+                    acc = new KindAccumulator();
+                acc.Add(speed, p.life, p.size, p.spawnDelay);
+                kindStats[kind] = acc;
+            }
+        }
+
+        var kindList = new List<KindStat>(kindStats.Count);
+        foreach (var kv in kindStats)
+        {
+            var acc = kv.Value;
+            kindList.Add(new KindStat
+            {
+                kind = kv.Key.ToString(),
+                count = acc.count,
+                avgSpeed = acc.AvgSpeed,
+                maxSpeed = acc.maxSpeed,
+                minSpeed = acc.minSpeed,
+                avgLife = acc.AvgLife,
+                avgSize = acc.AvgSize,
+                avgDelay = acc.AvgDelay
+            });
+        }
+        dump.kindStats = kindList.ToArray();
+
+        var burstList = new List<BurstStat>();
+        if (bursts != null && inits != null)
+        {
+            for (int b = 0; b < bursts.Length; b++)
+            {
+                var be = bursts[b];
+                int start = Mathf.Clamp(be.particleStartIndex, 0, inits.Length);
+                int count = Mathf.Clamp(be.particleCount, 0, inits.Length - start);
+                if (count <= 0) continue;
+
+                float sumSpeed = 0f, maxSpeed = 0f, minSpeed = float.MaxValue;
+                float sumLife = 0f, sumSize = 0f, sumDelay = 0f;
+                Vector3 meanDir = Vector3.zero;
+                for (int i = 0; i < count; i++)
+                {
+                    var p = inits[start + i];
+                    float speed = p.vel0Local.magnitude;
+                    sumSpeed += speed;
+                    maxSpeed = Mathf.Max(maxSpeed, speed);
+                    minSpeed = Mathf.Min(minSpeed, speed);
+                    sumLife += p.life;
+                    sumSize += p.size;
+                    sumDelay += p.spawnDelay;
+                    if (speed > 1e-6f)
+                        meanDir += p.vel0Local / speed;
+                }
+
+                meanDir /= count;
+                float dirBias = Mathf.Clamp01(meanDir.magnitude);
+
+                burstList.Add(new BurstStat
+                {
+                    index = b,
+                    timeLocal = be.timeLocal,
+                    particleCount = count,
+                    avgSpeed = sumSpeed / count,
+                    maxSpeed = maxSpeed,
+                    minSpeed = minSpeed == float.MaxValue ? 0f : minSpeed,
+                    avgLife = sumLife / count,
+                    avgSize = sumSize / count,
+                    avgDelay = sumDelay / count,
+                    dirBias = dirBias,
+                    meanDir = meanDir
+                });
+            }
+        }
+        dump.bursts = burstList.ToArray();
+
+        return dump;
+    }
+
+    struct KindAccumulator
+    {
+        public int count;
+        public float sumSpeed;
+        public float sumLife;
+        public float sumSize;
+        public float sumDelay;
+        public float maxSpeed;
+        public float minSpeed;
+
+        public void Add(float speed, float life, float size, float delay)
+        {
+            if (count == 0)
+            {
+                maxSpeed = speed;
+                minSpeed = speed;
+            }
+            else
+            {
+                maxSpeed = Mathf.Max(maxSpeed, speed);
+                minSpeed = Mathf.Min(minSpeed, speed);
+            }
+            count++;
+            sumSpeed += speed;
+            sumLife += life;
+            sumSize += size;
+            sumDelay += delay;
+        }
+
+        public float AvgSpeed => count > 0 ? sumSpeed / count : 0f;
+        public float AvgLife => count > 0 ? sumLife / count : 0f;
+        public float AvgSize => count > 0 ? sumSize / count : 0f;
+        public float AvgDelay => count > 0 ? sumDelay / count : 0f;
+    }
+
+    static StarKind ResolveKind(HanabiDatabase db, ushort profileId)
+    {
+        if (db != null)
+        {
+            var def = db.GetStarById(profileId);
+            if (def != null) return def.kind;
+        }
+        if (profileId < Enum.GetValues(typeof(StarKind)).Length)
+            return (StarKind)profileId;
+        return StarKind.Solid;
+    }
+
+    static string BuildBurstCsv(CompileDump dump)
+    {
+        var sb = new StringBuilder(2048);
+        sb.AppendLine("index,timeLocal,particleCount,avgSpeed,maxSpeed,minSpeed,avgLife,avgSize,avgDelay,dirBias,meanDirX,meanDirY,meanDirZ");
+        if (dump.bursts == null) return sb.ToString();
+        foreach (var b in dump.bursts)
+        {
+            sb.Append(b.index).Append(',')
+              .Append(b.timeLocal.ToString("0.###")).Append(',')
+              .Append(b.particleCount).Append(',')
+              .Append(b.avgSpeed.ToString("0.###")).Append(',')
+              .Append(b.maxSpeed.ToString("0.###")).Append(',')
+              .Append(b.minSpeed.ToString("0.###")).Append(',')
+              .Append(b.avgLife.ToString("0.###")).Append(',')
+              .Append(b.avgSize.ToString("0.###")).Append(',')
+              .Append(b.avgDelay.ToString("0.###")).Append(',')
+              .Append(b.dirBias.ToString("0.###")).Append(',')
+              .Append(b.meanDir.x.ToString("0.###")).Append(',')
+              .Append(b.meanDir.y.ToString("0.###")).Append(',')
+              .Append(b.meanDir.z.ToString("0.###"))
+              .AppendLine();
+        }
+        return sb.ToString();
+    }
+
+    static string SanitizeFileName(string name)
+    {
+        foreach (char c in Path.GetInvalidFileNameChars())
+            name = name.Replace(c, '_');
+        return name;
+    }
+#endif
 }

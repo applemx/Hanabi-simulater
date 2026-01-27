@@ -203,16 +203,30 @@ public class HanabiDatabase : ScriptableObject
         if (starProfiles.Count == 0)
         {
             // MVP initial 8 (smaller sizes to avoid heavy overdraw)
-            var solid = StarProfileDef.Make("Solid", StarKind.Solid, baseSize: 0.06f, sizeJitter: 0.02f, baseLife: 2.6f);
-            solid.baseSpeed = 40f;
+            var solid = StarProfileDef.Make("Solid", StarKind.Solid, baseSize: 0.06f, sizeJitter: 0.02f, baseLife: 3.2f);
+            solid.baseSpeed = 120f;
             starProfiles.Add(solid);
-            starProfiles.Add(StarProfileDef.Make("Tail", StarKind.Tail, baseSize: 0.08f, sizeJitter: 0.03f, baseLife: 2.8f));
-            starProfiles.Add(StarProfileDef.Make("ColorChange", StarKind.ColorChange, baseSize: 0.07f, sizeJitter: 0.025f, baseLife: 2.8f));
-            starProfiles.Add(StarProfileDef.Make("Comet", StarKind.Comet, baseSize: 0.10f, sizeJitter: 0.035f, baseLife: 3.2f));
-            starProfiles.Add(StarProfileDef.Make("Strobe", StarKind.Strobe, baseSize: 0.08f, sizeJitter: 0.03f, baseLife: 2.4f));
-            starProfiles.Add(StarProfileDef.Make("Glitter", StarKind.Glitter, baseSize: 0.09f, sizeJitter: 0.03f, baseLife: 3.0f));
-            starProfiles.Add(StarProfileDef.Make("Crackle", StarKind.Crackle, baseSize: 0.07f, sizeJitter: 0.025f, baseLife: 2.3f));
-            starProfiles.Add(StarProfileDef.Make("Crossette", StarKind.Crossette, baseSize: 0.075f, sizeJitter: 0.03f, baseLife: 2.6f));
+            var tail = StarProfileDef.Make("Tail", StarKind.Tail, baseSize: 0.08f, sizeJitter: 0.03f, baseLife: 3.4f);
+            tail.baseSpeed = 110f;
+            starProfiles.Add(tail);
+            var colorChange = StarProfileDef.Make("ColorChange", StarKind.ColorChange, baseSize: 0.07f, sizeJitter: 0.025f, baseLife: 3.3f);
+            colorChange.baseSpeed = 110f;
+            starProfiles.Add(colorChange);
+            var comet = StarProfileDef.Make("Comet", StarKind.Comet, baseSize: 0.10f, sizeJitter: 0.035f, baseLife: 3.6f);
+            comet.baseSpeed = 110f;
+            starProfiles.Add(comet);
+            var strobe = StarProfileDef.Make("Strobe", StarKind.Strobe, baseSize: 0.08f, sizeJitter: 0.03f, baseLife: 3.0f);
+            strobe.baseSpeed = 110f;
+            starProfiles.Add(strobe);
+            var glitter = StarProfileDef.Make("Glitter", StarKind.Glitter, baseSize: 0.09f, sizeJitter: 0.03f, baseLife: 3.5f);
+            glitter.baseSpeed = 110f;
+            starProfiles.Add(glitter);
+            var crackle = StarProfileDef.Make("Crackle", StarKind.Crackle, baseSize: 0.07f, sizeJitter: 0.025f, baseLife: 2.9f);
+            crackle.baseSpeed = 110f;
+            starProfiles.Add(crackle);
+            var crossette = StarProfileDef.Make("Crossette", StarKind.Crossette, baseSize: 0.075f, sizeJitter: 0.03f, baseLife: 3.1f);
+            crossette.baseSpeed = 110f;
+            starProfiles.Add(crossette);
         }
 
         if (palettes.Count == 0)
@@ -231,9 +245,9 @@ public class HanabiDatabase : ScriptableObject
 
         if (waruyakuDefs.Count == 0)
         {
-            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_L", igniteCostMultiplier = 0.9f, scatterStrength = 1.15f, uniformity = 0.9f });
-            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_M", igniteCostMultiplier = 1.0f, scatterStrength = 1.0f, uniformity = 0.85f });
-            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_H", igniteCostMultiplier = 1.15f, scatterStrength = 0.85f, uniformity = 0.8f });
+            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_L", igniteCostMultiplier = 0.9f, scatterStrength = 1.15f, uniformity = 0.82f });
+            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_M", igniteCostMultiplier = 1.0f, scatterStrength = 1.3f, uniformity = 0.75f });
+            waruyakuDefs.Add(new WaruyakuDef { tag = "Waruyaku_H", igniteCostMultiplier = 1.15f, scatterStrength = 1.6f, uniformity = 0.7f });
         }
 
         if (washiDefs.Count == 0)
@@ -250,9 +264,9 @@ public class HanabiDatabase : ScriptableObject
 
         if (launchProfiles.Count == 0)
         {
-            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_Default", launchSpeed = 70f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.2f });
-            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_Low", launchSpeed = 60f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.25f });
-            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_High", launchSpeed = 78f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.18f });
+            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_Default", launchSpeed = 240f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.2f });
+            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_Low", launchSpeed = 210f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.25f });
+            launchProfiles.Add(new LaunchProfileDef { tag = "Launch_High", launchSpeed = 264f, gravityScale = 1.0f, windScale = 0.2f, dragScale = 0.18f });
         }
     }
 }
@@ -276,7 +290,7 @@ public class StarProfileDef
     public StarKind kind = StarKind.Solid;
 
     [Header("Physics-ish")]
-    public float baseSpeed = 18f;
+    public float baseSpeed = 80f;
     public float speedJitter = 2.5f;
     public float baseLife = 2.6f;
     public float lifeJitter = 0.3f;
@@ -342,7 +356,7 @@ public class FuseDef
 public class LaunchProfileDef
 {
     public string tag = "Launch_Default";
-    public float launchSpeed = 70f;
+    public float launchSpeed = 240f;
     public float gravityScale = 1.0f;
     public float windScale = 0.2f;
     public float dragScale = 0.2f;

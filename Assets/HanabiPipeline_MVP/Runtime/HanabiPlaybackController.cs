@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class HanabiPlaybackController : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class HanabiPlaybackController : MonoBehaviour
 
     [Header("Playback")]
     [SerializeField] KeyCode launchKey = KeyCode.F;
-    [SerializeField] float explodeHeight = 180f;
+    [SerializeField] float explodeHeight = 650f;
     [SerializeField] bool loop = false;
     [SerializeField] bool playOnStart = false;
 
@@ -73,6 +74,7 @@ public class HanabiPlaybackController : MonoBehaviour
     {
         starKindCount = Enum.GetValues(typeof(StarKind)).Length;
         EnsureStarRenderers();
+        SanitizeDebugSettings();
 
         var primary = GetPrimaryRenderer();
         if (primary == null)
@@ -95,6 +97,25 @@ public class HanabiPlaybackController : MonoBehaviour
 
         if (playOnStart)
             StartShow();
+    }
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        SanitizeDebugSettings();
+    }
+#endif
+
+    void SanitizeDebugSettings()
+    {
+        if (debugCompiledSizeMultiplier > 5f || debugCompiledMinSize > 0.1f)
+        {
+            debugCompiledSizeMultiplier = 1.0f;
+            debugCompiledMinSize = 0.03f;
+            debugStartSize = Mathf.Min(debugStartSize, 0.2f);
+            if (debugVerboseLogs)
+                Debug.LogWarning("[HanabiPlayback] Debug size settings were too large; clamped to safe defaults.");
+        }
     }
 
     void LoadCompiled()
@@ -567,8 +588,10 @@ public class HanabiPlaybackController : MonoBehaviour
         {
             var ps = starParticleSystems[i];
             if (ps == null) continue;
+            int multiplier = (i == (int)StarKind.Tail || i == (int)StarKind.Comet) ? (1 + ParticleSim.TrailSamples) : 1;
             var main = ps.main;
-            if (main.maxParticles < need) main.maxParticles = need;
+            int target = need * multiplier;
+            if (main.maxParticles < target) main.maxParticles = target;
             int cap = main.maxParticles;
             if (starBuffers[i] == null || starBuffers[i].Length != cap)
                 starBuffers[i] = new ParticleSystem.Particle[cap];

@@ -5,6 +5,7 @@ using UnityEngine;
 public class ParticleSim
 {
     public int AliveCount => aliveCount;
+    public const int TrailSamples = 6;
 
     readonly Vector3[] pos;
     readonly Vector3[] vel;
@@ -14,6 +15,8 @@ public class ParticleSim
     readonly float[] size;
     readonly ushort[] profileId;
     readonly uint[] seed;
+    readonly Vector3[] trailHistory;
+    readonly byte[] trailCursor;
 
     StarKind[] kindLookup;
     float[] brightnessLookup;
@@ -31,6 +34,8 @@ public class ParticleSim
         size = new float[max];
         profileId = new ushort[max];
         seed = new uint[max];
+        trailHistory = new Vector3[max * TrailSamples];
+        trailCursor = new byte[max];
         aliveCount = 0;
     }
 
@@ -85,6 +90,7 @@ public class ParticleSim
             size[write] = Mathf.Max(0.001f, p.size);
             profileId[write] = p.profileId;
             seed[write] = p.seed;
+            InitTrail(write, pos[write]);
             write++;
         }
 
@@ -118,9 +124,11 @@ public class ParticleSim
             float speed = v.magnitude;
             v += (-dragK * speed) * v * dt;
 
-            Vector3 p = pos[i] + v * dt;
+            Vector3 oldPos = pos[i];
+            Vector3 p = oldPos + v * dt;
 
             vel[i] = v;
+            PushTrail(i, oldPos);
             pos[i] = p;
 
             if (write != i) Copy(i, write);
@@ -139,6 +147,11 @@ public class ParticleSim
         size[dst] = size[src];
         profileId[dst] = profileId[src];
         seed[dst] = seed[src];
+        trailCursor[dst] = trailCursor[src];
+        int srcBase = src * TrailSamples;
+        int dstBase = dst * TrailSamples;
+        for (int k = 0; k < TrailSamples; k++)
+            trailHistory[dstBase + k] = trailHistory[srcBase + k];
     }
 
     public void FillParticles(ParticleSystem.Particle[] outParticles)
@@ -319,17 +332,22 @@ public class ParticleSim
             if (target == null) continue;
 
             int writeIndex = counts[slot];
-            if (writeIndex >= target.Length) continue;
+            if (writeIndex < target.Length)
+            {
+                target[writeIndex].position = pos[i];
+                target[writeIndex].startColor = new Color32(r, g, b, alpha);
+                target[writeIndex].startSize = size[i] * sizeMul;
+                target[writeIndex].startLifetime = L;
+                target[writeIndex].remainingLifetime = Mathf.Max(0.01f, L - a);
+                target[writeIndex].velocity = vel[i];
+                target[writeIndex].randomSeed = seed[i];
+                counts[slot]++;
+            }
 
-            target[writeIndex].position = pos[i];
-            target[writeIndex].startColor = new Color32(r, g, b, alpha);
-            target[writeIndex].startSize = size[i] * sizeMul;
-            target[writeIndex].startLifetime = L;
-            target[writeIndex].remainingLifetime = Mathf.Max(0.01f, L - a);
-            target[writeIndex].velocity = vel[i];
-            target[writeIndex].randomSeed = seed[i];
-
-            counts[slot]++;
+            if (kind == StarKind.Tail || kind == StarKind.Comet)
+            {
+                EmitTrailSamples(i, target, counts, slot, r, g, b, alpha, size[i] * sizeMul, L, a);
+            }
         }
     }
 
@@ -353,6 +371,59 @@ public class ParticleSim
             if (buffers[i] != null) return i;
         }
         return -1;
+    }
+
+    void InitTrail(int index, Vector3 pos)
+    {
+        int baseIdx = index * TrailSamples;
+        for (int i = 0; i < TrailSamples; i++)
+            trailHistory[baseIdx + i] = pos;
+        trailCursor[index] = 0;
+    }
+
+    void PushTrail(int index, Vector3 pos)
+    {
+        int baseIdx = index * TrailSamples;
+        int cursor = trailCursor[index];
+        trailHistory[baseIdx + cursor] = pos;
+        trailCursor[index] = (byte)((cursor + 1) % TrailSamples);
+    }
+
+    void EmitTrailSamples(int index, ParticleSystem.Particle[] target, int[] counts, int slot, byte r, byte g, byte b, byte alpha, float size, float life, float age)
+    {
+        if (target == null || counts == null) return;
+        int baseIdx = index * TrailSamples;
+        int cursor = trailCursor[index];
+
+        for (int k = 0; k < TrailSamples; k++)
+        {
+            int sampleIdx = cursor - 1 - k;
+            if (sampleIdx < 0) sampleIdx += TrailSamples;
+            Vector3 p = trailHistory[baseIdx + sampleIdx];
+
+            float t = (k + 1f) / (TrailSamples + 1f);
+            float alphaScale = Mathf.Lerp(0.55f, 0.15f, t);
+            float sizeScale = Mathf.Lerp(0.9f, 0.5f, t);
+            byte a = (byte)Mathf.Clamp(alpha * alphaScale, 0f, 255f);
+
+            AddTrailPoint(target, counts, slot, p, new Color32(r, g, b, a), size * sizeScale, life, age);
+        }
+    }
+
+    static void AddTrailPoint(ParticleSystem.Particle[] target, int[] counts, int slot, Vector3 pos, Color32 color, float size, float life, float age)
+    {
+        if (target == null || counts == null) return;
+        int writeIndex = counts[slot];
+        if (writeIndex >= target.Length) return;
+
+        target[writeIndex].position = pos;
+        target[writeIndex].startColor = color;
+        target[writeIndex].startSize = size;
+        target[writeIndex].startLifetime = life;
+        target[writeIndex].remainingLifetime = Mathf.Max(0.01f, life - age);
+        target[writeIndex].velocity = Vector3.zero;
+        target[writeIndex].randomSeed = (uint)(writeIndex * 2654435761u);
+        counts[slot]++;
     }
 
     static float Hash01(uint x)
