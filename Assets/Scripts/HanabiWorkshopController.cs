@@ -250,6 +250,7 @@ public class HanabiWorkshopController : MonoBehaviour
         for (int i = 0; i < n; i++)
         {
             Vector3 d = Quaternion.AngleAxis(step * i, Vector3.up) * dir;
+            if (!CanPlaceStar(d, radius, starSize, added)) continue;
             added.Add(new StarPoint
             {
                 dir = d,
@@ -325,6 +326,45 @@ public class HanabiWorkshopController : MonoBehaviour
         PushUndo(EditMode.Waruyaku, added);
         MarkDirty();
         MarkPreviewDirty();
+    }
+
+    bool CanPlaceStar(Vector3 dir, float radius, byte size, List<StarPoint> added)
+    {
+        if (targetBlueprint == null) return true;
+        float minDist = StarMinDistance(size, targetBlueprint.shellSize);
+        if (minDist <= 0f) return true;
+
+        Vector3 p = dir.normalized * Mathf.Clamp01(radius);
+
+        if (targetBlueprint.stars != null)
+        {
+            for (int i = 0; i < targetBlueprint.stars.Count; i++)
+            {
+                Vector3 q = targetBlueprint.stars[i].dir.normalized * Mathf.Clamp01(targetBlueprint.stars[i].radius);
+                if ((p - q).sqrMagnitude < minDist * minDist)
+                    return false;
+            }
+        }
+
+        if (added != null)
+        {
+            for (int i = 0; i < added.Count; i++)
+            {
+                Vector3 q = added[i].dir.normalized * Mathf.Clamp01(added[i].radius);
+                if ((p - q).sqrMagnitude < minDist * minDist)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    static float StarMinDistance(byte size, ShellSize shellSize)
+    {
+        int res = shellSize == ShellSize.Small ? 48 : (shellSize == ShellSize.Large ? 80 : 64);
+        float voxelSize = 2f / Mathf.Max(1, res);
+        float min = Mathf.Max(voxelSize, size * voxelSize);
+        return Mathf.Max(0.001f, min);
     }
 
     void PushUndo(EditMode editMode, List<StarPoint> added)

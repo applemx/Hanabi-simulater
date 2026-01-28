@@ -103,7 +103,7 @@ public static class HanabiCompiler_MVP
             for (int i = 0; i < pv.starMask.Length; i++)
                 if (pv.starMask[i] != 0) indices.Add(i);
 
-            var solvedAll = BurstSolver.SolveSubset(bp, pv, indices, paletteUsed, starProfile, washiDef, waruyakuDef);
+            var solvedAll = BurstSolver.SolveSubset(bp, pv, indices, paletteUsed, starProfile, washiDef, waruyakuDef, db);
             bursts = new[]
             {
                 new BurstEvent
@@ -159,7 +159,7 @@ public static class HanabiCompiler_MVP
             float t0 = region.minTime;
 
             // Solve only these star cells
-            var solved = BurstSolver.SolveSubset(bp, pv, starIdx, paletteUsed, starProfile, washiDef, waruyakuDef);
+            var solved = BurstSolver.SolveSubset(bp, pv, starIdx, paletteUsed, starProfile, washiDef, waruyakuDef, db);
 
             int start = initList.Count;
 

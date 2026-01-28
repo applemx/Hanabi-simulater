@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiParticlePrefabBuilder.cs" />
+    <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiStarPreviewSceneBuilder.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\FireworkBlueprintAutoCompiler.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiMenu.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiDatabaseEditorUtil.cs" />

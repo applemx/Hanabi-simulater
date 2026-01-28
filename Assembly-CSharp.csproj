@@ -49,6 +49,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.4f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\StarPreviewController.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Runtime\HanabiCompiler_MVP.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Runtime\HanabiPlaybackController.cs" />
     <Compile Include="Assets\Scripts\BurstSolver.cs" />

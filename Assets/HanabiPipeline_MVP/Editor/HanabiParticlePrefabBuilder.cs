@@ -51,9 +51,9 @@ public static class HanabiParticlePrefabBuilder
     public static void SetupParticleLookAll()
     {
         EnsureFolders();
-        var mat = GetOrCreateParticleMaterial();
-        var tex = GetOrCreateSoftTexture();
+        var tex = GetOrCreateSoftTexture(forceRebuild: true);
         ApplyTextureSettings(tex);
+        var mat = GetOrCreateParticleMaterial(forceShaderReset: true);
         ApplyMaterialSettings(mat);
 
         var systems = FindSceneParticleSystems();
@@ -66,6 +66,17 @@ public static class HanabiParticlePrefabBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("[Hanabi] Particle look settings applied.");
+    }
+
+    [MenuItem("Hanabi/Rebuild Soft Circle Texture")]
+    public static void RebuildSoftCircleTextureMenu()
+    {
+        EnsureFolders();
+        var tex = GetOrCreateSoftTexture(forceRebuild: true);
+        ApplyTextureSettings(tex);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("[Hanabi] Soft circle texture rebuilt.");
     }
 
     static void CreatePrefabs(bool placeInScene)
@@ -226,16 +237,16 @@ public static class HanabiParticlePrefabBuilder
 
     static Shader FindParticleShader()
     {
-        Shader shader = Shader.Find("Universal Render Pipeline/Particles/Additive");
+        Shader shader = Shader.Find("Legacy Shaders/Particles/Additive");
+        if (shader != null) return shader;
+        shader = Shader.Find("Universal Render Pipeline/Particles/Additive");
         if (shader != null) return shader;
         shader = Shader.Find("Particles/Standard Unlit");
-        if (shader != null) return shader;
-        shader = Shader.Find("Legacy Shaders/Particles/Additive");
         if (shader != null) return shader;
         return Shader.Find("Sprites/Default");
     }
 
-    static Material GetOrCreateParticleMaterial()
+    static Material GetOrCreateParticleMaterial(bool forceShaderReset = false)
     {
         if (cachedMaterial != null) return cachedMaterial;
 
@@ -256,6 +267,11 @@ public static class HanabiParticlePrefabBuilder
         }
         else
         {
+            if (forceShaderReset)
+            {
+                var shader = FindParticleShader();
+                if (shader != null) mat.shader = shader;
+            }
             var tex = GetOrCreateSoftTexture();
             ApplyTexture(mat, tex);
         }
@@ -265,7 +281,7 @@ public static class HanabiParticlePrefabBuilder
         return mat;
     }
 
-    static Texture2D GetOrCreateSoftTexture()
+    static Texture2D GetOrCreateSoftTexture(bool forceRebuild = false)
     {
         if (cachedTexture != null) return cachedTexture;
 
@@ -273,29 +289,13 @@ public static class HanabiParticlePrefabBuilder
         var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(TexturePath);
         if (tex == null)
         {
-            tex = new Texture2D(SoftTextureSize, SoftTextureSize, TextureFormat.RGBA32, false, true);
-            tex.name = "HanabiSoftCircle";
-            tex.wrapMode = TextureWrapMode.Clamp;
-            tex.filterMode = FilterMode.Bilinear;
-            tex.anisoLevel = 1;
-
-            float center = (SoftTextureSize - 1) * 0.5f;
-            float inv = 1f / center;
-            for (int y = 0; y < SoftTextureSize; y++)
-            {
-                for (int x = 0; x < SoftTextureSize; x++)
-                {
-                    float dx = (x - center) * inv;
-                    float dy = (y - center) * inv;
-                    float d = Mathf.Sqrt(dx * dx + dy * dy);
-                    float a = Mathf.Clamp01(1f - d);
-                    a = Mathf.SmoothStep(0f, 1f, a);
-                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
-                }
-            }
-            tex.Apply();
+            tex = BuildSoftCircleTexture();
             AssetDatabase.CreateAsset(tex, TexturePath);
             AssetDatabase.SaveAssets();
+        }
+        else if (forceRebuild)
+        {
+            RebuildSoftCircleTexture(tex);
         }
 
         cachedTexture = tex;
@@ -347,7 +347,44 @@ public static class HanabiParticlePrefabBuilder
         if (mat == null) return;
         mat.enableInstancing = true;
         ApplyColor(mat, new Color(1.6f, 1.6f, 1.6f, 1f));
+        // Force additive blending for glow-like look.
+        if (mat.HasProperty("_SrcBlend")) mat.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.One);
+        if (mat.HasProperty("_DstBlend")) mat.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.One);
+        if (mat.HasProperty("_ZWrite")) mat.SetFloat("_ZWrite", 0f);
+        mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
         EditorUtility.SetDirty(mat);
+    }
+
+    static Texture2D BuildSoftCircleTexture()
+    {
+        var tex = new Texture2D(SoftTextureSize, SoftTextureSize, TextureFormat.RGBA32, false, true);
+        tex.name = "HanabiSoftCircle";
+        tex.wrapMode = TextureWrapMode.Clamp;
+        tex.filterMode = FilterMode.Bilinear;
+        tex.anisoLevel = 1;
+        RebuildSoftCircleTexture(tex);
+        return tex;
+    }
+
+    static void RebuildSoftCircleTexture(Texture2D tex)
+    {
+        if (tex == null) return;
+        float center = (SoftTextureSize - 1) * 0.5f;
+        float inv = 1f / center;
+        for (int y = 0; y < SoftTextureSize; y++)
+        {
+            for (int x = 0; x < SoftTextureSize; x++)
+            {
+                float dx = (x - center) * inv;
+                float dy = (y - center) * inv;
+                float d = Mathf.Sqrt(dx * dx + dy * dy);
+                float a = Mathf.Clamp01(1f - d);
+                a = Mathf.SmoothStep(0f, 1f, a);
+                tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
+            }
+        }
+        tex.Apply();
+        EditorUtility.SetDirty(tex);
     }
 
     static void ApplyDefaultVertexStreams(ParticleSystemRenderer renderer)

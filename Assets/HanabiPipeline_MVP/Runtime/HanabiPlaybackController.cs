@@ -17,7 +17,7 @@ public class HanabiPlaybackController : MonoBehaviour
 
     [Header("Playback")]
     [SerializeField] KeyCode launchKey = KeyCode.F;
-    [SerializeField] float explodeHeight = 650f;
+    [SerializeField] float explodeHeight = 1300f;
     [SerializeField] bool loop = false;
     [SerializeField] bool playOnStart = false;
 

@@ -1,0 +1,951 @@
+Sci. Tech. Energetic Materials, Vol.68, No.5, 2007
+
+141
+
+レター
+
+煙火星および組成物の燃焼特性
+指村泰弘 *，渡邊日出夫 **，堀内 守 **，渡邊摩衣子 **，伊東一臣 **，
+丁 大玉 **，吉田忠雄 **†
+*花火コンサルタント 〒221-0005 横浜市神奈川区松見町1-27-14 トンボ荘201
+**足利工業大学大学院工学研究科 〒326-8558 足利市大前町268-1
+Corresponding address: yoshida@ashitech.ac.jp
+
+†
+
+2007年1月16日 受付
+
+2007年7月25日
+
+受理
+
+要旨
+煙火星およびその組成物の燃焼挙動と燃焼時間を測定し，それらの特性について考察した。燃焼挙動は燃焼火炎の特定
+のスペクトルピークのプロフィルから考察した。煙火星および組成物の燃焼火炎の強さは時間的な変動が大きいが，全体
+の燃焼時間のバラツキはそれほど大きくなかった。紙筒入り組成物粉末の燃焼では，最初筒口炎が見られる。その後筒口
+炎はなくなり筒内部で燃焼を継続する場合が見られたが，燃焼時間には差が見られなかった。煙火星の燃焼速度の推定に
+は，実験の簡便性とバラツキの小ささから組成物粉末の紙筒内燃焼法が優れている。
+
+1. 緒言
+
+（strand）は，高さ 30 mm，縦横約6 mm の直方体圧搾固形
+
+煙火は花火と同義語であり，現在世界の夜空を彩り，多
+
+試料の側面と底面に難燃性接着剤を塗布し，上面に着火剤
+
+くの人々を楽しませている。煙火の効果を発揮する主な部
+
+を塗布したものである。紙筒入り粉末組成物（PPT）は，直
+
+品は星である。星は燃焼しながら空中を飛行し，いろいろ
+
+径約8 mm，高さ約95 mm の紙筒に粉末組成物を手で圧縮
+
+な形と色彩を与える。煙火の形を与える星の主要な特性は
+
+充填したものである。また，各試料の密度をTable 2に示す。
+
+燃焼時間である。日本の代表的な煙火である八重芯菊花型
+煙火はまん丸（真球）に開く。この場合は星の燃焼時間は短
+
+2.2 実験
+
+いことが必要である。一方，冠（かむろ）と呼ばれる煙火は
+
+静止燃焼の測定には，浜松ホトニクス（株）製のスペクト
+
+燃えながら垂れ下がってくる。この場合は，星の燃焼時間
+
+ルメータPMA-11C59966-31を用いた。飛行燃焼の観察には，
+
+は長いことが必要である。
+
+内径15 mm，深さ 270 mm の鋼製打揚筒と Phantom社製の
+
+本研究では，5種類の色星組成物と着火剤組成物を用い
+
+高速ビデオカメラ VRI-V4.2 を用いた。
+
+て，裸星，着火剤被覆星，接着剤・着火剤塗布星，ストラン
+
+静止燃焼実験は，ドラフトチャンバー内で試料の上端に
+
+ド成形固形組成物および紙筒入り粉末組成物について燃焼
+
+トーチバーナーで点火して，発光スペクトルの特定波長の
+
+時間を測定した結果について述べる。
+
+ピークのプロフィルをスペクトルメータで記録した。飛行
+燃焼実験では，打揚筒から星を打ち揚げて，星の燃焼時間
+
+2. 実験
+
+を高速ビデオカメラで測定した。実験装置の配置図を Fig.
+
+2.1 試料
+
+2 に示した。
+
+用いた星および同組成物は，全国火薬類保安協会編「煙
+火の製造と保安」1） 記載の組成物に外割りで 5 ％のみじん
+
+3 結果と考察
+
+粉を加えたものである。用いた色星および着火剤の組成を
+
+3.1 裸星および全面着火剤被覆星の静止燃焼挙動
+
+Table 1 に記す。
+
+裸星の燃焼における火炎の特定スペクトル・ピーク強度
+
+用いた試料の形状を Fig. 1 に示す。裸星（bare star）はア
+
+のプロフィルの例を Fig. 3（a）に示す。特徴は，
+（１）燃焼の
+
+ルプス煙火工業（株）で製造した直径11 mm，高さ約10 mm
+
+不均一による変動があること，
+（２）火炎表面伝播が遅いこ
+
+のプレス星である。全面着火剤被覆星（primed star）は，
+
+とによるピークの立ちあがりから頂点に達するまでの時
+
+裸星の全表面に着火剤を被覆したものである。接着剤・着
+
+間が長いこと，
+（３）燃焼の後半では，未燃焼の星の表面積
+
+火剤塗布星（PPR）は，裸星の側面と底面に難燃性接着剤を
+
+の減少によりピーク強度が時間と共に減少することなどで
+
+塗布し，上面に着火剤を被覆したものである。ストランド
+
+ある。
+
+142
+
+Y. Sashimura et al.
+
+Table 1 Composition of stars and prime.
+Material
+
+Red
+
+Green
+
+Blue
+
+Yellow
+
+Purple
+
+KClO4
+KNO3
+Phenol resin
+Binsol resin
+Chlorinated gum
+Sulfur
+Sb2S 3
+Silicone (fine)
+Charcoal
+Hemp charcoal
+Magnalium
+Magnalium (fine)
+K2Cr2O7
+SrCO3
+Ba(NO3) 2
+CuO
+Na2C2O4
+Rice granules
+
+53.2
+
+45.7
+
+53.2
+
+55.3
+
+53.2
+
+ø11 mm
+
+55.9
+10.5
+
+10.5
+9.5
+4.8
+
+4.8
+
+11.4
+5.7
+
+4.8
+
+9.3
+10.5
+
+6.7
+
+10.5
+
+10.5
+9.3
+0.3
+
+16.2
+
+8.1
+28.2
+8.1
+
+16.2
+4.8
+
+4.8
+
+Adhesive
+10 mm
+
+10 mm
+Primed star
+
+17.1
+4.8
+
+4.8
+
+ø11 mm
+
+Prime
+
+6.5
+
+Optical fiber
+
+PC
+
+Sample
+
+Spectrometer
+Hold Draft chamber
+
+(a) Stationary experiment (bare star, primed star)
+
+Optical fiber
+
+6 mm
+
+ø8 mm
+
+Sample
+PC
+
+95 mm
+
+Powder
+composition
+Paper tube
+
+30 mm
+
+4.8
+
+PPR
+
+6 mm
+
+Adhesive
+
+4.8
+
+5.7
+
+ø11 mm
+
+10 mm
+
+10.5
+4.7
+9.3
+4.7
+
+Prime
+
+Bare star
+
+Prime
+
+Spectrometer
+Hold
+
+(b) Stationary experiment (strand, PPT, PPR)
+
+PPT
+
+Strand
+
+Draft chamber
+
+Star
+
+Fig. 1 Various shapes of samples.
+3
+
+High-speed video camera
+
+-3
+
+Mortar
+
+Table 2 Density of samples (unit: 10 kg m ).
+
+Bare star
+Primed star
+PPR
+Strand
+PPT
+
+Red
+
+Green
+
+Blue
+
+Yellow
+
+Purple
+
+1.62
+1.16
+1.60
+1.95
+1.01
+
+1.41
+1.48
+1.41
+1.85
+0.95
+
+1.58
+1.25
+1.61
+2.10
+1.15
+
+1.42
+1.45
+1.42
+1.69
+0.98
+
+1.57
+1.39
+1.62
+2.03
+1.12
+
+PC
+
+Hold
+(c) Flying experiment
+Fig. 2 Setup of measuring system.
+
+Sci. Tech. Energetic Materials, Vol.68, No.5, 2007
+
+Counts Intensity
+
+Counts Intensity
+
+Counts Intensity
+
+15000
+
+30000
+
+6000
+
+10000
+
+20000
+
+143
+
+4000
+
+5000
+
+10000
+
+2000
+
+0
+0.000
+
+2.500
+
+5.000
+Time (s)
+(a) Bare star (767 nm)
+
+0
+0.000
+
+3.000
+Time (s)
+(b) Primed star (767 nm)
+1.000
+
+2.000
+
+0
+0.000
+
+1.000
+
+2.000
+
+3.000
+Time (s)
+(c) Primed star (673 nm)
+
+Fig. 3 Spectrum peak intensity profiles of a bare red star and the star covered by prime.
+Table 3 Mean burning times of various types of star compositions.
+Burning time (s)
+
+Height
+(mm)
+
+Red
+
+Green
+
+Blue
+
+Yellow
+
+Purple
+
+Stationary burning
+Bare star
+Primed star
+PPR star
+Strand
+Strand 10
+PPT
+PPT 10
+
+10
+10
+10
+30
+10
+95
+10
+
+2.64
+1.15
+3.70
+10.6
+3.53
+30.5
+3.21
+
+2.75
+2.18
+4.92
+19.0
+6.33
+45.2
+4.76
+
+2.57
+1.16
+2.74
+8.33
+2.78
+19.9
+2.09
+
+6.98
+4.23
+7.94
+24.9
+8.30
+52.3
+5.51
+
+3.06
+1.24
+2.94
+9.31
+3.10
+26.2
+2.75
+
+Flying burning
+Bare star
+Primed star
+PPR star
+
+10
+10
+10
+
+1.74
+1.42
+3.26
+
+2.71
+2.39
+4.11
+
+1.48
+1.34
+2.39
+
+3.29
+4.85
+5.42
+
+1.46
+1.15
+3.12
+
+Type
+
+Strand
+
+6
+
+Red
+Green
+Blue
+Yellow
+Purple
+
+3
+
+0
+
+A B C D E F G H
+Samples
+
+Strand . PPT
+Burning time (s/10 mm)
+
+Burning time (s)
+
+9
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
+0
+
+PPT
+
+y = 1.10x − 0.07
+R2 = 0.94
+y = 0.63x + 0.83
+R2 = 0.88
+
+2
+4
+6
+8
+Burning time (s/10 mm) PPR star
+
+10
+
+Fig. 4 Burning times of various types of star compositions.
+Stationary burning (A: Bare star; B: Primed star;
+C: PPR; D: Strand; E: PPT) Flying burning
+(F: Bare star; G: Primed star; H: PPR)
+
+Fig. 5 Correlations of burning times of various star
+compositions.
+◆ : Correlation between strand and PPR star
+■ : Correlation between PPT and PPR star
+
+着火剤全面被覆星のピーク強度プロフィルの例を Fig. 3
+
+これは，まず着火剤が最初に燃焼を開始し，0.10 s後に星の
+
+（b）および（c）に示す。（b）は K ピーク（767 nm，着火剤・星
+
+色火剤に伝火が始まることを意味する。
+
+の火炎中にともに含まれている），
+（c）は SrCl の最強ピーク
+（673 nm，着火剤の火炎には含まれず，星の火炎に含まれて
+いる）のプロフィルである。着火剤は火の回りが速く，立ち
+上がりからピークに達する時間が短くなり，星の全体の燃
+
+3.2 各種形状の星および組成物の燃焼
+各種形状の星組成物の平均燃焼時間を Table 3 および
+Fig. 4 に示す。
+
+焼時間も短くなることがわかる。この場合，K ピークの立
+
+静止燃焼における各種形状試料の燃焼特性を比較する。
+
+ちあがりは SrCl ピークの立ちあがりより 0.10 ｓはやい。
+
+裸星と全面着火剤被覆星では，後者の方が燃焼時間が短い。
+
+144
+
+Y. Sashimura et al.
+
+Table 4 Relative standard deviations (RSD) of various firework star compositions.
+
+Counts
+
+Red
+
+Green
+
+Blue
+
+Yellow
+
+Purple
+
+Mean
+
+Bare star
+Primed star
+PPR
+Strand
+PPT
+
+0.02
+0.09
+0.02
+0.05
+0.06
+
+0.06
+0.05
+0.13
+0.08
+0.03
+
+0.21
+0.05
+0.13
+0.03
+0.17
+
+0.4
+0.05
+0.43
+0.05
+0.01
+
+0.22
+0.25
+0.14
+0.02
+0.05
+
+0.22
+0.1
+0.17
+0.05
+0.06
+
+Mean
+
+0.08
+
+0.07
+
+0.12
+
+0.19
+
+0.14
+
+0.12
+
+Intensity
+
+Counts Intensity
+
+30000
+20000
+10000
+0
+0.000
+
+2.000
+
+4.000
+(a) Red PPR
+
+Counts
+12500
+10000
+7500
+5000
+2500
+0
+
+6.000
+Time (s)
+
+Intensity
+
+1250
+1000
+750
+500
+250
+0
+0.000
+
+5.000
+
+10.000 15.000
+(b) Green strand
+
+20.000
+Time (s)
+
+Counts Intensity
+1500
+1000
+500
+0
+
+0
+
+10
+
+20
+
+30
+
+(c) Blue PPT
+
+40
+Time (s)
+
+0
+
+10
+
+20
+
+30
+
+40
+
+(d) Yellow PPT
+
+50
+Time (s)
+
+Fig. 6 Examples of spectrum peak intensity profiles in the burning of PPR, strand and PPT.
+着火剤の方が裸星より火の回りが速いのが原因である。全
+
+焼でも飛行燃焼でもあまり差はないと思われる。飛行中に
+
+面着火剤被覆星と接着剤・着火剤被覆星との比較では，後者
+
+は燃焼を促進する何らかの要因が存在する可能性もある。
+
+の方が燃焼時間が長い。円筒形星の全面燃焼と端面燃焼の
+違いによる。接着剤・着火剤被覆星とストランドの比較で
+
+3.3 接着剤・着火剤塗布星（PPR），ストランド（strand）
+
+は，緑星を除いて 10 mm当りの燃焼時間は類似であった。
+
+および紙筒入り粉末組成物（PPT）の燃焼時間の
+
+ストランドと紙筒充填組成物の大きな違いは，前者は圧
+
+バラツキ
+
+搾固形物であり，後者は手で圧填された粉末であることで
+
+星の燃焼時間は，空中で開発した煙火の形状を決める重
+
+ある。平均して後者の方が 10 mm当りの燃焼時間は短い。
+
+要な要素である。実際の星の燃焼時間は星を打揚筒から直
+
+粉末の間隙に火が回り線燃焼速度を上げているためであろ
+
+接打ち揚げて測定することができる。しかし，この方法は
+
+う。しかし，Fig. 5 に示すように，接着剤・着火剤塗布星，
+
+星を造り打ち揚げるための長い時間と手数がかかる。次に
+
+ストランドおよび紙筒充填粉末組成物の燃焼時間の間には
+
+考えられる方法は，全着火剤被覆星を地上で燃焼させて燃
+
+ある程度の相関がある。これらのいずれの方法も星の燃焼
+
+焼時間を測定する方法である。この方法も試料作成に長時
+
+速度の比較に役立つであろう。
+
+間を要する。次に考えられる方法は，PPR，ストランドま
+
+裸星の静止燃焼時間と飛行燃焼時間を比較すると，後者の
+
+たは PPT を用いて線燃焼速度を測定する方法である。
+
+方が短くかつ星間の燃焼時間の差が大きい。飛行燃焼時間の
+
+時間の最もかからない方法は，紙筒入り粉末組成物の端
+
+方が短い一つの理由は，飛行燃焼の場合の着火は打揚筒内で
+
+面燃焼を用いる方法である。この方法は清水によっても用
+
+打揚火薬の燃焼による強力全面加熱によるものであり，星の
+
+いられている 2）。ストランド法は固体ロケット推進薬の線
+
+全表面への伝火がトーチによる局部的な点火の場合より速
+
+燃焼速度測定に用いられている 3）。
+
+いためであろう。全面着火剤被覆星の静止燃焼時間と飛行
+
+燃焼時間測定法の優劣の評価に，燃焼時間の測定のバラ
+
+燃焼時間ではあまり差が見られなかった。どちらの場合も，
+
+ツキを用いることができよう。各種形状の星組成物の燃焼
+
+星の全表面への伝火が同じ程度に早いためであろう。
+
+時間の相対標準偏差（標準偏差/平均値）を Table 4 に記す。
+
+接着剤・着火剤塗布星（PPR）の静止燃焼時間と飛行燃焼
+
+燃焼時間のバラツキの平均の順序は次の通りであった。
+
+時間を比較すると，後者の方がやや短い。試料の一部表面
+
+裸星＞接着剤・着火剤塗布星＞全面着火剤被覆星＞
+
+に着火剤が塗布してあるので，着火時の火の回りは静止燃
+
+紙筒入り粉末組成物＞ストランド
+
+Sci. Tech. Energetic Materials, Vol.68, No.5, 2007
+
+実験の簡便性からは紙筒入り粉末組成物を用いた燃焼速度
+推定法はストランド法より優れているようである。
+
+145
+
+コンポジット固体ロケット推進薬の表面燃焼機構は，燃
+焼表面付近における反応発熱とその熱の未燃固体への移動
+によって燃焼が継続することが知られている 3）。紙筒入り
+
+3.4 燃焼火炎のスペクトルピーク強度プロフィルから見た
+
+粉末組成物の燃焼の場合には，実質的な燃焼は筒口火炎の
+
+各種形状組成物燃焼の安定性
+
+有無に関わらず，筒内の未燃固体の表面付近で行われてい
+
+煙火星および組成物の燃焼火炎の強度の変動は，スペク
+
+ると思われる。
+
+トルピーク強度プロフィルで見ることができる。裸星およ
+び全面着火剤被覆星のピークプロフィルの例は Fig. 3 に示
+した。PPR，ストランドおよび PPT のピーク強度プロフィ
+ルの例を Fig. 6 に示す。
+ピーク強度プロフィルの変動の大きさから見た見かけの
+燃焼安定性は，次の順序であった。
+
+4. 結論
+実際の煙火の打ち揚げで重要な煙火星の燃焼時間は着火
+剤被覆星の飛行燃焼時間である。これを組成物から予測す
+ることは実用上重要である。最も簡単で測定値のバラツキ
+の小さい方法は粉末組成物を内径8 mm，長さ 95 mm の紙
+
+接着剤・着火剤被覆星（PPR）＞ストランド（strand）＞
+
+筒に手で充填して端面燃焼させ，全燃焼時間をストップウ
+
+紙筒入り粉末組成物（PPT）
+
+オッチで測定する方法であった。
+
+PPT では，途中の立ち消えはなかったが，ストランドで
+は立ち消えがあった。PPT では，最初火炎が筒口から噴出
+したが，燃焼の途中から筒口からの火炎の噴出はなくなり，
+内部でのみの燃焼が見られた。それでも，全燃焼時間はあ
+
+謝辞
+本研究に当り試料を提供していただいたアルプス煙火工
+業（株）社長堀内幸敏氏に感謝します。
+
+まり変化しなかった。Fig. 6（d）において 26 s以降のピーク
+強度が燃焼終了時の 52 s まで 0 となっているのは，筒口火
+
+References
+
+炎がまったく見られない状態である。燃焼の最後には短時
+
+1）All Japan Association for Safety of Explosives,
+Manufacture and Safety of Fireworks , p. 96（2006）.
+2）T. Shimizu, Fireworks , p. 137（1961）, Hitotubasi syobo.
+3）N. Kubota, Pyrotechnic Chemistry , Chapter 11（2004）,
+J. Pyrotechnics, Inc.
+
+間の筒口火炎が見られた。筒内燃焼はスペクトルメータの
+ピーク強度プロフィルでは検出できなかったが，目視では
+筒が明るくなるので知覚でき，ストップウオッチで燃焼終
+了時間を測定できた。
+
+Burning characteristics of firework stars
+and compositions
+Yasuhiro Sashimura*, Hideo Watanabe**, Mamoru Horiuti**, Maiko Watanabe**,
+Kazuomi Itoh**, Dayu Ding**, and Tadao Yoshida**†
+The burning behavior and burn-time of firework stars and their compositions were observed. The burning behavior
+is discussed from the perspective of specific spectral peaks observed in the combustion flame. Although the intensity
+of combustion flame fluctuated greatly with time, the total burning times of the stars had little scatter. During the
+combustion of the powdered star composition that had been loaded into paper tubes, at first the flame projected from
+the upper end of the tube. Sometimes, the flame disappeared below the upper end of the tube, with the combustion
+continuing down inside the tube; however, the total combustion time did not change much. For an estimation of burn
+rate of a firework star, the combustion of the powdered composition in a paper tube may be useful from the view
+point of simplicity and the small amount of scatter in the observed data.
+
+Keywords: Firework star, Star composition, Burning time, Spectrum peak profile.
+*Fireworks Consultant, 1-27-14-201 Matsumi-cho, Kanagawa-ku, Yokohama-shi, Kanagawa 221-0005, JAPAN
+**School of Engineering, Ashikaga Institute of Technology, 268-1 Omae-cho, Ashikaga-shi, Tochigi 326-8558, JAPAN
+†
+Corresponding address: yoshida@ashitech.ac.jp
+
+

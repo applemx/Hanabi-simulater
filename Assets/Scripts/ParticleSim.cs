@@ -5,7 +5,7 @@ using UnityEngine;
 public class ParticleSim
 {
     public int AliveCount => aliveCount;
-    public const int TrailSamples = 6;
+    public const int TrailSamples = 24;
 
     readonly Vector3[] pos;
     readonly Vector3[] vel;
@@ -99,7 +99,12 @@ public class ParticleSim
 
     public void Step(float dt, Vector3 wind, float dragK)
     {
-        Vector3 g = new Vector3(0f, -9.81f, 0f);
+        Step(dt, wind, dragK, 1f);
+    }
+
+    public void Step(float dt, Vector3 wind, float dragK, float gravityScale)
+    {
+        Vector3 g = new Vector3(0f, -9.81f * gravityScale, 0f);
 
         int write = 0;
         for (int i = 0; i < aliveCount; i++)
@@ -171,12 +176,17 @@ public class ParticleSim
             switch (kind)
             {
                 case StarKind.Tail:
-                    alphaMul *= Mathf.Lerp(1.1f, 0.5f, t);
-                    sizeMul *= Mathf.Lerp(1.1f, 0.7f, t);
+                    // Chrysanthemum: longer-lasting, visible trailing sparks.
+                    alphaMul *= Mathf.Lerp(2.2f, 1.0f, t);
+                    sizeMul *= Mathf.Lerp(1.0f, 0.55f, t);
                     break;
                 case StarKind.Comet:
                     alphaMul *= Mathf.Lerp(1.2f, 0.6f, t);
                     sizeMul *= 1.35f;
+                    break;
+                case StarKind.Solid:
+                    // Peony: clean bloom, no tail, quicker fade.
+                    alphaMul *= Mathf.Lerp(1.0f, 0.12f, t);
                     break;
                 case StarKind.Strobe:
                 {
@@ -265,12 +275,17 @@ public class ParticleSim
             switch (kind)
             {
                 case StarKind.Tail:
-                    alphaMul *= Mathf.Lerp(1.1f, 0.5f, t);
-                    sizeMul *= Mathf.Lerp(1.1f, 0.7f, t);
+                    // Chrysanthemum: longer-lasting, visible trailing sparks.
+                    alphaMul *= Mathf.Lerp(2.2f, 1.0f, t);
+                    sizeMul *= Mathf.Lerp(1.0f, 0.55f, t);
                     break;
                 case StarKind.Comet:
                     alphaMul *= Mathf.Lerp(1.2f, 0.6f, t);
                     sizeMul *= 1.35f;
+                    break;
+                case StarKind.Solid:
+                    // Peony: clean bloom, no trail, quicker fade to avoid streak feel.
+                    alphaMul *= Mathf.Lerp(1.0f, 0.12f, t);
                     break;
                 case StarKind.Strobe:
                 {
@@ -344,10 +359,13 @@ public class ParticleSim
                 counts[slot]++;
             }
 
-            if (kind == StarKind.Tail || kind == StarKind.Comet)
+            if (kind == StarKind.Tail)
             {
-                EmitTrailSamples(i, target, counts, slot, r, g, b, alpha, size[i] * sizeMul, L, a);
+                EmitTrailSamples(i, target, counts, slot, r, g, b, alpha, size[i] * sizeMul, L, a, TrailSamples);
+                EmitVelocityStreak(target, counts, slot, pos[i], vel[i], new Color32(r, g, b, alpha), size[i] * sizeMul, L, a);
             }
+            else if (kind == StarKind.Comet)
+                EmitTrailSamples(i, target, counts, slot, r, g, b, alpha, size[i] * sizeMul, L, a, 10);
         }
     }
 
@@ -389,21 +407,22 @@ public class ParticleSim
         trailCursor[index] = (byte)((cursor + 1) % TrailSamples);
     }
 
-    void EmitTrailSamples(int index, ParticleSystem.Particle[] target, int[] counts, int slot, byte r, byte g, byte b, byte alpha, float size, float life, float age)
+    void EmitTrailSamples(int index, ParticleSystem.Particle[] target, int[] counts, int slot, byte r, byte g, byte b, byte alpha, float size, float life, float age, int sampleCount)
     {
         if (target == null || counts == null) return;
         int baseIdx = index * TrailSamples;
         int cursor = trailCursor[index];
 
-        for (int k = 0; k < TrailSamples; k++)
+        int n = Mathf.Clamp(sampleCount, 0, TrailSamples);
+        for (int k = 0; k < n; k++)
         {
             int sampleIdx = cursor - 1 - k;
             if (sampleIdx < 0) sampleIdx += TrailSamples;
             Vector3 p = trailHistory[baseIdx + sampleIdx];
 
-            float t = (k + 1f) / (TrailSamples + 1f);
-            float alphaScale = Mathf.Lerp(0.55f, 0.15f, t);
-            float sizeScale = Mathf.Lerp(0.9f, 0.5f, t);
+            float t = (k + 1f) / (n + 1f);
+            float alphaScale = Mathf.Lerp(0.95f, 0.08f, t);
+            float sizeScale = Mathf.Lerp(0.85f, 0.3f, t);
             byte a = (byte)Mathf.Clamp(alpha * alphaScale, 0f, 255f);
 
             AddTrailPoint(target, counts, slot, p, new Color32(r, g, b, a), size * sizeScale, life, age);
@@ -424,6 +443,25 @@ public class ParticleSim
         target[writeIndex].velocity = Vector3.zero;
         target[writeIndex].randomSeed = (uint)(writeIndex * 2654435761u);
         counts[slot]++;
+    }
+
+    static void EmitVelocityStreak(ParticleSystem.Particle[] target, int[] counts, int slot, Vector3 pos, Vector3 vel, Color32 color, float size, float life, float age)
+    {
+        if (target == null || counts == null) return;
+        float speed = vel.magnitude;
+        if (speed < 0.01f) return;
+
+        Vector3 dir = vel / speed;
+        float len = Mathf.Clamp(speed * 0.03f, 0.03f, 0.6f);
+        for (int k = 1; k <= 3; k++)
+        {
+            float t = k / 3f;
+            Vector3 p = pos - dir * (len * t);
+            float alphaScale = Mathf.Lerp(0.7f, 0.1f, t);
+            float sizeScale = Mathf.Lerp(0.8f, 0.35f, t);
+            byte a = (byte)Mathf.Clamp(color.a * alphaScale, 0f, 255f);
+            AddTrailPoint(target, counts, slot, p, new Color32(color.r, color.g, color.b, a), size * sizeScale, life, age);
+        }
     }
 
     static float Hash01(uint x)

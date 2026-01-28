@@ -22,7 +22,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.06
     sizeJitter: 0.02
-    brightness: 1
+    brightness: 0.7
   - tag: Tail
     kind: 1
     baseSpeed: 110
@@ -32,7 +32,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.08
     sizeJitter: 0.03
-    brightness: 1
+    brightness: 0.7
   - tag: ColorChange
     kind: 2
     baseSpeed: 110
@@ -42,7 +42,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.07
     sizeJitter: 0.025
-    brightness: 1
+    brightness: 0.7
   - tag: Comet
     kind: 3
     baseSpeed: 110
@@ -52,7 +52,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.1
     sizeJitter: 0.035
-    brightness: 1
+    brightness: 0.7
   - tag: Strobe
     kind: 4
     baseSpeed: 110
@@ -62,7 +62,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.08
     sizeJitter: 0.03
-    brightness: 1
+    brightness: 0.7
   - tag: Glitter
     kind: 5
     baseSpeed: 110
@@ -72,7 +72,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.09
     sizeJitter: 0.03
-    brightness: 1
+    brightness: 0.7
   - tag: Crackle
     kind: 6
     baseSpeed: 110
@@ -82,7 +82,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.07
     sizeJitter: 0.025
-    brightness: 1
+    brightness: 0.7
   - tag: Crossette
     kind: 7
     baseSpeed: 110
@@ -92,7 +92,7 @@ MonoBehaviour:
     drag: 0.35
     baseSize: 0.075
     sizeJitter: 0.03
-    brightness: 1
+    brightness: 0.7
   palettes:
   - tag: Palette_Default
     colors:
@@ -137,17 +137,17 @@ MonoBehaviour:
     jitter: 0
   launchProfiles:
   - tag: Launch_Default
-    launchSpeed: 240
+    launchSpeed: 480
     gravityScale: 1
     windScale: 0.2
     dragScale: 0.2
   - tag: Launch_Low
-    launchSpeed: 210
+    launchSpeed: 420
     gravityScale: 1
     windScale: 0.2
     dragScale: 0.25
   - tag: Launch_High
-    launchSpeed: 264
+    launchSpeed: 528
     gravityScale: 1
     windScale: 0.2
     dragScale: 0.18

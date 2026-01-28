@@ -14,7 +14,7 @@ public class FireworkController : MonoBehaviour
     [SerializeField] bool instantExplode = true;
 
     [Tooltip("爆発の高さ（instant時）")]
-    [SerializeField] float testExplodeHeight = 60f;
+    [SerializeField] float testExplodeHeight = 120f;
 
     [Tooltip("爆発位置を launchOrigin から少し前に出す")]
     [SerializeField] float originForwardOffset = 0f;

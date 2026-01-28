@@ -41,134 +41,154 @@ MonoBehaviour:
     thickness: 0.1
   mirrorUpperHemisphere: 1
   stars:
-  - dir: {x: -0.5488213, y: -0.7683498, z: -0.32929277}
-    radius: 0.9490035
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.58270365, y: -0.7985198, z: 0.15107131}
-    radius: 0.96532774
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.40407243, y: -0.744344, z: 0.5316742}
-    radius: 0.97960985
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.10976426, y: -0.72444415, z: 0.6805384}
-    radius: 0.94900346
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.4131411, y: -0.76104945, z: 0.5001182}
-    radius: 0.9581069
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.5882088, y: -0.8060639, z: 0.06535653}
-    radius: 0.9562931
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.4507019, y: -0.7940938, z: -0.40777794}
-    radius: 0.97070813
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.15735303, y: -0.74180716, z: -0.6518912}
-    radius: 0.9267907
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.19423455, y: -0.7553566, z: -0.6258669}
-    radius: 0.96532774
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.7758644, y: -0.598524, z: 0.19950798}
-    radius: 0.939812
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.82019955, y: -0.46551865, z: -0.33251333}
-    radius: 0.93981194
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.5336085, y: -0.14941038, z: -0.8324293}
-    radius: 0.9760589
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.5395404, y: -0.021581618, z: -0.84168303}
-    radius: 0.96532774
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.10913493, y: -0.15278889, z: -0.9822144}
-    radius: 0.95447594
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.32554895, y: -0.15192284, z: -0.93324023}
-    radius: 0.9599171
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.5859881, y: -0.10851631, z: -0.8030207}
-    radius: 0.9599171
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.66288364, y: -0.021383343, z: -0.748417}
-    radius: 0.97427857
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.88983375, y: -0.4557685, z: 0.021703262}
-    radius: 0.9599172
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.72867036, y: -0.24289013, z: 0.6403467}
-    radius: 0.9434993
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.42453465, y: -0.24578321, z: 0.87141323}
-    radius: 0.9323935
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.15735304, y: -0.20231105, z: 0.96659726}
-    radius: 0.92679065
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.54882133, y: -0.19757567, z: 0.81225556}
-    radius: 0.94900346
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.93856037, y: -0.19644287, z: 0.28375083}
-    radius: 0.95447594
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.9569743, y: -0.24480739, z: -0.15578651}
+  - dir: {x: -0.3783387, y: -0.91246396, z: 0.15578651}
     radius: 0.9361101
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.022211257, y: -0.99950653, z: -0.022211257}
-    radius: 0.93796283
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.06474485, y: -0.9280095, z: -0.36688748}
-    radius: 0.96532774
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.021152478, y: -0.105762385, z: -0.99416643}
-    radius: 0.9849122
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.23608196, y: -0.9657898, z: 0.107309975}
-    radius: 0.97070813
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.19387369, y: -0.9262854, z: 0.32312283}
-    radius: 0.9671245
-    tag: Glitter
-    size: 2
-  - dir: {x: 0.3201651, y: -0.9178066, z: 0.23478775}
-    radius: 0.9760589
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.107908085, y: -0.8848463, z: 0.45321396}
-    radius: 0.96532774
-    tag: Glitter
-    size: 2
-  - dir: {x: -0.93856037, y: -0.28375083, z: -0.19644287}
+    tag: Solid
+    size: 8
+  - dir: {x: 0.10976426, y: -0.6805384, z: 0.72444415}
+    radius: 0.94900346
+    tag: Solid
+    size: 8
+  - dir: {x: -0.32133842, y: -0.74978966, z: 0.57840914}
+    radius: 0.972495
+    tag: Solid
+    size: 8
+  - dir: {x: -0.63419235, y: -0.6779297, z: 0.3717679}
+    radius: 0.95265526
+    tag: Solid
+    size: 8
+  - dir: {x: -0.41236198, y: -0.88983375, z: -0.19532935}
+    radius: 0.9599172
+    tag: Solid
+    size: 8
+  - dir: {x: -0.15278889, y: -0.8512525, z: -0.50202066}
     radius: 0.95447594
     tag: Solid
-    size: 2
+    size: 8
+  - dir: {x: -0.41953748, y: -0.59618485, z: -0.6845085}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: -0.54360676, y: -0.23918697, z: -0.80453795}
+    radius: 0.9581068
+    tag: Solid
+    size: 8
+  - dir: {x: -0.76104945, y: -0.5001182, z: -0.4131411}
+    radius: 0.9581069
+    tag: Solid
+    size: 8
+  - dir: {x: -0.8060639, y: -0.5882088, z: -0.06535653}
+    radius: 0.9562931
+    tag: Solid
+    size: 8
+  - dir: {x: -0.86115587, y: -0.41953748, z: 0.28705198}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: -0.6235478, y: -0.4085313, z: 0.66655105}
+    radius: 0.968918
+    tag: Solid
+    size: 8
+  - dir: {x: -0.3675729, y: -0.2810852, z: 0.8864994}
+    radius: 0.9635276
+    tag: Solid
+    size: 8
+  - dir: {x: 0.02178551, y: -0.1960696, z: 0.980348}
+    radius: 0.9562931
+    tag: Solid
+    size: 8
+  - dir: {x: 0.41550532, y: -0.1530809, z: 0.8966167}
+    radius: 0.9526553
+    tag: Solid
+    size: 8
+  - dir: {x: 0.72867036, y: -0.24289013, z: 0.6403467}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: 0.91246396, y: -0.28931785, z: 0.28931785}
+    radius: 0.9361101
+    tag: Solid
+    size: 8
+  - dir: {x: 0.9784921, y: -0.19569843, z: -0.065232806}
+    radius: 0.9581069
+    tag: Solid
+    size: 8
+  - dir: {x: 0.88983375, y: -0.19532935, z: -0.41236198}
+    radius: 0.9599172
+    tag: Solid
+    size: 8
+  - dir: {x: 0.65927607, y: -0.3615385, z: -0.65927607}
+    radius: 0.9796098
+    tag: Solid
+    size: 8
+  - dir: {x: 0.3675729, y: -0.5405484, z: -0.7567678}
+    radius: 0.9635276
+    tag: Solid
+    size: 8
+  - dir: {x: -0.065731965, y: -0.94215816, z: 0.32865983}
+    radius: 0.9508311
+    tag: Solid
+    size: 8
+  - dir: {x: 0.4557685, y: -0.6293946, z: 0.6293946}
+    radius: 0.9599172
+    tag: Solid
+    size: 8
+  - dir: {x: 0.6329826, y: -0.72029054, z: 0.28375083}
+    radius: 0.95447594
+    tag: Solid
+    size: 8
+  - dir: {x: 0.6831774, y: -0.72725344, z: -0.06611395}
+    radius: 0.9453376
+    tag: Solid
+    size: 8
+  - dir: {x: 0.46551865, y: -0.82019955, z: -0.33251333}
+    radius: 0.93981194
+    tag: Solid
+    size: 8
+  - dir: {x: 0.02208092, y: -0.99364144, z: -0.110404596}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: 0.15578651, y: -0.24480739, z: -0.9569743}
+    radius: 0.9361101
+    tag: Solid
+    size: 8
+  - dir: {x: -0.19872828, y: -0.24289013, z: -0.9494795}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: -0.021826986, y: -0.58932865, z: -0.8075985}
+    radius: 0.95447594
+    tag: Solid
+    size: 8
+  - dir: {x: 0.36757293, y: -0.92974335, z: 0.021621939}
+    radius: 0.96352756
+    tag: Solid
+    size: 8
+  - dir: {x: 0.28705198, y: -0.86115587, z: 0.41953748}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: -0.980348, y: -0.1960696, z: -0.02178551}
+    radius: 0.9562931
+    tag: Solid
+    size: 8
+  - dir: {x: -0.9053177, y: -0.06624276, z: 0.41953748}
+    radius: 0.9434993
+    tag: Solid
+    size: 8
+  - dir: {x: -0.8966167, y: -0.1530809, z: -0.41550532}
+    radius: 0.9526553
+    tag: Solid
+    size: 8
+  - dir: {x: 0.4891403, y: 0.02126697, z: -0.8719458}
+    radius: 0.97960985
+    tag: Solid
+    size: 8
+  - dir: {x: -0.6831774, y: -0.06611395, z: 0.72725344}
+    radius: 0.9453376
+    tag: Solid
+    size: 8
   waruyaku:
   - shape: 0
     center: {x: 0, y: 0, z: 0}
@@ -179,220 +199,1152 @@ MonoBehaviour:
     radius: 0.8
     strength: 190
   waruyakuStrokes:
-  - dir: {x: -0.19872828, y: -0.9494795, z: 0.24289013}
-    radius: 0.9434993
+  - dir: {x: -0.33251333, y: -0.8645347, z: 0.37684843}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32678264, y: -0.8496349, z: 0.4139247}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32554895, y: -0.8030207, z: 0.499175}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.318429, y: -0.7854582, z: 0.530715}
+    radius: 0.98138046
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.27952144, y: -0.79556096, z: 0.5375412}
+    radius: 0.96891797
     brushRadius: 0.08
     strength: 180
   - dir: {x: -0.23918697, y: -0.80453795, z: 0.54360676}
     radius: 0.9581068
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.06624276, y: -0.41953748, z: 0.9053177}
+  - dir: {x: -0.19757567, y: -0.81225556, z: 0.54882133}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.14941038, y: -0.8324293, z: 0.5336085}
+    radius: 0.9760589
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15278889, y: -0.8512525, z: 0.50202066}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.109764256, y: -0.85616124, z: 0.5049156}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06498745, y: -0.8881619, z: 0.4549122}
+    radius: 0.9617241
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02212411, y: -0.9070885, z: 0.4203581}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.021266973, y: -0.91447973, z: 0.40407246}
+    radius: 0.9796098
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.06474485, y: -0.9280095, z: 0.36688748}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.10913493, y: -0.93856037, z: 0.3274048}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.11062055, y: -0.95133674, z: 0.28761345}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.15578651, y: -0.9569743, z: 0.24480739}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.19245009, y: -0.9622505, z: 0.19245009}
+    radius: 0.97427857
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.23478775, y: -0.9604953, z: 0.14941038}
+    radius: 0.9760589
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.23608196, y: -0.9657898, z: 0.107309975}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.27697217, y: -0.9587498, z: 0.06391665}
+    radius: 0.97783595
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.28931785, y: -0.9569743, z: 0.022255218}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.36552802, y: -0.92457086, z: -0.10750824}
+    radius: 0.96891797
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.37537563, y: -0.9053177, z: -0.19872828}
     radius: 0.9434993
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.06474485, y: -0.36688748, z: 0.9280095}
-    radius: 0.96532774
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.36688748, y: -0.06474485, z: 0.9280095}
-    radius: 0.96532774
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.67153704, y: -0.5848871, z: 0.4549122}
-    radius: 0.96172404
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.67153704, y: -0.5848871, z: 0.4549122}
-    radius: 0.96172404
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.66655105, y: -0.6235478, z: 0.4085313}
+  - dir: {x: 0.4085313, y: -0.88156754, z: -0.23651811}
     radius: 0.968918
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.6779297, y: -0.63419235, z: 0.3717679}
-    radius: 0.95265526
+  - dir: {x: 0.41953748, y: -0.86115587, z: -0.28705198}
+    radius: 0.9434993
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.45070186, y: -0.87994176, z: -0.15023395}
-    radius: 0.9707082
+  - dir: {x: 0.4507019, y: -0.7940938, z: -0.40777794}
+    radius: 0.97070813
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.41791058, y: -0.901807, z: -0.10997646}
+  - dir: {x: 0.45749572, y: -0.7624929, z: -0.45749572}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.45237195, y: -0.7108702, z: -0.538538}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.46828824, y: -0.6466838, z: -0.6020849}
+    radius: 0.93425363
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.4664364, y: -0.5552814, z: -0.6885489}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.46279764, y: -0.5068736, z: -0.72725344}
+    radius: 0.9453376
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.46643636, y: -0.42201385, z: -0.77739394}
+    radius: 0.9379629
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.45836672, y: -0.37105876, z: -0.8075985}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.41953748, y: -0.28705198, z: -0.86115587}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.37537563, y: -0.19872828, z: -0.9053177}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.3783387, y: -0.15578651, z: -0.91246396}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.3274048, y: -0.10913493, z: -0.93856037}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.32865983, y: -0.065731965, z: -0.94215816}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.27747643, y: -0.021344341, z: -0.9604953}
+    radius: 0.9760589
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.86115587, y: -0.02208092, z: -0.50786114}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8881619, y: -0.06498745, z: -0.4549122}
+    radius: 0.9617241
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.901807, y: -0.10997646, z: -0.41791058}
     radius: 0.94717234
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.41791058, y: -0.901807, z: -0.10997646}
+  - dir: {x: -0.91246396, y: -0.15578651, z: -0.3783387}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.9262854, y: -0.19387369, z: -0.32312283}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.92974335, y: -0.2810852, z: -0.23784132}
+    radius: 0.96352756
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.93856037, y: -0.28375083, z: -0.19644287}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.901807, y: -0.41791058, z: -0.10997646}
     radius: 0.94717234
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.61674213, y: -0.7868779, z: -0.02126697}
-    radius: 0.97960985
+  - dir: {x: -0.88983375, y: -0.4557685, z: -0.021703262}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.88983375, y: -0.4557685, z: 0.021703262}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.83701783, y: -0.53654987, z: 0.107309975}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8185921, y: -0.55310273, z: 0.15486877}
+    radius: 0.9416574
     brushRadius: 0.08
     strength: 180
   - dir: {x: -0.7683498, y: -0.592727, z: 0.24148138}
     radius: 0.9490035
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.77893263, y: -0.5563804, z: 0.28931785}
-    radius: 0.9361101
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.77893263, y: -0.5563804, z: 0.28931785}
-    radius: 0.9361101
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.6057101, y: -0.29163823, z: 0.74031234}
-    radius: 0.92866206
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.15735304, y: -0.20231105, z: 0.96659726}
-    radius: 0.92679065
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.15079065, y: -0.19387369, z: 0.96936846}
-    radius: 0.9671245
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.10831242, y: -0.19496235, z: 0.9748118}
-    radius: 0.9617241
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.065731965, y: -0.15337458, z: 0.9859795}
-    radius: 0.9508311
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.5068736, y: -0.06611395, z: 0.85948133}
-    radius: 0.9453376
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.8512525, y: -0.15278889, z: 0.50202066}
+  - dir: {x: -0.72029054, y: -0.6329826, z: 0.28375083}
     radius: 0.95447594
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.8696782, y: -0.15609607, z: 0.46828824}
-    radius: 0.93425363
+  - dir: {x: -0.6885489, y: -0.6441265, z: 0.33316886}
+    radius: 0.93796283
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.93856037, y: -0.28375083, z: 0.19644287}
-    radius: 0.95447594
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.9457976, y: -0.28593883, z: 0.15396705}
-    radius: 0.9471723
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.95133674, y: -0.28761345, z: 0.11062055}
-    radius: 0.9416574
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.95133674, y: -0.28761345, z: 0.11062055}
-    radius: 0.9416574
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.94215816, y: -0.32865983, z: 0.065731965}
-    radius: 0.9508311
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.94397265, y: -0.3292928, z: 0.021952854}
-    radius: 0.94900346
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.8496349, y: -0.32678264, z: -0.4139247}
-    radius: 0.9562931
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.82019955, y: -0.33251333, z: -0.46551865}
-    radius: 0.93981194
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.7108702, y: -0.538538, z: -0.45237195}
-    radius: 0.9671245
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.67153704, y: -0.5848871, z: -0.4549122}
-    radius: 0.96172404
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.67153704, y: -0.5848871, z: -0.4549122}
-    radius: 0.96172404
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.6293946, y: -0.6293946, z: -0.4557685}
-    radius: 0.9599172
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: 0.6235478, y: -0.66655105, z: -0.4085313}
+  - dir: {x: -0.6235478, y: -0.66655105, z: 0.4085313}
     radius: 0.968918
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.59618485, y: -0.6845085, z: -0.41953748}
+  - dir: {x: -0.538538, y: -0.7108702, z: 0.45237195}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.45237195, y: -0.7108702, z: 0.538538}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.37035367, y: -0.71892184, z: 0.5882088}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.28375083, y: -0.72029054, z: 0.6329826}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19496237, y: -0.71486205, z: 0.67153704}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.10976426, y: -0.6805384, z: 0.72444415}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.6845085, z: 0.72867036}
     radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.06585856, y: -0.63663274, z: 0.7683498}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.15640749, y: -0.6032861, z: 0.7820375}
+    radius: 0.9323935
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.23918697, y: -0.54360676, z: 0.80453795}
+    radius: 0.9581068
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.32554895, y: -0.499175, z: 0.8030207}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.40777794, y: -0.4507019, z: 0.7940938}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.49181688, y: -0.36351684, z: 0.7911837}
+    radius: 0.97427857
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.5488213, y: -0.32929277, z: 0.7683498}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.58598804, y: -0.2821424, z: 0.75961417}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.6466838, y: -0.20069496, z: 0.73588157}
+    radius: 0.93425363
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.6766366, y: -0.15278889, z: 0.72029054}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.70308316, y: -0.10652775, z: 0.70308316}
+    radius: 0.97783595
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.92974335, y: -0.021621939, z: 0.36757293}
+    radius: 0.96352756
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.92974335, y: -0.021621939, z: 0.36757293}
+    radius: 0.96352756
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.955084, y: -0.06663377, z: 0.28874636}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.9657898, y: -0.107309975, z: 0.23608196}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.9748118, y: -0.10831242, z: 0.19496235}
+    radius: 0.9617241
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.9766467, y: -0.15192282, z: 0.15192282}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.9784921, y: -0.19569843, z: 0.065232806}
+    radius: 0.9581069
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.97117275, y: -0.23739779, z: 0.021581618}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.9587498, y: -0.27697217, z: -0.06391665}
+    radius: 0.97783595
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.955084, y: -0.28874636, z: -0.06663377}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.93324023, y: -0.32554895, z: -0.15192284}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.9053177, y: -0.37537563, z: -0.19872828}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.85451555, y: -0.46012378, z: -0.24101722}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.8138259, y: -0.50589174, z: -0.28593883}
+    radius: 0.9471723
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.7683498, y: -0.5488213, z: -0.32929277}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.71892184, y: -0.5882088, z: -0.37035367}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.63419235, y: -0.6779297, z: -0.3717679}
+    radius: 0.95265526
     brushRadius: 0.08
     strength: 180
   - dir: {x: 0.5488213, y: -0.7244441, z: -0.41710418}
     radius: 0.9490035
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.3783387, y: -0.823443, z: -0.42284915}
-    radius: 0.9361101
+  - dir: {x: 0.49091983, y: -0.74705195, z: -0.44823116}
+    radius: 0.9760589
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.37105876, y: -0.8075985, z: -0.45836672}
+  - dir: {x: 0.23608196, y: -0.83701783, z: -0.49362588}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.15278889, y: -0.8512525, z: -0.50202066}
     radius: 0.95447594
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.33251333, y: -0.82019955, z: -0.46551865}
+  - dir: {x: 0.06611395, y: -0.85948133, z: -0.5068736}
+    radius: 0.9453376
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.109764256, y: -0.85616124, z: -0.5049156}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19496237, y: -0.84483695, z: -0.49823716}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.33251333, y: -0.82019955, z: -0.46551865}
     radius: 0.93981194
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.32554895, y: -0.8030207, z: -0.499175}
+  - dir: {x: -0.40777794, y: -0.7940938, z: -0.4507019}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.5088545, y: -0.77434385, z: -0.37610984}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.597351, y: -0.7300957, z: -0.33186167}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.6779297, y: -0.6779297, z: -0.28429312}
+    radius: 0.95265526
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.6858474, y: -0.6858474, z: -0.24336523}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.7553566, y: -0.6258669, z: -0.19423455}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8030207, y: -0.5859881, z: -0.10851631}
     radius: 0.9599171
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.0212286, y: -0.0636858, z: -0.99774414}
-    radius: 0.9813805
+  - dir: {x: -0.84168303, y: -0.5395404, z: -0.021581618}
+    radius: 0.96532774
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.15337458, y: -0.065731965, z: -0.9859795}
-    radius: 0.9508311
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.19496235, y: -0.10831242, z: -0.9748118}
-    radius: 0.9617241
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.19496235, y: -0.10831242, z: -0.9748118}
-    radius: 0.9617241
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.44741654, y: -0.19174995, z: -0.8735275}
-    radius: 0.977836
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.7108702, y: -0.538538, z: -0.45237195}
-    radius: 0.9671245
-    brushRadius: 0.08
-    strength: 180
-  - dir: {x: -0.110404596, y: -0.99364144, z: -0.02208092}
+  - dir: {x: -0.86115587, y: -0.50786114, z: 0.02208092}
     radius: 0.9434993
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.10913493, y: -0.9822144, z: -0.15278889}
-    radius: 0.95447594
+  - dir: {x: -0.85616124, y: -0.5049156, z: 0.109764256}
+    radius: 0.9490035
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.37176788, y: -0.8966167, z: 0.2405557}
-    radius: 0.9526553
+  - dir: {x: -0.8735275, y: -0.44741654, z: 0.19174995}
+    radius: 0.977836
     brushRadius: 0.08
     strength: 180
-  - dir: {x: 0.33251333, y: -0.82019955, z: 0.46551865}
+  - dir: {x: -0.8719458, y: -0.40407243, z: 0.27647063}
+    radius: 0.97960985
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8645347, y: -0.33251333, z: 0.37684843}
     radius: 0.93981194
     brushRadius: 0.08
     strength: 180
-  - dir: {x: -0.6329826, y: -0.50202066, z: 0.58932865}
+  - dir: {x: -0.86284035, y: -0.199117, z: 0.46460634}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.823443, y: -0.11127608, z: 0.5563804}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.3292928, y: -0.021952854, z: -0.94397265}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.3274048, y: -0.10913493, z: -0.93856037}
     radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.37684843, y: -0.33251333, z: -0.8645347}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.3783387, y: -0.42284915, z: -0.823443}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.40702865, y: -0.57840914, z: -0.70694447}
+    radius: 0.972495
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.4203581, y: -0.6415992, z: -0.6415992}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.42284915, y: -0.823443, z: -0.3783387}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.4085313, y: -0.88156754, z: -0.23651811}
+    radius: 0.968918
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.41791058, y: -0.901807, z: -0.10997646}
+    radius: 0.94717234
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.40407246, y: -0.91447973, z: 0.021266973}
+    radius: 0.9796098
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.37176788, y: -0.8966167, z: 0.2405557}
+    radius: 0.9526553
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.37105876, y: -0.8512525, z: 0.37105876}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32929277, y: -0.7683498, z: 0.5488213}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32312283, y: -0.7108702, z: 0.6247041}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.2821424, y: -0.58598804, z: 0.75961417}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24480739, y: -0.51186997, z: 0.823443}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24432382, y: -0.33316883, z: 0.9106615}
+    radius: 0.9379629
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.20069496, y: -0.20069496, z: 0.9588759}
+    radius: 0.93425363
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15079065, y: -0.19387369, z: 0.96936846}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15578651, y: -0.24480739, z: 0.9569743}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15396705, y: -0.28593883, z: 0.9457976}
+    radius: 0.9471723
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15578651, y: -0.3783387, z: 0.91246396}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15023395, y: -0.45070186, z: 0.87994176}
+    radius: 0.9707082
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15278889, y: -0.50202066, z: 0.8512525}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15107131, y: -0.58270365, z: 0.7985198}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15220988, y: -0.6305838, z: 0.76104945}
+    radius: 0.9581069
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.10976426, y: -0.72444415, z: 0.6805384}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.1093435, y: -0.7654045, z: 0.63419235}
+    radius: 0.9526553
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.10851631, y: -0.8030207, z: 0.5859881}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06611395, y: -0.85948133, z: 0.5068736}
+    radius: 0.9453376
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06624276, y: -0.9053177, z: 0.41953748}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.065731965, y: -0.94215816, z: 0.32865983}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06663377, y: -0.955084, z: 0.28874636}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02178551, y: -0.980348, z: 0.1960696}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021952853, y: -0.9878783, z: 0.15366995}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.022167556, y: -0.99754, z: 0.06650267}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02126697, y: -0.9995476, z: 0.02126697}
+    radius: 0.97960985
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.022167556, y: -0.99754, z: -0.06650267}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.99364144, z: -0.110404596}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02178551, y: -0.980348, z: -0.1960696}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021344341, y: -0.9604953, z: -0.27747643}
+    radius: 0.9760589
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021952854, y: -0.94397265, z: -0.3292928}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021621939, y: -0.92974335, z: -0.36757293}
+    radius: 0.96352756
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021703262, y: -0.88983375, z: -0.4557685}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.86115587, z: -0.50786114}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021581618, y: -0.84168303, z: -0.5395404}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021826986, y: -0.8075985, z: -0.58932865}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021383343, y: -0.748417, z: -0.66288364}
+    radius: 0.97427857
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.6845085, z: -0.72867036}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02126697, y: -0.61674213, z: -0.7868779}
+    radius: 0.97960985
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06611395, y: -0.5068736, z: -0.85948133}
+    radius: 0.9453376
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06624276, y: -0.41953748, z: -0.9053177}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.065731965, y: -0.32865983, z: -0.94215816}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06663377, y: -0.28874636, z: -0.955084}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.065731965, y: -0.15337458, z: -0.9859795}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.066372335, y: -0.066372335, z: -0.99558496}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.3292928, y: -0.021952854, z: 0.94397265}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.3274048, y: -0.10913493, z: 0.93856037}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32312283, y: -0.19387369, z: 0.9262854}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32929277, y: -0.28538707, z: 0.9000669}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.33251333, y: -0.37684843, z: 0.8645347}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32678264, y: -0.4139247, z: 0.8496349}
+    radius: 0.9562931
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.33251333, y: -0.46551865, z: 0.82019955}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32554895, y: -0.499175, z: 0.8030207}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.32929277, y: -0.5488213, z: 0.7683498}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.28375083, y: -0.6329826, z: 0.72029054}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.29281953, y: -0.6532128, z: 0.6982619}
+    radius: 0.92491555
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.28429312, y: -0.6779297, z: 0.6779297}
+    radius: 0.95265526
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.28375083, y: -0.72029054, z: 0.6329826}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24148138, y: -0.7683498, z: 0.592727}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.23918697, y: -0.80453795, z: 0.54360676}
+    radius: 0.9581068
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19496237, y: -0.84483695, z: 0.49823716}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19174995, y: -0.8735275, z: 0.44741654}
+    radius: 0.977836
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.1530809, y: -0.8966167, z: 0.41550532}
+    radius: 0.9526553
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15192284, y: -0.93324023, z: 0.32554895}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.107309975, y: -0.9657898, z: 0.23608196}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.10831242, y: -0.9748118, z: 0.19496235}
+    radius: 0.9617241
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.066372335, y: -0.99558496, z: 0.066372335}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06650267, y: -0.99754, z: -0.022167556}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06611395, y: -0.99170923, z: -0.11018991}
+    radius: 0.9453376
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06462456, y: -0.96936846, z: -0.23695673}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021952854, y: -0.94397265, z: -0.3292928}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021621939, y: -0.92974335, z: -0.36757293}
+    radius: 0.96352756
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021581618, y: -0.84168303, z: -0.5395404}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021995293, y: -0.7698353, z: -0.6378635}
+    radius: 0.94717234
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.6845085, z: -0.72867036}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.021826986, y: -0.58932865, z: -0.8075985}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.50786114, z: -0.86115587}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02212411, y: -0.4203581, z: -0.9070885}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.065731965, y: -0.32865983, z: -0.94215816}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06462456, y: -0.23695673, z: -0.96936846}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.109764256, y: -0.109764256, z: -0.9878783}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15366995, y: -0.021952853, z: -0.9878783}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.85948133, y: -0.06611395, z: -0.5068736}
+    radius: 0.9453376
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.86284035, y: -0.199117, z: -0.46460634}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.86115587, y: -0.28705198, z: -0.41953748}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8645347, y: -0.37684843, z: -0.33251333}
+    radius: 0.93981194
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.85451555, y: -0.46012378, z: -0.24101722}
+    radius: 0.9508311
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8512525, y: -0.50202066, z: -0.15278889}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.83701783, y: -0.53654987, z: -0.107309975}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.8075985, y: -0.58932865, z: 0.021826986}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.7683498, y: -0.63663274, z: 0.06585856}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.71486205, y: -0.67153704, z: 0.19496237}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.6779297, y: -0.6779297, z: 0.28429312}
+    radius: 0.95265526
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.63419235, y: -0.6779297, z: 0.3717679}
+    radius: 0.95265526
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.5552814, y: -0.6885489, z: 0.4664364}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.4549122, y: -0.67153704, z: 0.5848871}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.4085313, y: -0.6235478, z: 0.66655105}
+    radius: 0.968918
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.33186167, y: -0.597351, z: 0.7300957}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24148138, y: -0.592727, z: 0.7683498}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15278889, y: -0.50202066, z: 0.8512525}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15278889, y: -0.50202066, z: 0.8512525}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.06498745, y: -0.4549122, z: 0.8881619}
+    radius: 0.9617241
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.02212411, y: -0.4203581, z: 0.9070885}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.06624276, y: -0.41953748, z: 0.9053177}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.11194341, y: -0.3806076, z: 0.917936}
+    radius: 0.93052965
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.15578651, y: -0.3783387, z: 0.91246396}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.23651811, y: -0.4085313, z: 0.88156754}
+    radius: 0.968918
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.28705198, y: -0.41953748, z: 0.86115587}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.32075015, y: -0.44905022, z: 0.8339504}
+    radius: 0.97427857
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.36351684, y: -0.49181688, z: 0.7911837}
+    radius: 0.97427857
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.40407243, y: -0.5316742, z: 0.744344}
+    radius: 0.97960985
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.4549122, y: -0.5848871, z: 0.67153704}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.4557685, y: -0.6293946, z: 0.6293946}
+    radius: 0.9599172
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.49637717, y: -0.71219337, z: 0.49637717}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.5405484, y: -0.7567678, z: 0.3675729}
+    radius: 0.9635276
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.5731722, y: -0.7854582, z: 0.2335146}
+    radius: 0.98138046
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.58270365, y: -0.7985198, z: 0.15107131}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.58932865, y: -0.8075985, z: -0.021826986}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.598524, y: -0.7758644, z: -0.19950798}
+    radius: 0.939812
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.57840914, y: -0.70694447, z: -0.40702865}
+    radius: 0.972495
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.58932865, y: -0.6329826, z: -0.50202066}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.54360676, y: -0.5001182, z: -0.6740723}
+    radius: 0.9581068
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.49181688, y: -0.36351684, z: -0.7911837}
+    radius: 0.97427857
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.41550532, y: -0.1530809, z: -0.8966167}
+    radius: 0.9526553
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.15366995, y: -0.021952853, z: -0.9878783}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19644287, y: -0.28375083, z: -0.93856037}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19174995, y: -0.44741654, z: -0.8735275}
+    radius: 0.977836
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19950798, y: -0.598524, z: -0.7758644}
+    radius: 0.939812
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.19757567, y: -0.81225556, z: -0.54882133}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.23478775, y: -0.9178066, z: -0.3201651}
+    radius: 0.9760589
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.23695673, y: -0.96936846, z: -0.06462456}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.23478775, y: -0.9604953, z: 0.14941038}
+    radius: 0.9760589
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.2405557, y: -0.8966167, z: 0.37176788}
+    radius: 0.9526553
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24148138, y: -0.7683498, z: 0.592727}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.23608196, y: -0.6653218, z: 0.7082459}
+    radius: 0.97070813
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24578321, y: -0.42453465, z: 0.87141323}
+    radius: 0.9323935
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.24055572, y: -0.24055572, z: 0.94035417}
+    radius: 0.95265526
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.23739779, y: -0.021581618, z: 0.97117275}
+    radius: 0.96532774
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: -0.02208092, y: -0.110404596, z: 0.99364144}
+    radius: 0.9434993
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.06663377, y: -0.28874636, z: 0.955084}
+    radius: 0.93796283
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.1530809, y: -0.41550532, z: 0.8966167}
+    radius: 0.9526553
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.19496237, y: -0.49823716, z: 0.84483695}
+    radius: 0.96172404
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.33186167, y: -0.597351, z: 0.7300957}
+    radius: 0.9416574
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.4203581, y: -0.6415992, z: 0.6415992}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.50202066, y: -0.6329826, z: 0.58932865}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.58932865, y: -0.6329826, z: 0.50202066}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.6415992, y: -0.6415992, z: 0.4203581}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.7108702, y: -0.6247041, z: 0.32312283}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.748417, y: -0.62011695, z: 0.23521677}
+    radius: 0.9742786
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.7820375, y: -0.6032861, z: 0.15640749}
+    radius: 0.9323935
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.8030207, y: -0.5859881, z: 0.10851631}
+    radius: 0.9599171
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.8075985, y: -0.58932865, z: 0.021826986}
+    radius: 0.95447594
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.823443, y: -0.5563804, z: -0.11127608}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.81225556, y: -0.54882133, z: -0.19757567}
+    radius: 0.94900346
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.8138259, y: -0.50589174, z: -0.28593883}
+    radius: 0.9471723
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.76104945, y: -0.5001182, z: -0.4131411}
+    radius: 0.9581069
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.7108702, y: -0.45237195, z: -0.538538}
+    radius: 0.9671245
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.6415992, y: -0.4203581, z: -0.6415992}
+    radius: 0.9416575
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.5488213, y: -0.32929277, z: -0.7683498}
+    radius: 0.9490035
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.4549122, y: -0.2816123, z: -0.8448369}
+    radius: 0.9617241
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.3783387, y: -0.15578651, z: -0.91246396}
+    radius: 0.9361101
+    brushRadius: 0.08
+    strength: 180
+  - dir: {x: 0.28874636, y: -0.06663377, z: -0.955084}
+    radius: 0.93796283
     brushRadius: 0.08
     strength: 180
   paper: []

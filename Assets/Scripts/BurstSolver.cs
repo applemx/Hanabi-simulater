@@ -16,35 +16,37 @@ public static class BurstSolver
     /// <summary>
     /// MVP: solve all star voxels (single-shot).
     /// </summary>
-    public static List<ParticleInit> Solve(FireworkBlueprint bp, PackedVolume pv, StarProfileDef starProfile = null, WashiDef washiDef = null, WaruyakuDef waruyakuDef = null)
+    public static List<ParticleInit> Solve(FireworkBlueprint bp, PackedVolume pv, StarProfileDef starProfile = null, WashiDef washiDef = null, WaruyakuDef waruyakuDef = null, HanabiDatabase db = null)
     {
         // Gather all star indices and forward to subset solver.
         var indices = new List<int>(capacity: 4096);
         for (int i = 0; i < pv.starMask.Length; i++)
             if (pv.starMask[i] != 0) indices.Add(i);
 
-        return SolveSubset(bp, pv, indices, null, starProfile, washiDef, waruyakuDef);
+        return SolveSubset(bp, pv, indices, null, starProfile, washiDef, waruyakuDef, db);
     }
 
     /// <summary>
     /// Solve only the provided star cell indices, preserving order (one ParticleInit per index).
     /// This is used by the ignition-driven multi-burst compiler.
     /// </summary>
-    public static List<ParticleInit> SolveSubset(FireworkBlueprint bp, PackedVolume pv, IReadOnlyList<int> starCellIndices, List<Color32> paletteOverride = null, StarProfileDef starProfile = null, WashiDef washiDef = null, WaruyakuDef waruyakuDef = null)
+    public static List<ParticleInit> SolveSubset(FireworkBlueprint bp, PackedVolume pv, IReadOnlyList<int> starCellIndices, List<Color32> paletteOverride = null, StarProfileDef starProfile = null, WashiDef washiDef = null, WaruyakuDef waruyakuDef = null, HanabiDatabase db = null)
     {
         var outList = new List<ParticleInit>(capacity: Mathf.Max(64, starCellIndices.Count));
         var rng = new System.Random(bp.seed);
 
-        float baseSpeed = bp.intent.baseSpeed;
-        float speedJitter = 0f;
-        float baseLife = bp.intent.life;
-        float lifeJitter = 0f;
+        float defaultBaseSpeed = bp.intent.baseSpeed;
+        float defaultBaseLife = bp.intent.life;
+        float defaultLifeJitter = 0f;
+        float defaultSpeedJitter = 0f;
+        StarKind defaultKind = StarKind.Solid;
         if (starProfile != null)
         {
-            baseSpeed = starProfile.baseSpeed;
-            speedJitter = starProfile.speedJitter;
-            baseLife = starProfile.baseLife;
-            lifeJitter = starProfile.lifeJitter;
+            defaultBaseSpeed = starProfile.baseSpeed;
+            defaultSpeedJitter = starProfile.speedJitter;
+            defaultBaseLife = starProfile.baseLife;
+            defaultLifeJitter = starProfile.lifeJitter;
+            defaultKind = starProfile.kind;
         }
 
         float washiDelay = (washiDef != null) ? Mathf.Max(0f, washiDef.delaySeconds) : 0.05f;
@@ -80,6 +82,28 @@ public static class BurstSolver
             float localAvg = SampleLocalChargeAvg(pv, x, y, z);
             float rayInt = SampleRayChargeIntegral(pv, pos, steps: 24);
 
+            StarProfileDef profile = starProfile;
+            if (db != null && pv.starProfileId != null)
+            {
+                int pid = pv.starProfileId[idx];
+                var byId = db.GetStarById(pid);
+                if (byId != null) profile = byId;
+            }
+
+            float baseSpeed = defaultBaseSpeed;
+            float speedJitter = defaultSpeedJitter;
+            float baseLife = defaultBaseLife;
+            float lifeJitter = defaultLifeJitter;
+            StarKind kind = defaultKind;
+            if (profile != null)
+            {
+                baseSpeed = profile.baseSpeed;
+                speedJitter = profile.speedJitter;
+                baseLife = profile.baseLife;
+                lifeJitter = profile.lifeJitter;
+                kind = profile.kind;
+            }
+
             float speed = baseSpeed * (1.0f + 0.6f * localAvg + 0.9f * rayInt);
             if (speedJitter > 0f)
             {
@@ -105,6 +129,9 @@ public static class BurstSolver
                 float c = washiCollimation * paperStrength;
                 vDir = (vPar + vPerp * (1f - c)).normalized;
             }
+            float radialBias = Mathf.Clamp01(uniformity * 0.6f + (kind == StarKind.Tail ? 0.1f : 0f));
+            if (radialBias > 0f && dir.sqrMagnitude > 1e-6f)
+                vDir = Vector3.Slerp(vDir, dir, radialBias).normalized;
 
             float life = baseLife;
             if (lifeJitter > 0f)
@@ -112,6 +139,30 @@ public static class BurstSolver
                 float lj = ((float)rng.NextDouble() * 2f - 1f) * lifeJitter;
                 life = Mathf.Max(0.05f, life + lj);
             }
+            float speedNorm = Mathf.InverseLerp(baseSpeed * 0.6f, baseSpeed * 1.6f, speed);
+            float lifeScale = 1f;
+            switch (kind)
+            {
+                case StarKind.Solid:
+                    lifeScale = Mathf.Lerp(0.85f, 0.65f, speedNorm);
+                    break;
+                case StarKind.Tail:
+                    lifeScale = Mathf.Lerp(1.25f, 1.05f, speedNorm);
+                    break;
+                case StarKind.Comet:
+                    lifeScale = Mathf.Lerp(1.35f, 1.1f, speedNorm);
+                    break;
+                case StarKind.Glitter:
+                    lifeScale = Mathf.Lerp(1.1f, 0.95f, speedNorm);
+                    break;
+                case StarKind.Crackle:
+                    lifeScale = Mathf.Lerp(0.95f, 0.8f, speedNorm);
+                    break;
+                default:
+                    lifeScale = Mathf.Lerp(1.0f, 0.85f, speedNorm);
+                    break;
+            }
+            life = Mathf.Max(0.05f, life * lifeScale);
             float delay = paperHit ? (washiDelay * paperStrength) : 0f;
 
             int ci = pv.starColor[idx];
