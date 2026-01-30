@@ -28,26 +28,27 @@ public static class HanabiParticlePrefabBuilder
     static Material cachedMaterial;
     static Texture2D cachedTexture;
 
-    [MenuItem("Hanabi/Create Star Particle Prefabs")]
+    [MenuItem("Hanabi/Particles/Setup (Create+Place+Assign+Look)")]
+    public static void SetupParticlesAll()
+    {
+        CreatePrefabs(placeInScene: true);
+        SetupParticleLookAll();
+    }
+
+    [MenuItem("Hanabi/Particles/Advanced/Create Prefabs Only")]
     public static void CreateStarParticlePrefabs()
     {
         CreatePrefabs(placeInScene: false);
     }
 
-    [MenuItem("Hanabi/Create Star Particle Prefabs And Place In Scene")]
-    public static void CreateStarParticlePrefabsAndPlace()
-    {
-        CreatePrefabs(placeInScene: true);
-    }
-
-    [MenuItem("Hanabi/Assign Star Particle Systems In Scene")]
+    [MenuItem("Hanabi/Particles/Advanced/Assign In Scene (Stars Only)")]
     public static void AssignStarParticleSystemsInScene()
     {
         var systems = FindSceneParticleSystems();
         AssignToPlaybackControllers(systems);
     }
 
-    [MenuItem("Hanabi/Setup Particle Look (All)")]
+    [MenuItem("Hanabi/Particles/Advanced/Setup Look (All)")]
     public static void SetupParticleLookAll()
     {
         EnsureFolders();
@@ -68,7 +69,7 @@ public static class HanabiParticlePrefabBuilder
         Debug.Log("[Hanabi] Particle look settings applied.");
     }
 
-    [MenuItem("Hanabi/Rebuild Soft Circle Texture")]
+    [MenuItem("Hanabi/Particles/Advanced/Rebuild Soft Circle Texture")]
     public static void RebuildSoftCircleTextureMenu()
     {
         EnsureFolders();
@@ -402,4 +403,5 @@ public static class HanabiParticlePrefabBuilder
         renderer.SetActiveVertexStreams(streams);
         renderer.enableGPUInstancing = true;
     }
+
 }

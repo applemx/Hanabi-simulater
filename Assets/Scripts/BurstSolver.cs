@@ -7,6 +7,7 @@ public struct ParticleInit
     public Vector3 pos0;
     public Vector3 vel0;
     public float life;
+    public float size;
     public Color32 color;
     public float delay;
 }
@@ -139,6 +140,16 @@ public static class BurstSolver
                 float lj = ((float)rng.NextDouble() * 2f - 1f) * lifeJitter;
                 life = Mathf.Max(0.05f, life + lj);
             }
+            float size = 0.06f;
+            if (profile != null)
+            {
+                size = profile.baseSize;
+                if (profile.sizeJitter > 0f)
+                {
+                    float sj = ((float)rng.NextDouble() * 2f - 1f) * profile.sizeJitter;
+                    size = Mathf.Max(0.01f, size + sj);
+                }
+            }
             float speedNorm = Mathf.InverseLerp(baseSpeed * 0.6f, baseSpeed * 1.6f, speed);
             float lifeScale = 1f;
             switch (kind)
@@ -176,6 +187,7 @@ public static class BurstSolver
                 pos0 = pos,
                 vel0 = vDir * speed,
                 life = life,
+                size = size,
                 color = color,
                 delay = delay
             });

@@ -225,6 +225,7 @@ public class HanabiPlaybackController : MonoBehaviour
             sim.FillParticles(psBuffer);
         }
 
+
         // DEBUG: make compiled particles more visible (optional)
         if (debugCompiledSizeMultiplier != 1f || debugCompiledMinSize > 0f)
         {
@@ -280,6 +281,7 @@ public class HanabiPlaybackController : MonoBehaviour
         {
             particleSystemRenderer.SetParticles(psBuffer, sim.AliveCount);
         }
+
 
         if (nextBurstIndex >= bursts.Length && sim.AliveCount == 0)
         {
@@ -616,4 +618,5 @@ public class HanabiPlaybackController : MonoBehaviour
             particleSystemRenderer.Clear(true);
         }
     }
+
 }

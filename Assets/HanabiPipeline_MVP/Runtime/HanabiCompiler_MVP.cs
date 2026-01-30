@@ -104,25 +104,13 @@ public static class HanabiCompiler_MVP
                 if (pv.starMask[i] != 0) indices.Add(i);
 
             var solvedAll = BurstSolver.SolveSubset(bp, pv, indices, paletteUsed, starProfile, washiDef, waruyakuDef, db);
-            bursts = new[]
-            {
-                new BurstEvent
-                {
-                    timeLocal = 0f,
-                    posLocal = Vector3.zero,
-                    eventFxId = -1,
-                    particleCount = solvedAll.Count,
-                    particleStartIndex = 0
-                }
-            };
-
-            inits = new ParticleInitV2[solvedAll.Count];
+            var fallbackInits = new List<ParticleInitV2>(solvedAll.Count * 2);
             for (int i = 0; i < solvedAll.Count; i++)
             {
                 int cell = (i < indices.Count) ? indices[i] : -1;
                 ushort profileId = ResolveStarProfileIdForCell(db, bp, pv, cell);
                 var s = solvedAll[i];
-                inits[i] = new ParticleInitV2
+                fallbackInits.Add(new ParticleInitV2
                 {
                     pos0Local = s.pos0,
                     vel0Local = s.vel0,
@@ -131,9 +119,24 @@ public static class HanabiCompiler_MVP
                     color = s.color,
                     spawnDelay = s.delay,
                     profileId = profileId,
-                    seed = seed ^ (uint)i * 2654435761u
-                };
+                    seed = seed ^ (uint)i * 2654435761u,
+                    flags = 0
+                });
+
             }
+
+            inits = fallbackInits.ToArray();
+            bursts = new[]
+            {
+                new BurstEvent
+                {
+                    timeLocal = 0f,
+                    posLocal = Vector3.zero,
+                    eventFxId = -1,
+                    particleCount = inits.Length,
+                    particleStartIndex = 0
+                }
+            };
 
             if (LogWashiStats)
             {
@@ -195,8 +198,10 @@ public static class HanabiCompiler_MVP
                     color = s.color,
                     spawnDelay = s.delay + dtWithin,
                     profileId = profileId,
-                    seed = seed ^ (uint)(start + k) * 2654435761u
+                    seed = seed ^ (uint)(start + k) * 2654435761u,
+                    flags = 0
                 });
+
             }
 
             int count = initList.Count - start;

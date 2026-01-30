@@ -6,7 +6,7 @@ public static class HanabiWorkshopSceneBuilder
 {
     const string ScenePath = "Assets/Scenes/Workshop.unity";
 
-    [MenuItem("Hanabi/Create Workshop Scene")]
+    [MenuItem("Hanabi/Scenes/Create Workshop Scene")]
     public static void CreateWorkshopScene()
     {
         var scene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);

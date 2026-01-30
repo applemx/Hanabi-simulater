@@ -17,12 +17,12 @@ public static class CompiledShowSerializer
     // [windScale f32]
     // [dragScale f32]
     // bursts: time(f32), pos(xyz f32), eventFx(i32), particleCount(i32), particleStart(i32)
-    // particles: pos(xyz f32), vel(xyz f32), life(f32), size(f32), color(rgba u8), delay(f32), profile(u16), seed(u32)
+    // particles: pos(xyz f32), vel(xyz f32), life(f32), size(f32), color(rgba u8), delay(f32), profile(u16), seed(u32), flags(u8) [v3+]
 
     const string MAGIC_V1 = "HBS1";
     const string MAGIC_V2 = "HBS2";
 
-    public static byte[] Write(uint showSeed, BurstEvent[] bursts, ParticleInitV2[] particles, LaunchParams launchParams, int version = 2)
+    public static byte[] Write(uint showSeed, BurstEvent[] bursts, ParticleInitV2[] particles, LaunchParams launchParams, int version = 3)
     {
         using var ms = new MemoryStream(1024);
         using var bw = new BinaryWriter(ms);
@@ -60,6 +60,8 @@ public static class CompiledShowSerializer
             bw.Write(p.spawnDelay);
             bw.Write(p.profileId);
             bw.Write(p.seed);
+            if (version >= 3)
+                bw.Write(p.flags);
         }
 
         bw.Flush();
@@ -130,6 +132,9 @@ public static class CompiledShowSerializer
                 float delay = br.ReadSingle();
                 ushort profile = br.ReadUInt16();
                 uint seed = br.ReadUInt32();
+                byte flags = 0;
+                if (version >= 3)
+                    flags = br.ReadByte();
 
                 particles[i] = new ParticleInitV2
                 {
@@ -140,7 +145,8 @@ public static class CompiledShowSerializer
                     color = new Color32(r, g, b, a),
                     spawnDelay = delay,
                     profileId = profile,
-                    seed = seed
+                    seed = seed,
+                    flags = flags
                 };
             }
 

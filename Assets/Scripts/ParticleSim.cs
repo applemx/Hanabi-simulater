@@ -369,6 +369,7 @@ public class ParticleSim
         }
     }
 
+
     StarKind ResolveKind(ushort id)
     {
         if (kindLookup != null && id < kindLookup.Length) return kindLookup[id];
@@ -471,4 +472,5 @@ public class ParticleSim
         x ^= x << 5;
         return (x & 0x00FFFFFF) / 16777215.0f;
     }
+
 }

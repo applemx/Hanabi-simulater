@@ -130,6 +130,7 @@ public class StarPreviewController : MonoBehaviour
             if (buf == null) continue;
             ps.SetParticles(buf, starCounts[i]);
         }
+
     }
 
     void Spawn()
@@ -171,11 +172,13 @@ public class StarPreviewController : MonoBehaviour
                 color = color,
                 spawnDelay = 0f,
                 profileId = (ushort)profileIndex,
-                seed = baseSeed + (uint)i * 2654435761u
+                seed = baseSeed + (uint)i * 2654435761u,
+                flags = 0
             };
         }
 
         sim.AppendSpawn(init, 0, init.Length, Vector3.zero, Vector3.zero);
+
     }
 
     void LogDebugInfo()
@@ -248,6 +251,7 @@ public class StarPreviewController : MonoBehaviour
         }
     }
 
+
     ParticleSystem GetStarRenderer(int index)
     {
         if (starParticleSystems == null || index < 0 || index >= starParticleSystems.Length)
@@ -266,6 +270,7 @@ public class StarPreviewController : MonoBehaviour
             main.playOnAwake = false;
         }
     }
+
 
     Vector2 scroll;
 

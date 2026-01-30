@@ -25,6 +25,7 @@ public struct BurstEvent
 [Serializable]
 public struct ParticleInitV2
 {
+    public const byte FlagSmoke = 1;
     public Vector3 pos0Local;
     public Vector3 vel0Local;
     public float life;
@@ -33,6 +34,7 @@ public struct ParticleInitV2
     public float spawnDelay;
     public ushort profileId; // StarProfile id (future-proof)
     public uint seed;
+    public byte flags;
 }
 
 [Serializable]

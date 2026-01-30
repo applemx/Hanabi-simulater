@@ -9,7 +9,7 @@ public static class HanabiStarPreviewSceneBuilder
     const string DatabasePath = "Assets/Data/HanabiDatabase_Default.asset";
     const string ParticlePrefabFolder = "Assets/Prefabs/Particles";
 
-    [MenuItem("Hanabi/Create Star Preview Scene")]
+    [MenuItem("Hanabi/Scenes/Create Star Preview Scene")]
     public static void CreateStarPreviewScene()
     {
         EnsureFolders();
@@ -75,6 +75,7 @@ public static class HanabiStarPreviewSceneBuilder
 
         controller.GetType().GetField("starParticleSystems", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
             ?.SetValue(controller, systems);
+
 
         // Save scene
         EditorSceneManager.SaveScene(scene, ScenePath);

@@ -1184,7 +1184,7 @@ public class HanabiWorkshopController : MonoBehaviour
         }
 
         HanabiCompiler_MVP.Compile(targetBlueprint, db, out uint seed, out BurstEvent[] bursts, out ParticleInitV2[] inits, out LaunchParams launchParams);
-        cs.blob = CompiledShowSerializer.Write(seed, bursts, inits, launchParams, version: 2);
+        cs.blob = CompiledShowSerializer.Write(seed, bursts, inits, launchParams, version: 3);
         cs.version = 2;
 
         EditorUtility.SetDirty(cs);
