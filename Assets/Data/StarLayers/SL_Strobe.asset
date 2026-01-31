@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af79733513ba33d44bc240df494a9c15, type: 3}
+  m_Name: SL_Strobe
+  m_EditorClassIdentifier: Assembly-CSharp::StarLayerDef
+  id: strobe
+  displayName: Strobe
+  category: 4
+  prefab: {fileID: 3265324217521712894, guid: a7bd6092feb144938030959e0bb8be6e, type: 3}
+  defaultStartDelay: 0
+  defaultDuration: 0
+  defaultColor: {r: 0.95, g: 0.95, b: 1, a: 1}
+  defaultSizeScale: 1
+  defaultLifetimeScale: 1
+  defaultIntensity: 1
+  usesColor: 1
+  applyTemplate: 1
+  maxParticles: 800
+  burstCount: 100
+  burstTime: 0
+  startSpeed: 6
+  startLifetime: 2.4
+  startSize: 0.06
+  shapeRadius: 0.02
+  gravityModifier: 0
+  enableTrails: 0
+  trailsLifetime: 0.6
+  enableNoise: 0
+  noiseStrength: 0.3
+  noiseFrequency: 0.5
+  enableStrobe: 1
+  strobeFrequency: 8
+  strobeBurstCount: 25

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af79733513ba33d44bc240df494a9c15, type: 3}
+  m_Name: SL_TigerTail
+  m_EditorClassIdentifier: Assembly-CSharp::StarLayerDef
+  id: tiger_tail
+  displayName: Tiger Tail
+  category: 3
+  prefab: {fileID: 3265324217521712894, guid: a18492323b6b485d8b4ee5bc3e31076d, type: 3}
+  defaultStartDelay: 0
+  defaultDuration: 0
+  defaultColor: {r: 0.55, g: 0.25, b: 0.15, a: 1}
+  defaultSizeScale: 1
+  defaultLifetimeScale: 1
+  defaultIntensity: 0.85
+  usesColor: 1
+  applyTemplate: 1
+  maxParticles: 1080
+  burstCount: 180
+  burstTime: 0
+  startSpeed: 5.5
+  startLifetime: 3.2
+  startSize: 0.1
+  shapeRadius: 0.02
+  gravityModifier: 0
+  enableTrails: 1
+  trailsLifetime: 1.2
+  enableNoise: 1
+  noiseStrength: 0.12
+  noiseFrequency: 0.8
+  enableStrobe: 0
+  strobeFrequency: 10
+  strobeBurstCount: 40

@@ -252,6 +252,26 @@ public class ParticleSim
         }
     }
 
+    public int FillParticlesRaw(ParticleSystem.Particle[] outParticles)
+    {
+        if (outParticles == null) return 0;
+        int count = Mathf.Min(aliveCount, outParticles.Length);
+        for (int i = 0; i < count; i++)
+        {
+            float a = Mathf.Max(0f, age[i]);
+            float L = Mathf.Max(0.001f, life[i]);
+
+            outParticles[i].position = pos[i];
+            outParticles[i].startColor = col[i];
+            outParticles[i].startSize = size[i];
+            outParticles[i].startLifetime = L;
+            outParticles[i].remainingLifetime = Mathf.Max(0.01f, L - a);
+            outParticles[i].velocity = vel[i];
+            outParticles[i].randomSeed = seed[i];
+        }
+        return count;
+    }
+
     public void FillParticlesByKind(ParticleSystem.Particle[][] outBuffers, int[] counts)
     {
         if (outBuffers == null || counts == null) return;

@@ -1,0 +1,229 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deb3622e581fa10409b07c088aac37ea, type: 3}
+  m_Name: StarLayerLibrary_Default
+  m_EditorClassIdentifier: Assembly-CSharp::StarLayerLibrary
+  layers:
+  - {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+  - {fileID: 11400000, guid: 0517cccb6d17ed8438009807127931c8, type: 2}
+  - {fileID: 11400000, guid: bd9e00377a2f30e4cb1454c490cfa8c5, type: 2}
+  - {fileID: 11400000, guid: 205e2cb881de1914db59891bebcade74, type: 2}
+  - {fileID: 11400000, guid: d610848ef95792c47a5fdd88e40640dd, type: 2}
+  - {fileID: 11400000, guid: 800aa3c92e4664c468d02a54976ace17, type: 2}
+  - {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+  - {fileID: 11400000, guid: e7f57b20e1680f54e9da9a44f5bffc79, type: 2}
+  - {fileID: 11400000, guid: eff73f452b8b1ef48b0aa1da8168b7ae, type: 2}
+  - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+  - {fileID: 11400000, guid: bc2aa43eb2b289247a70b6a8cfb1d1f6, type: 2}
+  - {fileID: 11400000, guid: 91b6474ed21438f408d814156989008e, type: 2}
+  - {fileID: 11400000, guid: 3d1a4a4f0c5bcc94ba1f89b3d3972cca, type: 2}
+  - {fileID: 11400000, guid: 7984b81268b2ee7489259ea5d339628d, type: 2}
+  - {fileID: 11400000, guid: 4d69c7a5b3173a740b9642c602fba71a, type: 2}
+  - {fileID: 11400000, guid: 03e72e80c45a46e498c8f8ed167fe290, type: 2}
+  - {fileID: 11400000, guid: 3b2d652721f744a4fa8b0941ad9500e0, type: 2}
+  - {fileID: 11400000, guid: a988e1c7facda3747a9c6add698efb92, type: 2}
+  - {fileID: 11400000, guid: c689be8f5eb2b7741af0fb2ae0916522, type: 2}
+  - {fileID: 11400000, guid: 6ddb178730612a54d9925d2b6d10c614, type: 2}
+  - {fileID: 11400000, guid: 4fab5e030a55080458d7a42b7f9061d0, type: 2}
+  - {fileID: 11400000, guid: 6646880199bd90545b523ce4dda3fe55, type: 2}
+  - {fileID: 11400000, guid: 7c0c88bde0bfc744e850fa4208c451eb, type: 2}
+  - {fileID: 11400000, guid: 5f386382c1229ff47a557b5639449d48, type: 2}
+  - {fileID: 11400000, guid: 68b1732a28674de4cb07ec2bc007e83b, type: 2}
+  - {fileID: 11400000, guid: 8007c3bfd93910542a7e97183feb5d39, type: 2}
+  - {fileID: 11400000, guid: 8d26d8633c6ac824cba1b81e957e05ef, type: 2}
+  - {fileID: 11400000, guid: db48c345e129b1c4c84e61da6d97eaa7, type: 2}
+  - {fileID: 11400000, guid: 26c394799e8be04468b52499fb04937a, type: 2}
+  - {fileID: 11400000, guid: cb3dc93c36fc90441a6ef39270e2d539, type: 2}
+  - {fileID: 11400000, guid: 5f06cb126688fb74d9fb8f13d892bf38, type: 2}
+  - {fileID: 11400000, guid: d0cbee3dafe443541aee705e5360e53c, type: 2}
+  - {fileID: 11400000, guid: f30ffefeea8749044bb0d108d5616760, type: 2}
+  presets:
+  - id: peony
+    displayName: "01 \u5C3E\u306A\u3057\u5358\u8272 (Peony)"
+    memo: "\u8272\u5DEE\u5206\u306F\u30D1\u30E9\u30E1\u30FC\u30BF\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: f30ffefeea8749044bb0d108d5616760, type: 2}
+  - id: peony_dim
+    displayName: "02 \u5C3E\u306A\u3057\u6E0B\u8272"
+    memo: "\u6E0B\u3044\u5B9A\u5E38\u767A\u5149\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: bc2aa43eb2b289247a70b6a8cfb1d1f6, type: 2}
+    - {fileID: 11400000, guid: f30ffefeea8749044bb0d108d5616760, type: 2}
+  - id: flare
+    displayName: "03 \u7167\u660E\u661F (Flare)"
+    memo: "\u9AD8\u8F1D\u5EA6\u30FB\u9577\u6301\u7D9A\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 91b6474ed21438f408d814156989008e, type: 2}
+    - {fileID: 11400000, guid: f30ffefeea8749044bb0d108d5616760, type: 2}
+  - id: color_change_2
+    displayName: "04 \u5909\u8272 (2\u6BB5)"
+    memo: "\u6697\u3064\u306A\u304E\u3067\u5207\u66FF\u3092\u5F37\u8ABF\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: eff73f452b8b1ef48b0aa1da8168b7ae, type: 2}
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: d0cbee3dafe443541aee705e5360e53c, type: 2}
+  - id: color_change_3
+    displayName: "05 \u5909\u8272 (3\u6BB5)"
+    memo: "\u6697\u3064\u306A\u304E\u30922\u56DE\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: eff73f452b8b1ef48b0aa1da8168b7ae, type: 2}
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: eff73f452b8b1ef48b0aa1da8168b7ae, type: 2}
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+  - id: tail_tip
+    displayName: "06 \u5F15\u5148\u25CB\u25CB (\u5C3E+\u5148\u7AEF\u8272)"
+    memo: "\u5C3E\u30BF\u30A4\u30D7+\u5148\u7AEF\u8272\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 3d1a4a4f0c5bcc94ba1f89b3d3972cca, type: 2}
+    - {fileID: 11400000, guid: eff73f452b8b1ef48b0aa1da8168b7ae, type: 2}
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: d0cbee3dafe443541aee705e5360e53c, type: 2}
+  - id: afterglow
+    displayName: "07 Afterglow (\u6B8B\u5149)"
+    memo: "\u6D88\u3048\u305D\u3046\u3067\u6D88\u3048\u306A\u3044\u6B8B\u5149\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 5f06cb126688fb74d9fb8f13d892bf38, type: 2}
+    - {fileID: 11400000, guid: f30ffefeea8749044bb0d108d5616760, type: 2}
+  - id: chrysanthemum
+    displayName: "08 \u83CA\u5F15\u304D"
+    memo: "\u653E\u5C04\u72B6\u306E\u5F15\u304D\u5C3E\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 3d1a4a4f0c5bcc94ba1f89b3d3972cca, type: 2}
+  - id: willow
+    displayName: "09 \u51A0\u83CA/\u67F3\u5F15\u304D"
+    memo: "\u5782\u308C\u308B\u5C3E + \u70B9\u6EC5\u7C92\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 7984b81268b2ee7489259ea5d339628d, type: 2}
+    - {fileID: 11400000, guid: 8007c3bfd93910542a7e97183feb5d39, type: 2}
+  - id: wabi
+    displayName: "10 \u548C\u706B\u5C3E"
+    memo: "\u6E0B\u3044\u70AD\u706B\u5C3E\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 4d69c7a5b3173a740b9642c602fba71a, type: 2}
+  - id: tiger
+    displayName: "11 \u864E\u306E\u5C3E"
+    memo: "\u592A\u5C3E\u30FB\u7159\u611F\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 03e72e80c45a46e498c8f8ed167fe290, type: 2}
+  - id: brocade
+    displayName: "12 \u9326/\u30D6\u30ED\u30B1\u30FC\u30C9"
+    memo: "\u8C6A\u83EF\u306A\u91D1\u5C3E + \u304D\u3089\u3081\u304D\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 3b2d652721f744a4fa8b0941ad9500e0, type: 2}
+    - {fileID: 11400000, guid: 7c0c88bde0bfc744e850fa4208c451eb, type: 2}
+  - id: gold_dust
+    displayName: "13 \u7802\u91D1"
+    memo: "\u5FAE\u7D30\u306A\u91D1\u5C3E\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: a988e1c7facda3747a9c6add698efb92, type: 2}
+  - id: silver_line
+    displayName: "14 \u9280\u5F15"
+    memo: "\u92ED\u3044\u9280\u5C3E\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: c689be8f5eb2b7741af0fb2ae0916522, type: 2}
+  - id: silver_kamuro
+    displayName: "15 \u9280\u51A0"
+    memo: "\u9280\u306E\u5782\u308C\u5C3E\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 6ddb178730612a54d9925d2b6d10c614, type: 2}
+  - id: iron_sparks
+    displayName: "16 \u9244\u706B/\u9244\u7C89"
+    memo: "\u679D\u5206\u304B\u308C\u706B\u82B1\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 4fab5e030a55080458d7a42b7f9061d0, type: 2}
+  - id: granite
+    displayName: "17 \u30B0\u30E9\u30CA\u30A4\u30C8"
+    memo: "\u8352\u3044\u706B\u82B1 + \u7159\u611F\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 6646880199bd90545b523ce4dda3fe55, type: 2}
+  - id: glitter
+    displayName: "18 \u30B0\u30EA\u30C3\u30BF\u30FC"
+    memo: "\u9045\u308C\u3066\u77AC\u304F\u7C92\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 7c0c88bde0bfc744e850fa4208c451eb, type: 2}
+    - {fileID: 11400000, guid: 5f386382c1229ff47a557b5639449d48, type: 2}
+  - id: flitter
+    displayName: "19 \u30D5\u30EA\u30C3\u30BF\u30FC/\u30B9\u30D1\u30F3\u30B3\u30FC\u30EB"
+    memo: "\u92ED\u3044\u304D\u3089\u3081\u304D\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 68b1732a28674de4cb07ec2bc007e83b, type: 2}
+  - id: strobe
+    displayName: "20 \u30B9\u30C8\u30ED\u30DC"
+    memo: "\u5468\u671F\u7684\u306A\u660E\u6EC5\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 8d26d8633c6ac824cba1b81e957e05ef, type: 2}
+  - id: crackle
+    displayName: "21 \u30AF\u30E9\u30C3\u30AF\u30EB"
+    memo: "\u30D1\u30C1\u30D1\u30C1\u7834\u88C2\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: db48c345e129b1c4c84e61da6d97eaa7, type: 2}
+  - id: crossette
+    displayName: "22 \u30AF\u30ED\u30BB\u30C3\u30C8"
+    memo: "\u9014\u4E2D\u3067\u5206\u88C2\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: 9214a825631ca694d9dbbe50855fb966, type: 2}
+    - {fileID: 11400000, guid: 26c394799e8be04468b52499fb04937a, type: 2}
+  - id: falling_leaves
+    displayName: "23 \u843D\u8449"
+    memo: "\u3075\u308F\u3063\u3068\u6F02\u3063\u3066\u843D\u3061\u308B\u3002"
+    core: {fileID: 11400000, guid: 8ae9aabeaf2372b4da861cc36b14fcfd, type: 2}
+    prime: {fileID: 11400000, guid: d1566f6c770641641b5502c8b0fe126c, type: 2}
+    layers:
+    - {fileID: 11400000, guid: cb3dc93c36fc90441a6ef39270e2d539, type: 2}
+    - {fileID: 11400000, guid: bc2aa43eb2b289247a70b6a8cfb1d1f6, type: 2}
