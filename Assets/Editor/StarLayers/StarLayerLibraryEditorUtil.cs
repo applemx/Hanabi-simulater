@@ -86,24 +86,24 @@ public static class StarLayerLibraryEditorUtil
         ConfigureSteady(steadyLow, 200, 7f, 1.6f, 0.075f, 0.6f, new Color(0.9f, 0.85f, 0.75f));
 
         var illumination = MakeLayer(lib, "SL_Illumination.asset", "illumination", "Illumination / Flare", StarLayerCategory.Color);
-        ConfigureSteady(illumination, 140, 4f, 4.2f, 0.12f, 1.7f, new Color(1f, 0.97f, 0.9f));
+        ConfigureSteady(illumination, 60, 3.0f, 6.5f, 0.12f, 1.6f, new Color(1f, 0.97f, 0.9f));
         illumination.gravityModifier = 0.25f;
 
         var chrysanthemum = MakeLayer(lib, "SL_ChrysanthemumTail.asset", "chrysanthemum_tail", "Chrysanthemum Tail", StarLayerCategory.Trail);
         ConfigureTail(chrysanthemum, 220, 7f, 3.0f, 0.055f, 0.8f, 1f, new Color(1f, 0.85f, 0.6f));
 
         var willow = MakeLayer(lib, "SL_WillowTail.asset", "willow_tail", "Willow / Kamuro Tail", StarLayerCategory.Trail);
-        ConfigureTail(willow, 240, 4.5f, 5.0f, 0.06f, 1.6f, 1f, new Color(0.95f, 0.85f, 0.6f));
+        ConfigureTail(willow, 220, 4.2f, 5.8f, 0.06f, 1.7f, 1.0f, new Color(0.95f, 0.85f, 0.6f));
         willow.gravityModifier = 0.6f;
 
         var wabi = MakeLayer(lib, "SL_WabiTail.asset", "wabi_tail", "Wabi Tail", StarLayerCategory.Trail);
-        ConfigureTail(wabi, 140, 5.2f, 2.2f, 0.055f, 0.6f, 0.55f, new Color(0.6f, 0.45f, 0.25f));
+        ConfigureTail(wabi, 110, 5.0f, 1.8f, 0.055f, 0.5f, 0.5f, new Color(0.6f, 0.45f, 0.25f));
         wabi.enableNoise = true;
         wabi.noiseStrength = 0.05f;
         wabi.noiseFrequency = 1.5f;
 
         var tiger = MakeLayer(lib, "SL_TigerTail.asset", "tiger_tail", "Tiger Tail", StarLayerCategory.Trail);
-        ConfigureTail(tiger, 180, 5.5f, 3.2f, 0.1f, 1.2f, 0.85f, new Color(0.55f, 0.25f, 0.15f));
+        ConfigureTail(tiger, 120, 4.6f, 5.2f, 0.1f, 1.6f, 0.5f, new Color(0.5f, 0.22f, 0.12f));
         tiger.enableNoise = true;
         tiger.noiseStrength = 0.12f;
         tiger.noiseFrequency = 0.8f;
@@ -112,13 +112,13 @@ public static class StarLayerLibraryEditorUtil
         ConfigureTail(brocade, 260, 6.5f, 3.6f, 0.075f, 1.1f, 1.2f, new Color(1f, 0.8f, 0.35f));
 
         var goldDust = MakeLayer(lib, "SL_GoldDust.asset", "gold_dust", "Gold Dust", StarLayerCategory.Trail);
-        ConfigureTail(goldDust, 520, 4f, 0.35f, 0.025f, 0.2f, 1.1f, new Color(1f, 0.85f, 0.5f));
+        ConfigureTail(goldDust, 640, 4.0f, 0.2f, 0.025f, 0.15f, 1.0f, new Color(1f, 0.85f, 0.5f));
 
         var silverLine = MakeLayer(lib, "SL_SilverLine.asset", "silver_line", "Silver Line", StarLayerCategory.Trail);
         ConfigureTail(silverLine, 220, 9.5f, 1.6f, 0.03f, 0.25f, 1.05f, new Color(0.85f, 0.9f, 1f));
 
         var silverKamuro = MakeLayer(lib, "SL_SilverKamuro.asset", "silver_kamuro", "Silver Kamuro", StarLayerCategory.Trail);
-        ConfigureTail(silverKamuro, 240, 4.0f, 4.6f, 0.05f, 1.4f, 1f, new Color(0.9f, 0.95f, 1f));
+        ConfigureTail(silverKamuro, 210, 3.8f, 5.2f, 0.05f, 1.5f, 1.0f, new Color(0.9f, 0.95f, 1f));
         silverKamuro.gravityModifier = 0.4f;
 
         var ironSparks = MakeLayer(lib, "SL_IronSparks.asset", "iron_sparks", "Iron Sparks", StarLayerCategory.Sparkle);
@@ -161,7 +161,7 @@ public static class StarLayerLibraryEditorUtil
         fallingLeaves.noiseFrequency = 1.2f;
 
         var afterglow = MakeLayer(lib, "SL_Afterglow.asset", "afterglow", "Afterglow", StarLayerCategory.Terminal);
-        ConfigureSteady(afterglow, 120, 0.2f, 2.0f, 0.05f, 0.35f, new Color(0.7f, 0.85f, 1f));
+        ConfigureSteady(afterglow, 120, 0.2f, 2.8f, 0.05f, 0.28f, new Color(0.7f, 0.85f, 1f));
         afterglow.defaultStartDelay = 1.2f;
 
         var terminalFlash = MakeLayer(lib, "SL_TerminalFlash.asset", "terminal_flash", "Terminal Flash", StarLayerCategory.Terminal);
@@ -171,7 +171,7 @@ public static class StarLayerLibraryEditorUtil
         terminalFlash.defaultColor = Color.white;
 
         var terminalSlowFade = MakeLayer(lib, "SL_TerminalSlowFade.asset", "terminal_slow_fade", "Terminal Slow-Fade", StarLayerCategory.Terminal);
-        ConfigureSteady(terminalSlowFade, 120, 1.5f, 3.2f, 0.06f, 0.6f, new Color(0.95f, 0.9f, 0.85f));
+        ConfigureSteady(terminalSlowFade, 120, 1.2f, 3.8f, 0.06f, 0.5f, new Color(0.95f, 0.9f, 0.85f));
 
         for (int i = 0; i < lib.layers.Count; i++)
         {

@@ -24,7 +24,7 @@ MonoBehaviour:
   defaultIntensity: 0.8
   usesColor: 1
   applyTemplate: 1
-  maxParticles: 560
+  maxParticles: 200
   burstCount: 10
   burstTime: 0
   startSpeed: 0

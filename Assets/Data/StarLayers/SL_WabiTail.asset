@@ -21,19 +21,19 @@ MonoBehaviour:
   defaultColor: {r: 0.6, g: 0.45, b: 0.25, a: 1}
   defaultSizeScale: 1
   defaultLifetimeScale: 1
-  defaultIntensity: 0.55
+  defaultIntensity: 0.5
   usesColor: 1
   applyTemplate: 1
   maxParticles: 1000
-  burstCount: 140
+  burstCount: 110
   burstTime: 0
-  startSpeed: 5.2
-  startLifetime: 2.2
+  startSpeed: 5
+  startLifetime: 1.8
   startSize: 0.055
   shapeRadius: 0.02
   gravityModifier: 0
   enableTrails: 1
-  trailsLifetime: 0.6
+  trailsLifetime: 0.5
   enableNoise: 1
   noiseStrength: 0.05
   noiseFrequency: 1.5

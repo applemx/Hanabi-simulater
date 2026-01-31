@@ -24,16 +24,16 @@ MonoBehaviour:
   defaultIntensity: 1
   usesColor: 1
   applyTemplate: 1
-  maxParticles: 1440
-  burstCount: 240
+  maxParticles: 1260
+  burstCount: 210
   burstTime: 0
-  startSpeed: 4
-  startLifetime: 4.6
+  startSpeed: 3.8
+  startLifetime: 5.2
   startSize: 0.05
   shapeRadius: 0.02
   gravityModifier: 0.4
   enableTrails: 1
-  trailsLifetime: 1.4
+  trailsLifetime: 1.5
   enableNoise: 0
   noiseStrength: 0.3
   noiseFrequency: 0.5

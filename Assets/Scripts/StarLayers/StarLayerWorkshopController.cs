@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class StarLayerWorkshopController : MonoBehaviour
@@ -59,7 +60,7 @@ public class StarLayerWorkshopController : MonoBehaviour
     [SerializeField] float autoRespawnInterval = 2.5f;
 
     [Header("Camera")]
-    [SerializeField] float camDistance = 10f;
+    [SerializeField] float camDistance = 38f;
     [SerializeField] float camFov = 45f;
 
     [Header("Layer Lab")]
@@ -79,7 +80,7 @@ public class StarLayerWorkshopController : MonoBehaviour
     [SerializeField] float spawnRadius = 0.02f;
     [SerializeField] Vector3 wind = Vector3.zero;
     [SerializeField] float dragK = 0.06f;
-    [SerializeField] float gravityScale = 1f;
+    [SerializeField] float gravityScale = 0.15f;
 
     [Header("UI")]
     [SerializeField] UiTab uiTab = UiTab.StarBuilder;
@@ -92,6 +93,13 @@ public class StarLayerWorkshopController : MonoBehaviour
     Vector2 scroll;
     float respawnTimer;
     float simElapsed;
+    bool captureArmed;
+    bool captureInProgress;
+    int captureIndex;
+    int captureTotal;
+    string captureFolder = "";
+    float captureInterval = 0.1f;
+    bool capturePrevAutoRespawn;
 
     ParticleSim sim;
     ParticleSystem.Particle[] baseParticles;
@@ -126,6 +134,8 @@ public class StarLayerWorkshopController : MonoBehaviour
 
     void Update()
     {
+        if (captureInProgress)
+            UpdateCapture();
         if (autoRespawn)
         {
             respawnTimer += Time.deltaTime;
@@ -454,6 +464,9 @@ public class StarLayerWorkshopController : MonoBehaviour
             float renderLife = Mathf.Max(0.05f, baseLife * lifetimeScale);
             float layerT = renderLife > 0f ? Mathf.Clamp01(age / renderLife) : 0f;
 
+            if (!ShouldEmitParticle(def, p.randomSeed, age))
+                continue;
+
             float alphaMul = ComputeLayerAlpha(def, age, renderLife, p.randomSeed);
             if (alphaMul <= 0.001f)
                 continue;
@@ -466,7 +479,7 @@ public class StarLayerWorkshopController : MonoBehaviour
 
             sizeScale = ApplyLayerSize(def, sizeScale, layerT);
 
-            p.position = ApplyLayerOffsets(def, p.position, age, p.randomSeed);
+            p.position = ApplyLayerOffsets(def, p.position, p.velocity, age, p.randomSeed);
             p.startColor = c;
             p.startSize = Mathf.Clamp(p.startSize * sizeScale, 0.0005f, 5f);
             p.startLifetime = Mathf.Clamp(renderLife, 0.02f, 60f);
@@ -482,13 +495,19 @@ public class StarLayerWorkshopController : MonoBehaviour
                 buffer[write++] = p;
 
             if (trailLayer && trailSamples > 0)
-                EmitVelocityStreak(buffer, ref write, p, c, trailSamples, def.trailsLifetime);
+                EmitVelocityStreak(buffer, ref write, def, p, c, trailSamples, def.trailsLifetime);
 
             if (IsCrossetteLayer(def))
                 EmitCrossette(buffer, ref write, p, c, renderLife, age);
 
             if (IsCrackleLayer(def))
                 EmitCrackle(buffer, ref write, p, c, renderLife, age);
+
+            if (IsBrocadeLayer(def))
+                EmitBrocadeHighlights(buffer, ref write, p, c);
+
+            if (IsIlluminationLayer(def))
+                EmitFlareHalo(buffer, ref write, p, c);
         }
 
         return write;
@@ -498,6 +517,18 @@ public class StarLayerWorkshopController : MonoBehaviour
     {
         float alphaMul = 1f;
         float t = life > 0f ? Mathf.Clamp01(age / life) : 0f;
+
+        if (IsSteadyHighLayer(def))
+            alphaMul *= Mathf.Lerp(1.1f, 0.25f, Mathf.Pow(t, 1.6f));
+
+        if (IsSteadyLowLayer(def))
+            alphaMul *= Mathf.Lerp(0.7f, 0.15f, Mathf.Pow(t, 1.2f));
+
+        if (IsIlluminationLayer(def))
+            alphaMul *= Mathf.Lerp(0.9f, 0.25f, Mathf.Pow(t, 0.7f));
+
+        if (IsSilverLineLayer(def))
+            alphaMul *= Mathf.Lerp(1.2f, 0.08f, Mathf.Pow(t, 2.0f));
 
         if (def.enableStrobe && def.strobeFrequency > 0f && !IsGlitterLayer(def))
         {
@@ -528,7 +559,7 @@ public class StarLayerWorkshopController : MonoBehaviour
             alphaMul *= Mathf.Lerp(0.4f, 1f, flicker);
         }
 
-        if (IsLowSteadyLayer(def) || IsWabiLayer(def))
+        if (IsLowSteadyLayer(def) || IsWabiLayer(def) || IsIronSparksLayer(def))
         {
             int tick = Mathf.FloorToInt(age * 20f);
             float flicker = Hash01(seed ^ (uint)tick);
@@ -549,6 +580,15 @@ public class StarLayerWorkshopController : MonoBehaviour
             }
         }
 
+        if (IsChrysanthemumLayer(def))
+            alphaMul *= Mathf.Lerp(1.0f, 0.2f, t);
+
+        if (IsWillowLayer(def) || IsSilverKamuroLayer(def))
+            alphaMul *= Mathf.Lerp(1.0f, 0.35f, t);
+
+        if (IsGoldDustLayer(def))
+            alphaMul *= Mathf.Lerp(0.6f, 0.05f, Mathf.Clamp01(t * 2.5f));
+
         if (IsAfterglowLayer(def))
             alphaMul *= Mathf.Lerp(0.6f, 0.1f, t);
 
@@ -558,7 +598,7 @@ public class StarLayerWorkshopController : MonoBehaviour
         return alphaMul;
     }
 
-    static void EmitVelocityStreak(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c, int samples, float lengthScale)
+    static void EmitVelocityStreak(ParticleSystem.Particle[] buffer, ref int write, StarLayerDef def, ParticleSystem.Particle p, Color c, int samples, float lengthScale)
     {
         if (!IsFinite(p.position) || !IsFinite(p.velocity))
             return;
@@ -567,7 +607,8 @@ public class StarLayerWorkshopController : MonoBehaviour
         if (speed < 0.01f) return;
 
         Vector3 dir = v / speed;
-        float len = Mathf.Clamp(speed * 0.03f * Mathf.Max(0.2f, lengthScale), 0.03f, 1.2f);
+        float tailBoost = IsTigerLayer(def) ? 1.9f : 1f;
+        float len = Mathf.Clamp(speed * 0.03f * Mathf.Max(0.2f, lengthScale) * tailBoost, 0.03f, 2.0f);
         int count = Mathf.Clamp(samples, 1, 12);
         for (int k = 1; k <= count; k++)
         {
@@ -577,7 +618,19 @@ public class StarLayerWorkshopController : MonoBehaviour
             tp.position = p.position - dir * (len * t);
             float alphaScale = Mathf.Lerp(0.8f, 0.1f, t);
             float sizeScale = Mathf.Lerp(0.9f, 0.35f, t);
-            var tc = c;
+            var tc = ApplyTrailColor(def, c, t);
+            if (IsWillowLayer(def))
+            {
+                if ((k % 2) == 0)
+                    continue;
+                alphaScale *= 0.75f;
+            }
+            if (IsTigerLayer(def))
+            {
+                if (Hash01(p.randomSeed ^ (uint)k) < 0.25f)
+                    continue;
+                alphaScale *= 0.6f;
+            }
             tc.a = Mathf.Clamp01(c.a * alphaScale);
             tp.startColor = tc;
             tp.startSize *= sizeScale;
@@ -663,6 +716,17 @@ public class StarLayerWorkshopController : MonoBehaviour
         return def.id.ToLowerInvariant().Contains("steady_color_low");
     }
 
+    static bool IsSteadyHighLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("steady_color_high");
+    }
+
+    static bool IsSteadyLowLayer(StarLayerDef def)
+    {
+        return IsLowSteadyLayer(def);
+    }
+
     static bool IsWabiLayer(StarLayerDef def)
     {
         if (def == null || string.IsNullOrEmpty(def.id)) return false;
@@ -693,14 +757,107 @@ public class StarLayerWorkshopController : MonoBehaviour
         return def.id.ToLowerInvariant().Contains("falling_leaves");
     }
 
+    static bool IsIlluminationLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("illumination");
+    }
+
+    static bool IsChrysanthemumLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("chrysanthemum");
+    }
+
+    static bool IsWillowLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("willow");
+    }
+
+    static bool IsTigerLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("tiger");
+    }
+
+    static bool IsBrocadeLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("brocade");
+    }
+
+    static bool IsGoldDustLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("gold_dust");
+    }
+
+    static bool IsSilverLineLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("silver_line");
+    }
+
+    static bool IsSilverKamuroLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("silver_kamuro");
+    }
+
+    static bool IsIronSparksLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("iron_sparks");
+    }
+
+    static bool IsFireflyLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("firefly");
+    }
+
+    static bool IsGraniteLayer(StarLayerDef def)
+    {
+        if (def == null || string.IsNullOrEmpty(def.id)) return false;
+        return def.id.ToLowerInvariant().Contains("granite");
+    }
+
     static Color ApplyLayerColor(StarLayerDef def, Color c, float t, uint seed)
     {
+        if (IsIlluminationLayer(def))
+            c = Color.Lerp(c, new Color(1f, 0.98f, 0.9f, c.a), 0.8f);
+
+        if (IsSilverLineLayer(def))
+            c = Color.Lerp(c, new Color(0.85f, 0.9f, 1f, c.a), 0.7f);
+
+        if (IsSilverKamuroLayer(def))
+            c = Color.Lerp(c, new Color(0.9f, 0.95f, 1f, c.a), 0.6f);
+
+        if (IsWabiLayer(def))
+            c = Color.Lerp(c, new Color(0.55f, 0.4f, 0.25f, c.a), 0.6f);
+
+        if (IsTigerLayer(def))
+            c = Color.Lerp(c, new Color(0.4f, 0.2f, 0.1f, c.a), 0.6f);
+
+        if (IsBrocadeLayer(def))
+        {
+            float r = Hash01(seed ^ 0x9e3779b9u);
+            if (r > 0.7f)
+                c = Color.Lerp(c, new Color(1f, 0.85f, 0.4f, c.a), 0.8f);
+            else
+                c = Color.Lerp(c, new Color(0.8f, 0.3f, 0.15f, c.a), 0.4f);
+        }
+
         if (IsGlitterLayer(def))
         {
             float r = Hash01(seed ^ 0x9e3779b9u);
             var warm = new Color(1f, 0.95f, 0.7f, c.a);
             c = Color.Lerp(c, warm, 0.35f * r);
         }
+
+        if (IsAfterglowLayer(def))
+            c = Color.Lerp(c, new Color(0.6f, 0.8f, 1f, c.a), 0.7f);
 
         if (IsTerminalFlashLayer(def))
             c = Color.Lerp(c, Color.white, 0.9f);
@@ -722,10 +879,25 @@ public class StarLayerWorkshopController : MonoBehaviour
         if (IsAfterglowLayer(def))
             sizeScale *= Mathf.Lerp(1f, 2.4f, t);
 
+        if (IsIlluminationLayer(def))
+            sizeScale *= 0.8f;
+
+        if (IsSilverLineLayer(def))
+            sizeScale *= 0.45f;
+
+        if (IsGoldDustLayer(def))
+            sizeScale *= 0.5f;
+
+        if (IsTigerLayer(def))
+            sizeScale *= 1.4f;
+
+        if (IsTerminalSlowFadeLayer(def))
+            sizeScale *= Mathf.Lerp(1f, 0.7f, t);
+
         return sizeScale;
     }
 
-    static Vector3 ApplyLayerOffsets(StarLayerDef def, Vector3 pos, float age, uint seed)
+    static Vector3 ApplyLayerOffsets(StarLayerDef def, Vector3 pos, Vector3 velocity, float age, uint seed)
     {
         if (def == null) return pos;
 
@@ -742,16 +914,93 @@ public class StarLayerWorkshopController : MonoBehaviour
             pos += new Vector3(nx, ny, nz) * def.noiseStrength;
         }
 
+        if (IsIronSparksLayer(def))
+        {
+            float zig = Mathf.Sin(age * 18f + Hash01(seed) * Mathf.PI * 2f);
+            pos += new Vector3(zig, -zig * 0.4f, 0f) * 0.03f;
+        }
+
+        if (IsGraniteLayer(def))
+        {
+            float jit = Mathf.Sin(age * 25f + Hash01(seed) * 7f);
+            pos += new Vector3(jit, -jit, 0f) * 0.02f;
+        }
+
         if (IsFallingLeavesLayer(def))
         {
             float sway = Mathf.Sin(age * 2.1f + Hash01(seed) * Mathf.PI * 2f);
             pos.x += sway * 0.25f;
         }
 
+        if (IsGlitterLayer(def) || IsFireflyLayer(def) || IsCrackleLayer(def))
+        {
+            float drift = Mathf.Clamp(def.defaultStartDelay, 0.1f, 0.6f);
+            float phase = Hash01(seed) * Mathf.PI * 2f;
+            Vector3 delayOffset = velocity * Mathf.Clamp(drift, 0.1f, 0.45f);
+            pos -= delayOffset;
+            pos += new Vector3(Mathf.Sin(age * 3f + phase), Mathf.Cos(age * 2.2f + phase), 0f) * 0.03f;
+            pos -= Vector3.up * drift * 0.03f;
+        }
+
         if (Mathf.Abs(def.gravityModifier) > 0.001f)
             pos += Vector3.down * (0.5f * def.gravityModifier * age * age);
 
         return pos;
+    }
+
+    static bool ShouldEmitParticle(StarLayerDef def, uint seed, float age)
+    {
+        if (def == null) return true;
+        float r = Hash01(seed);
+
+        if (IsWabiLayer(def))
+            return r > 0.35f;
+
+        if (IsGoldDustLayer(def))
+            return r > 0.15f;
+
+        if (IsFireflyLayer(def))
+            return r > 0.75f;
+
+        if (IsIronSparksLayer(def))
+            return r > 0.2f;
+
+        if (IsFlitterLayer(def))
+            return r > 0.4f;
+
+        if (IsTigerLayer(def))
+            return r > 0.25f;
+
+        if (IsBrocadeLayer(def))
+            return r > 0.15f;
+
+        if (IsWillowLayer(def))
+            return r > 0.2f;
+
+        if (IsChrysanthemumLayer(def))
+            return r > 0.1f;
+
+        if (IsIlluminationLayer(def))
+            return r > 0.88f;
+
+        return true;
+    }
+
+    static Color ApplyTrailColor(StarLayerDef def, Color baseColor, float t)
+    {
+        if (IsChrysanthemumLayer(def))
+            return Color.Lerp(baseColor, new Color(0.2f, 0.05f, 0.02f, baseColor.a), t);
+
+        if (IsBrocadeLayer(def))
+        {
+            var dark = new Color(0.7f, 0.2f, 0.1f, baseColor.a);
+            return Color.Lerp(baseColor, dark, t * 0.7f);
+        }
+
+        if (IsWillowLayer(def))
+            return Color.Lerp(baseColor, new Color(0.3f, 0.1f, 0.05f, baseColor.a), t);
+
+        return baseColor;
     }
 
     static void EmitCrossette(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c, float life, float age)
@@ -790,6 +1039,28 @@ public class StarLayerWorkshopController : MonoBehaviour
             Vector3 pos = p.position + dir * radius;
             AddDerivedParticle(buffer, ref write, p, c, pos, 0.6f);
         }
+    }
+
+    static void EmitBrocadeHighlights(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c)
+    {
+        uint s = p.randomSeed;
+        float r = Hash01(s);
+        if (r < 0.65f) return;
+
+        Color gold = new Color(1f, 0.85f, 0.4f, c.a);
+        Vector3 offset = HashUnitVector(s ^ 0x7f4a7c15u) * 0.03f;
+        AddDerivedParticle(buffer, ref write, p, gold, p.position + offset, 0.45f);
+    }
+
+    static void EmitFlareHalo(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c)
+    {
+        uint s = p.randomSeed;
+        if (Hash01(s) < 0.85f) return;
+
+        Color halo = new Color(1f, 0.98f, 0.92f, Mathf.Clamp01(c.a * 0.35f));
+        float radius = 0.18f + 0.12f * Hash01(s ^ 0x51c7e9u);
+        Vector3 offset = HashUnitVector(s ^ 0x4b1d3a19u) * radius;
+        AddDerivedParticle(buffer, ref write, p, halo, p.position + offset, 3.0f);
     }
 
     static void AddDerivedParticle(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle baseP, Color c, Vector3 pos, float sizeScale)
@@ -884,6 +1155,9 @@ public class StarLayerWorkshopController : MonoBehaviour
 
     void DrawStarBuilderUI()
     {
+        GUILayout.Space(6);
+        captureArmed = GUILayout.Toggle(captureArmed, "To_AI_SH_Star (Capture On Preset)");
+
         DrawPresetList();
 
         GUILayout.Space(6);
@@ -975,7 +1249,11 @@ public class StarLayerWorkshopController : MonoBehaviour
             if (GUILayout.Button(preset.displayName))
             {
                 ApplyPreset(preset);
-                if (autoSpawnPreset)
+                if (captureArmed)
+                {
+                    StartCaptureForCurrentPreset();
+                }
+                else if (autoSpawnPreset)
                 {
                     Rebuild();
                     Spawn();
@@ -1147,6 +1425,9 @@ public class StarLayerWorkshopController : MonoBehaviour
 
         GUILayout.Label($"Global Lifetime Scale: {globalLifetimeScale:F2}");
         globalLifetimeScale = GUILayout.HorizontalSlider(globalLifetimeScale, 0.2f, 3f);
+
+        GUILayout.Label($"Gravity Scale: {gravityScale:F2}");
+        gravityScale = GUILayout.HorizontalSlider(gravityScale, 0f, 3f);
     }
 
     void DrawPlaybackControls()
@@ -1201,6 +1482,10 @@ public class StarLayerWorkshopController : MonoBehaviour
         GUILayout.Label($"Sim Active: {simActive}");
         GUILayout.Label($"Alive: {(sim != null ? sim.AliveCount : 0)}");
         GUILayout.Label($"Auto Respawn: {autoRespawn}");
+        GUILayout.Label($"Capture Armed: {captureArmed}");
+        GUILayout.Label($"Capture: {(captureInProgress ? "ON" : "OFF")}");
+        if (captureInProgress)
+            GUILayout.Label($"Capture {captureIndex}/{captureTotal}");
 
         GUILayout.Space(6);
         GUILayout.Label("Preset");
@@ -1233,6 +1518,114 @@ public class StarLayerWorkshopController : MonoBehaviour
         }
 
         GUILayout.EndArea();
+    }
+
+    void StartCaptureForCurrentPreset()
+    {
+        if (captureInProgress)
+            return;
+
+        string presetName = string.IsNullOrEmpty(lastPresetName) ? "Custom" : lastPresetName;
+        string safeName = SanitizeFileName(presetName);
+        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        captureFolder = Path.Combine(Application.dataPath, "To_AI_SH_Star", safeName, timestamp);
+        Directory.CreateDirectory(captureFolder);
+
+        float duration = Mathf.Max(0.6f, EstimateStarDuration());
+        captureTotal = Mathf.Clamp(Mathf.CeilToInt(duration / Mathf.Max(0.05f, captureInterval)) + 1, 3, 80);
+        captureIndex = 0;
+        captureInProgress = true;
+        capturePrevAutoRespawn = autoRespawn;
+        autoRespawn = false;
+
+        Rebuild();
+        Spawn();
+    }
+
+    void UpdateCapture()
+    {
+        if (!captureInProgress)
+            return;
+
+        if (!simActive && captureIndex > 0)
+        {
+            StopCapture();
+            return;
+        }
+
+        if (captureIndex >= captureTotal)
+        {
+            StopCapture();
+            return;
+        }
+
+        if (Time.timeScale <= 0f)
+            return;
+
+        float elapsed = simElapsed;
+        int expectedIndex = Mathf.FloorToInt(elapsed / Mathf.Max(0.05f, captureInterval));
+        if (expectedIndex < captureIndex)
+            return;
+
+        string file = Path.Combine(captureFolder, $"frame_{captureIndex:000}.png");
+        ScreenCapture.CaptureScreenshot(file);
+        captureIndex++;
+    }
+
+    void StopCapture()
+    {
+        captureInProgress = false;
+        autoRespawn = capturePrevAutoRespawn;
+    }
+
+    float EstimateStarDuration()
+    {
+        float baseLife = GetBaseLifeForDebug();
+        float maxEnd = 0.2f;
+
+        if (coreLayer != null)
+            maxEnd = Mathf.Max(maxEnd, GetLayerEndTime(coreLayer, coreOverrides, 0, baseLife));
+        if (primeLayer != null)
+            maxEnd = Mathf.Max(maxEnd, GetLayerEndTime(primeLayer, primeOverrides, 0, baseLife));
+
+        int stackIndex = 0;
+        for (int i = 0; i < slots.Count; i++)
+        {
+            var slot = slots[i];
+            if (slot == null || !slot.enabled || slot.layer == null) continue;
+            stackIndex++;
+            maxEnd = Mathf.Max(maxEnd, GetLayerEndTime(slot.layer, slot, stackIndex, baseLife));
+        }
+
+        return maxEnd + 0.2f;
+    }
+
+    float GetLayerEndTime(StarLayerDef def, StarLayerSlot slot, int stackIndex, float baseLife)
+    {
+        float start = def.defaultStartDelay;
+        if (useStackSpacing && stackIndex > 0)
+            start += stackSpacing * stackIndex;
+        if (slot != null)
+            start += slot.startDelay;
+
+        float duration;
+        if (slot != null && slot.durationOverride > 0f)
+            duration = slot.durationOverride;
+        else if (def.defaultDuration > 0f)
+            duration = def.defaultDuration;
+        else
+            duration = baseLife * def.defaultLifetimeScale * globalLifetimeScale * (slot != null ? slot.lifetimeScale : 1f);
+
+        return start + Mathf.Max(0.02f, duration);
+    }
+
+    static string SanitizeFileName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return "Star";
+        foreach (char c in Path.GetInvalidFileNameChars())
+            name = name.Replace(c, '_');
+        return name;
     }
 
     float GetBaseLifeForDebug()

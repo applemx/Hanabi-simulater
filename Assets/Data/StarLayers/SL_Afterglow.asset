@@ -21,14 +21,14 @@ MonoBehaviour:
   defaultColor: {r: 0.7, g: 0.85, b: 1, a: 1}
   defaultSizeScale: 1
   defaultLifetimeScale: 1
-  defaultIntensity: 0.35
+  defaultIntensity: 0.28
   usesColor: 1
   applyTemplate: 1
   maxParticles: 800
   burstCount: 120
   burstTime: 0
   startSpeed: 0.2
-  startLifetime: 2
+  startLifetime: 2.8
   startSize: 0.05
   shapeRadius: 0.02
   gravityModifier: 0
