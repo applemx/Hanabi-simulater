@@ -18,25 +18,25 @@ MonoBehaviour:
   prefab: {fileID: 3265324217521712894, guid: 9ae97c6d28ae4044adbb6c2851eb01b3, type: 3}
   defaultStartDelay: 0
   defaultDuration: 0
-  defaultColor: {r: 1, g: 0.85, b: 0.6, a: 1}
+  defaultColor: {r: 1, g: 0.62, b: 0.25, a: 1}
   defaultSizeScale: 1
   defaultLifetimeScale: 1
   defaultIntensity: 1
   usesColor: 1
   applyTemplate: 1
-  maxParticles: 1320
-  burstCount: 220
+  maxParticles: 2000
+  burstCount: 260
   burstTime: 0
-  startSpeed: 7
-  startLifetime: 3
-  startSize: 0.055
-  shapeRadius: 0.02
-  gravityModifier: 0
+  startSpeed: 8
+  startLifetime: 6.5
+  startSize: 0.012
+  shapeRadius: 0.01
+  gravityModifier: 0.5
   enableTrails: 1
-  trailsLifetime: 0.8
-  enableNoise: 0
-  noiseStrength: 0.3
-  noiseFrequency: 0.5
+  trailsLifetime: 4.8
+  enableNoise: 1
+  noiseStrength: 0.02
+  noiseFrequency: 0.9
   enableStrobe: 0
   strobeFrequency: 10
   strobeBurstCount: 40

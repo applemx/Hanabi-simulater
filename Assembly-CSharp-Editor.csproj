@@ -54,6 +54,7 @@
     <Compile Include="Assets\Editor\StarLayers\StarLayerWorkshopSceneBuilder.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\FireworkBlueprintAutoCompiler.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiDatabaseEditorUtil.cs" />
+    <Compile Include="Assets\Editor\StarLayers\StarLayerDevTools.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\HanabiWorkshopSceneBuilder.cs" />
     <Compile Include="Assets\HanabiPipeline_MVP\Editor\FireworkBlueprintEditor.cs" />
     <Compile Include="Assets\Editor\StarLayers\StarLayerLibraryEditorUtil.cs" />

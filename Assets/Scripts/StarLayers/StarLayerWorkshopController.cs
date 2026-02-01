@@ -106,6 +106,7 @@ public class StarLayerWorkshopController : MonoBehaviour
     int simCapacity;
     bool simActive;
     uint baseSeed = 12345;
+    readonly StarLayerRendererRegistry rendererRegistry = new StarLayerRendererRegistry();
 
     class LayerInstance
     {
@@ -343,6 +344,7 @@ public class StarLayerWorkshopController : MonoBehaviour
         int trailSamples = GetTrailSampleCount(def);
         int maxParticles = simCapacity * (1 + trailSamples);
         ConfigureRendererSystem(ps, maxParticles);
+        rendererRegistry.Get(def).ConfigureParticleSystem(ps, def, slot, useGlobalColor, globalColor, globalIntensity, globalSizeScale, globalLifetimeScale);
 
         var instance = new LayerInstance
         {
@@ -420,6 +422,7 @@ public class StarLayerWorkshopController : MonoBehaviour
         var def = inst.def;
         var slot = inst.slot;
         var buffer = inst.buffer;
+        var renderer = rendererRegistry.Get(def);
         int write = 0;
 
         float layerStart = def.defaultStartDelay;
@@ -450,8 +453,8 @@ public class StarLayerWorkshopController : MonoBehaviour
         for (int i = 0; i < baseCount; i++)
         {
             var p = baseBuf[i];
-            if (!IsFinite(p.position) || !IsFinite(p.velocity) || !IsFinite(p.startSize) ||
-                !IsFinite(p.startLifetime) || !IsFinite(p.remainingLifetime))
+            if (!StarLayerRenderUtil.IsFinite(p.position) || !StarLayerRenderUtil.IsFinite(p.velocity) || !StarLayerRenderUtil.IsFinite(p.startSize) ||
+                !StarLayerRenderUtil.IsFinite(p.startLifetime) || !StarLayerRenderUtil.IsFinite(p.remainingLifetime))
                 continue;
             float baseLife = p.startLifetime;
             float age = Mathf.Max(0f, baseLife - p.remainingLifetime);
@@ -464,29 +467,29 @@ public class StarLayerWorkshopController : MonoBehaviour
             float renderLife = Mathf.Max(0.05f, baseLife * lifetimeScale);
             float layerT = renderLife > 0f ? Mathf.Clamp01(age / renderLife) : 0f;
 
-            if (!ShouldEmitParticle(def, p.randomSeed, age))
+            if (!renderer.ShouldEmitParticle(def, p.randomSeed, age))
                 continue;
 
-            float alphaMul = ComputeLayerAlpha(def, age, renderLife, p.randomSeed);
+            float alphaMul = renderer.ComputeAlpha(def, age, renderLife, p.randomSeed);
             if (alphaMul <= 0.001f)
                 continue;
 
             float remaining = Mathf.Max(0.01f, renderLife - age);
 
             Color c = MultiplyColor(baseColor, intensity);
-            c = ApplyLayerColor(def, c, layerT, p.randomSeed);
+            c = renderer.ApplyColor(def, c, layerT, p.randomSeed);
             c.a = Mathf.Clamp01(c.a * alphaMul);
 
-            sizeScale = ApplyLayerSize(def, sizeScale, layerT);
+            sizeScale = renderer.ApplySize(def, sizeScale, layerT);
 
-            p.position = ApplyLayerOffsets(def, p.position, p.velocity, age, p.randomSeed);
+            p.position = renderer.ApplyOffsets(def, p.position, p.velocity, age, p.randomSeed);
             p.startColor = c;
             p.startSize = Mathf.Clamp(p.startSize * sizeScale, 0.0005f, 5f);
             p.startLifetime = Mathf.Clamp(renderLife, 0.02f, 60f);
             p.remainingLifetime = Mathf.Clamp(remaining, 0.01f, p.startLifetime);
 
-            if (!IsFinite(p.position) || !IsFinite(p.startSize) || !IsFinite(p.startLifetime) ||
-                !IsFinite(p.remainingLifetime))
+            if (!StarLayerRenderUtil.IsFinite(p.position) || !StarLayerRenderUtil.IsFinite(p.startSize) || !StarLayerRenderUtil.IsFinite(p.startLifetime) ||
+                !StarLayerRenderUtil.IsFinite(p.remainingLifetime))
                 continue;
             if (Mathf.Abs(p.position.x) > 10000f || Mathf.Abs(p.position.y) > 10000f || Mathf.Abs(p.position.z) > 10000f)
                 continue;
@@ -495,142 +498,37 @@ public class StarLayerWorkshopController : MonoBehaviour
                 buffer[write++] = p;
 
             if (trailLayer && trailSamples > 0)
-                EmitVelocityStreak(buffer, ref write, def, p, c, trailSamples, def.trailsLifetime);
+                EmitVelocityStreak(renderer, buffer, ref write, def, p, c, trailSamples, def.trailsLifetime);
 
-            if (IsCrossetteLayer(def))
-                EmitCrossette(buffer, ref write, p, c, renderLife, age);
-
-            if (IsCrackleLayer(def))
-                EmitCrackle(buffer, ref write, p, c, renderLife, age);
-
-            if (IsBrocadeLayer(def))
-                EmitBrocadeHighlights(buffer, ref write, p, c);
-
-            if (IsIlluminationLayer(def))
-                EmitFlareHalo(buffer, ref write, p, c);
+            renderer.EmitExtras(buffer, ref write, def, p, c, renderLife, age);
         }
 
         return write;
     }
 
-    float ComputeLayerAlpha(StarLayerDef def, float age, float life, uint seed)
+    static void EmitVelocityStreak(IStarLayerRenderer renderer, ParticleSystem.Particle[] buffer, ref int write, StarLayerDef def, ParticleSystem.Particle p, Color c, int samples, float lengthScale)
     {
-        float alphaMul = 1f;
-        float t = life > 0f ? Mathf.Clamp01(age / life) : 0f;
-
-        if (IsSteadyHighLayer(def))
-            alphaMul *= Mathf.Lerp(1.1f, 0.25f, Mathf.Pow(t, 1.6f));
-
-        if (IsSteadyLowLayer(def))
-            alphaMul *= Mathf.Lerp(0.7f, 0.15f, Mathf.Pow(t, 1.2f));
-
-        if (IsIlluminationLayer(def))
-            alphaMul *= Mathf.Lerp(0.9f, 0.25f, Mathf.Pow(t, 0.7f));
-
-        if (IsSilverLineLayer(def))
-            alphaMul *= Mathf.Lerp(1.2f, 0.08f, Mathf.Pow(t, 2.0f));
-
-        if (def.enableStrobe && def.strobeFrequency > 0f && !IsGlitterLayer(def))
-        {
-            float freq = Mathf.Max(0.1f, def.strobeFrequency);
-            float phase = Hash01(seed);
-            float frac = Mathf.Repeat(age * freq + phase, 1f);
-            float duty = Mathf.Clamp(def.strobeBurstCount / 100f, 0.05f, 0.6f);
-            alphaMul *= frac < duty ? 1f : 0f;
-        }
-
-        if (IsGlitterLayer(def))
-        {
-            float freq = Mathf.Max(2f, def.strobeFrequency);
-            float phase = Hash01(seed);
-            float cycle = age * freq + phase;
-            float frac = cycle - Mathf.Floor(cycle);
-            float spike = Mathf.Clamp01(1f - frac / 0.18f);
-            int tick = Mathf.FloorToInt(age * freq);
-            float sparkle = Hash01(seed ^ (uint)tick);
-            alphaMul *= 0.1f + spike * (0.9f + 0.5f * sparkle);
-        }
-
-        if (IsFlitterLayer(def))
-        {
-            float freq = Mathf.Max(12f, def.strobeFrequency);
-            int tick = Mathf.FloorToInt(age * freq);
-            float flicker = Hash01(seed ^ (uint)tick);
-            alphaMul *= Mathf.Lerp(0.4f, 1f, flicker);
-        }
-
-        if (IsLowSteadyLayer(def) || IsWabiLayer(def) || IsIronSparksLayer(def))
-        {
-            int tick = Mathf.FloorToInt(age * 20f);
-            float flicker = Hash01(seed ^ (uint)tick);
-            alphaMul *= Mathf.Lerp(0.75f, 1f, flicker);
-        }
-
-        if (IsCrackleLayer(def))
-        {
-            if (life > 0f && age > life * 0.65f)
-            {
-                int tick = Mathf.FloorToInt(age * 40f);
-                float s = Hash01(seed ^ (uint)tick);
-                alphaMul *= (s > 0.5f) ? 1.3f : 0.25f;
-            }
-            else
-            {
-                alphaMul *= 0.1f;
-            }
-        }
-
-        if (IsChrysanthemumLayer(def))
-            alphaMul *= Mathf.Lerp(1.0f, 0.2f, t);
-
-        if (IsWillowLayer(def) || IsSilverKamuroLayer(def))
-            alphaMul *= Mathf.Lerp(1.0f, 0.35f, t);
-
-        if (IsGoldDustLayer(def))
-            alphaMul *= Mathf.Lerp(0.6f, 0.05f, Mathf.Clamp01(t * 2.5f));
-
-        if (IsAfterglowLayer(def))
-            alphaMul *= Mathf.Lerp(0.6f, 0.1f, t);
-
-        if (IsTerminalSlowFadeLayer(def))
-            alphaMul *= Mathf.Pow(1f - t, 0.35f);
-
-        return alphaMul;
-    }
-
-    static void EmitVelocityStreak(ParticleSystem.Particle[] buffer, ref int write, StarLayerDef def, ParticleSystem.Particle p, Color c, int samples, float lengthScale)
-    {
-        if (!IsFinite(p.position) || !IsFinite(p.velocity))
+        if (!StarLayerRenderUtil.IsFinite(p.position) || !StarLayerRenderUtil.IsFinite(p.velocity))
             return;
         Vector3 v = p.velocity;
         float speed = v.magnitude;
         if (speed < 0.01f) return;
 
         Vector3 dir = v / speed;
-        float tailBoost = IsTigerLayer(def) ? 1.9f : 1f;
-        float len = Mathf.Clamp(speed * 0.03f * Mathf.Max(0.2f, lengthScale) * tailBoost, 0.03f, 2.0f);
+        float lenScale = renderer != null ? renderer.GetTrailLengthScale(def) : 1f;
+        float len = Mathf.Clamp(speed * 0.03f * Mathf.Max(0.2f, lengthScale) * lenScale, 0.03f, 2.0f);
         int count = Mathf.Clamp(samples, 1, 12);
         for (int k = 1; k <= count; k++)
         {
             if (write >= buffer.Length) break;
             float t = k / (float)count;
+            if (renderer != null && !renderer.ShouldEmitTrailSample(def, t, p.randomSeed, k))
+                continue;
             var tp = p;
             tp.position = p.position - dir * (len * t);
-            float alphaScale = Mathf.Lerp(0.8f, 0.1f, t);
-            float sizeScale = Mathf.Lerp(0.9f, 0.35f, t);
-            var tc = ApplyTrailColor(def, c, t);
-            if (IsWillowLayer(def))
-            {
-                if ((k % 2) == 0)
-                    continue;
-                alphaScale *= 0.75f;
-            }
-            if (IsTigerLayer(def))
-            {
-                if (Hash01(p.randomSeed ^ (uint)k) < 0.25f)
-                    continue;
-                alphaScale *= 0.6f;
-            }
+            float alphaScale = renderer != null ? renderer.GetTrailAlphaScale(def, t, p.randomSeed, k) : Mathf.Lerp(0.8f, 0.1f, t);
+            float sizeScale = renderer != null ? renderer.GetTrailSizeScale(def, t, p.randomSeed, k) : Mathf.Lerp(0.9f, 0.35f, t);
+            var tc = renderer.ApplyTrailColor(def, c, t);
             tc.a = Mathf.Clamp01(c.a * alphaScale);
             tp.startColor = tc;
             tp.startSize *= sizeScale;
@@ -682,426 +580,6 @@ public class StarLayerWorkshopController : MonoBehaviour
     static bool IsTrailLayer(StarLayerDef def)
     {
         return def != null && def.category == StarLayerCategory.Trail;
-    }
-
-    static bool IsGlitterLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        var id = def.id.ToLowerInvariant();
-        return id.Contains("glitter") || id.Contains("tremolant") || id.Contains("firefly");
-    }
-
-    static bool IsCrackleLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("crackle");
-    }
-
-    static bool IsCrossetteLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("crossette");
-    }
-
-    static bool IsFlitterLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        var id = def.id.ToLowerInvariant();
-        return id.Contains("flitter") || id.Contains("spangle");
-    }
-
-    static bool IsLowSteadyLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("steady_color_low");
-    }
-
-    static bool IsSteadyHighLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("steady_color_high");
-    }
-
-    static bool IsSteadyLowLayer(StarLayerDef def)
-    {
-        return IsLowSteadyLayer(def);
-    }
-
-    static bool IsWabiLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("wabi");
-    }
-
-    static bool IsAfterglowLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("afterglow");
-    }
-
-    static bool IsTerminalFlashLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("terminal_flash");
-    }
-
-    static bool IsTerminalSlowFadeLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("terminal_slow_fade");
-    }
-
-    static bool IsFallingLeavesLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("falling_leaves");
-    }
-
-    static bool IsIlluminationLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("illumination");
-    }
-
-    static bool IsChrysanthemumLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("chrysanthemum");
-    }
-
-    static bool IsWillowLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("willow");
-    }
-
-    static bool IsTigerLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("tiger");
-    }
-
-    static bool IsBrocadeLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("brocade");
-    }
-
-    static bool IsGoldDustLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("gold_dust");
-    }
-
-    static bool IsSilverLineLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("silver_line");
-    }
-
-    static bool IsSilverKamuroLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("silver_kamuro");
-    }
-
-    static bool IsIronSparksLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("iron_sparks");
-    }
-
-    static bool IsFireflyLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("firefly");
-    }
-
-    static bool IsGraniteLayer(StarLayerDef def)
-    {
-        if (def == null || string.IsNullOrEmpty(def.id)) return false;
-        return def.id.ToLowerInvariant().Contains("granite");
-    }
-
-    static Color ApplyLayerColor(StarLayerDef def, Color c, float t, uint seed)
-    {
-        if (IsIlluminationLayer(def))
-            c = Color.Lerp(c, new Color(1f, 0.98f, 0.9f, c.a), 0.8f);
-
-        if (IsSilverLineLayer(def))
-            c = Color.Lerp(c, new Color(0.85f, 0.9f, 1f, c.a), 0.7f);
-
-        if (IsSilverKamuroLayer(def))
-            c = Color.Lerp(c, new Color(0.9f, 0.95f, 1f, c.a), 0.6f);
-
-        if (IsWabiLayer(def))
-            c = Color.Lerp(c, new Color(0.55f, 0.4f, 0.25f, c.a), 0.6f);
-
-        if (IsTigerLayer(def))
-            c = Color.Lerp(c, new Color(0.4f, 0.2f, 0.1f, c.a), 0.6f);
-
-        if (IsBrocadeLayer(def))
-        {
-            float r = Hash01(seed ^ 0x9e3779b9u);
-            if (r > 0.7f)
-                c = Color.Lerp(c, new Color(1f, 0.85f, 0.4f, c.a), 0.8f);
-            else
-                c = Color.Lerp(c, new Color(0.8f, 0.3f, 0.15f, c.a), 0.4f);
-        }
-
-        if (IsGlitterLayer(def))
-        {
-            float r = Hash01(seed ^ 0x9e3779b9u);
-            var warm = new Color(1f, 0.95f, 0.7f, c.a);
-            c = Color.Lerp(c, warm, 0.35f * r);
-        }
-
-        if (IsAfterglowLayer(def))
-            c = Color.Lerp(c, new Color(0.6f, 0.8f, 1f, c.a), 0.7f);
-
-        if (IsTerminalFlashLayer(def))
-            c = Color.Lerp(c, Color.white, 0.9f);
-
-        if (IsTerminalSlowFadeLayer(def))
-        {
-            var warm = new Color(c.r, c.g * 0.8f, c.b * 0.6f, c.a);
-            c = Color.Lerp(c, warm, t);
-        }
-
-        return c;
-    }
-
-    static float ApplyLayerSize(StarLayerDef def, float sizeScale, float t)
-    {
-        if (IsTerminalFlashLayer(def))
-            sizeScale *= 0.45f;
-
-        if (IsAfterglowLayer(def))
-            sizeScale *= Mathf.Lerp(1f, 2.4f, t);
-
-        if (IsIlluminationLayer(def))
-            sizeScale *= 0.8f;
-
-        if (IsSilverLineLayer(def))
-            sizeScale *= 0.45f;
-
-        if (IsGoldDustLayer(def))
-            sizeScale *= 0.5f;
-
-        if (IsTigerLayer(def))
-            sizeScale *= 1.4f;
-
-        if (IsTerminalSlowFadeLayer(def))
-            sizeScale *= Mathf.Lerp(1f, 0.7f, t);
-
-        return sizeScale;
-    }
-
-    static Vector3 ApplyLayerOffsets(StarLayerDef def, Vector3 pos, Vector3 velocity, float age, uint seed)
-    {
-        if (def == null) return pos;
-
-        if (def.enableNoise && def.noiseStrength > 0f)
-        {
-            float f = Mathf.Max(0.01f, def.noiseFrequency);
-            float t = age * f;
-            float sx = Hash01(seed) * 10f;
-            float sy = Hash01(seed ^ 0x68bc21u) * 10f;
-            float sz = Hash01(seed ^ 0x02e5be93u) * 10f;
-            float nx = Mathf.PerlinNoise(sx, t) - 0.5f;
-            float ny = Mathf.PerlinNoise(sy, t + 3.3f) - 0.5f;
-            float nz = Mathf.PerlinNoise(sz, t + 7.7f) - 0.5f;
-            pos += new Vector3(nx, ny, nz) * def.noiseStrength;
-        }
-
-        if (IsIronSparksLayer(def))
-        {
-            float zig = Mathf.Sin(age * 18f + Hash01(seed) * Mathf.PI * 2f);
-            pos += new Vector3(zig, -zig * 0.4f, 0f) * 0.03f;
-        }
-
-        if (IsGraniteLayer(def))
-        {
-            float jit = Mathf.Sin(age * 25f + Hash01(seed) * 7f);
-            pos += new Vector3(jit, -jit, 0f) * 0.02f;
-        }
-
-        if (IsFallingLeavesLayer(def))
-        {
-            float sway = Mathf.Sin(age * 2.1f + Hash01(seed) * Mathf.PI * 2f);
-            pos.x += sway * 0.25f;
-        }
-
-        if (IsGlitterLayer(def) || IsFireflyLayer(def) || IsCrackleLayer(def))
-        {
-            float drift = Mathf.Clamp(def.defaultStartDelay, 0.1f, 0.6f);
-            float phase = Hash01(seed) * Mathf.PI * 2f;
-            Vector3 delayOffset = velocity * Mathf.Clamp(drift, 0.1f, 0.45f);
-            pos -= delayOffset;
-            pos += new Vector3(Mathf.Sin(age * 3f + phase), Mathf.Cos(age * 2.2f + phase), 0f) * 0.03f;
-            pos -= Vector3.up * drift * 0.03f;
-        }
-
-        if (Mathf.Abs(def.gravityModifier) > 0.001f)
-            pos += Vector3.down * (0.5f * def.gravityModifier * age * age);
-
-        return pos;
-    }
-
-    static bool ShouldEmitParticle(StarLayerDef def, uint seed, float age)
-    {
-        if (def == null) return true;
-        float r = Hash01(seed);
-
-        if (IsWabiLayer(def))
-            return r > 0.35f;
-
-        if (IsGoldDustLayer(def))
-            return r > 0.15f;
-
-        if (IsFireflyLayer(def))
-            return r > 0.75f;
-
-        if (IsIronSparksLayer(def))
-            return r > 0.2f;
-
-        if (IsFlitterLayer(def))
-            return r > 0.4f;
-
-        if (IsTigerLayer(def))
-            return r > 0.25f;
-
-        if (IsBrocadeLayer(def))
-            return r > 0.15f;
-
-        if (IsWillowLayer(def))
-            return r > 0.2f;
-
-        if (IsChrysanthemumLayer(def))
-            return r > 0.1f;
-
-        if (IsIlluminationLayer(def))
-            return r > 0.88f;
-
-        return true;
-    }
-
-    static Color ApplyTrailColor(StarLayerDef def, Color baseColor, float t)
-    {
-        if (IsChrysanthemumLayer(def))
-            return Color.Lerp(baseColor, new Color(0.2f, 0.05f, 0.02f, baseColor.a), t);
-
-        if (IsBrocadeLayer(def))
-        {
-            var dark = new Color(0.7f, 0.2f, 0.1f, baseColor.a);
-            return Color.Lerp(baseColor, dark, t * 0.7f);
-        }
-
-        if (IsWillowLayer(def))
-            return Color.Lerp(baseColor, new Color(0.3f, 0.1f, 0.05f, baseColor.a), t);
-
-        return baseColor;
-    }
-
-    static void EmitCrossette(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c, float life, float age)
-    {
-        if (life <= 0f) return;
-        float t = age / life;
-        if (t < 0.55f) return;
-
-        float splitAge = Mathf.Max(0f, age - life * 0.55f);
-        float offset = Mathf.Clamp(splitAge * 1.6f, 0.05f, 1.2f);
-        Vector3 dir = p.velocity.sqrMagnitude > 0.0001f ? p.velocity.normalized : Vector3.right;
-        Vector3 right = Vector3.Cross(dir, Vector3.up);
-        if (right.sqrMagnitude < 0.0001f)
-            right = Vector3.Cross(dir, Vector3.forward);
-        right.Normalize();
-        Vector3 up = Vector3.Cross(right, dir).normalized;
-
-        AddDerivedParticle(buffer, ref write, p, c, p.position + right * offset, 0.75f);
-        AddDerivedParticle(buffer, ref write, p, c, p.position - right * offset, 0.75f);
-        AddDerivedParticle(buffer, ref write, p, c, p.position + up * offset, 0.75f);
-        AddDerivedParticle(buffer, ref write, p, c, p.position - up * offset, 0.75f);
-    }
-
-    static void EmitCrackle(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c, float life, float age)
-    {
-        if (life <= 0f) return;
-        float t = age / life;
-        if (t < 0.7f) return;
-
-        float burst = Mathf.Clamp01((t - 0.7f) / 0.3f);
-        for (int i = 0; i < 4; i++)
-        {
-            uint s = p.randomSeed ^ (uint)(i * 2654435761u);
-            Vector3 dir = HashUnitVector(s);
-            float radius = 0.15f + 0.35f * burst;
-            Vector3 pos = p.position + dir * radius;
-            AddDerivedParticle(buffer, ref write, p, c, pos, 0.6f);
-        }
-    }
-
-    static void EmitBrocadeHighlights(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c)
-    {
-        uint s = p.randomSeed;
-        float r = Hash01(s);
-        if (r < 0.65f) return;
-
-        Color gold = new Color(1f, 0.85f, 0.4f, c.a);
-        Vector3 offset = HashUnitVector(s ^ 0x7f4a7c15u) * 0.03f;
-        AddDerivedParticle(buffer, ref write, p, gold, p.position + offset, 0.45f);
-    }
-
-    static void EmitFlareHalo(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle p, Color c)
-    {
-        uint s = p.randomSeed;
-        if (Hash01(s) < 0.85f) return;
-
-        Color halo = new Color(1f, 0.98f, 0.92f, Mathf.Clamp01(c.a * 0.35f));
-        float radius = 0.18f + 0.12f * Hash01(s ^ 0x51c7e9u);
-        Vector3 offset = HashUnitVector(s ^ 0x4b1d3a19u) * radius;
-        AddDerivedParticle(buffer, ref write, p, halo, p.position + offset, 3.0f);
-    }
-
-    static void AddDerivedParticle(ParticleSystem.Particle[] buffer, ref int write, ParticleSystem.Particle baseP, Color c, Vector3 pos, float sizeScale)
-    {
-        if (write >= buffer.Length) return;
-        if (!IsFinite(pos))
-            return;
-        var p = baseP;
-        p.position = pos;
-        p.startColor = c;
-        p.startSize *= sizeScale;
-        buffer[write++] = p;
-    }
-
-    static Vector3 HashUnitVector(uint seed)
-    {
-        float x = Hash01(seed) * 2f - 1f;
-        float y = Hash01(seed ^ 0x68bc21u) * 2f - 1f;
-        float z = Hash01(seed ^ 0x02e5be93u) * 2f - 1f;
-        var v = new Vector3(x, y, z);
-        if (v.sqrMagnitude < 0.0001f)
-            return Vector3.up;
-        return v.normalized;
-    }
-
-    static bool IsFinite(float v)
-    {
-        return !float.IsNaN(v) && !float.IsInfinity(v);
-    }
-
-    static bool IsFinite(Vector3 v)
-    {
-        return IsFinite(v.x) && IsFinite(v.y) && IsFinite(v.z);
-    }
-
-    static float Hash01(uint x)
-    {
-        x ^= x << 13;
-        x ^= x >> 17;
-        x ^= x << 5;
-        return (x & 0x00FFFFFF) / 16777215.0f;
     }
 
     void ClearInstances(bool destroy)
